@@ -1,0 +1,117 @@
+body{
+	font-size: 14px;
+	font-family: Consolas;
+}
+.ContestStatus{
+	font-size: 20px;
+	height: 20px;
+	text-align: center;
+}
+.ContestId{
+	width: 100px;
+	display: inline-block;
+	border-radius: 5px;
+	padding: 3px;
+	background-color: #ccc;
+}
+.ContestName{
+	width: 100%;
+	border-left: 2px solid #66ccff;
+	padding-left: 5px;
+	height: 54px;
+	font-size: 15px;
+	-webkit-line-clamp: 3;
+	display: -webkit-box;
+	overflow: hidden;
+	-webkit-box-orient: vertical;
+	text-overflow:ellipsis;
+	/*white-space:nowrap;*/
+}
+.ContestIdNumber{
+	font-size: 28px;
+}
+.ProblemList{
+	height: 65px;
+	overflow-x: scroll;
+	overflow-y: none;
+	white-space: nowrap;
+}
+.SingleProblem{
+	text-align: center;
+	position: relative;
+	width: 60px;
+	height: 55px;
+	border: 1px solid #000;
+	border-radius: 5px;
+	display: inline-block;
+}
+.BackgroundPic{
+	z-index: -1;
+	position:absolute;
+    left:0px;
+    top:0px;
+    width: 60px;
+    height: 55px;
+    font-size: 50px;
+    text-align: center;
+    color: #aaa;
+}
+.ProblemResult{
+	font-family: verdana,arial,sans-serif;
+	font-size: 0.9em;
+}
+.ProblemAccepted{
+	font-weight: bold;
+}
+.TimeUsed{
+	font-size: 0.9em;
+}
+hr{
+	margin: 2px;
+	height: 1px;
+	border: 0px;
+	background-color: #000;
+}
+.CurrentRatingDescription{
+	padding: 3px;
+	background-color: #ccc;
+	border-bottom-left-radius: 3px;
+	border-top-left-radius: 3px;
+}
+.RatingGraphDescription{
+	padding: 3px;
+}
+.CurrentRating{
+	font-size: 44px;
+	text-align: right;
+	width: 100%;
+	background-color: #ccc;
+	border-bottom-left-radius: 3px;
+	border-bottom-right-radius: 3px;
+	border-top-right-radius: 3px;
+}
+
+.ProblemList::-webkit-scrollbar{
+    width: 5px;
+    height: 5px;
+}
+.ProblemList::-webkit-scrollbar-thumb{
+    border-radius: 1px;
+}
+.ProblemList::-webkit-scrollbar-corner{
+    display: none;
+}
+.ProblemList::-webkit-scrollbar{
+    width: 5px;
+    height: 5px;
+}
+.ProblemList::-webkit-scrollbar-thumb{
+	background-color: #6bb4cb;
+    border-radius: 1px;
+}
+.ProblemList::-webkit-scrollbar-corner{
+    display: none;
+}
+.ProblemList::-webkit-scrollbar:hover{
+    background-color: #93d9e5;
+}
