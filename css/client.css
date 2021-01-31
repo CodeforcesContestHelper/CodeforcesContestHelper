@@ -8,7 +8,8 @@ body{
 	text-align: center;
 }
 .ContestId{
-	width: 100px;
+	text-align: center;
+	width: 130px;
 	display: inline-block;
 	border-radius: 5px;
 	padding: 3px;
@@ -54,7 +55,7 @@ body{
     height: 55px;
     font-size: 50px;
     text-align: center;
-    color: #aaa;
+    color: #ccc;
 }
 .ProblemResult{
 	font-family: verdana,arial,sans-serif;
@@ -89,6 +90,39 @@ hr{
 	border-bottom-left-radius: 3px;
 	border-bottom-right-radius: 3px;
 	border-top-right-radius: 3px;
+}
+.GraphFolder{
+	width: 100%;
+	padding: 3px;
+	text-align: center;
+	transition: background-color 0.3s;
+}
+.GraphFolder:hover{
+	background-color: #d7d7d7;
+}
+input{
+    -webkit-tap-highlight-color: rgba(0,0,0,0);
+    border-radius: 0;
+    padding: 3px;
+    font-size: 14px;
+    font-family: 'Consolas','Fira Code','Source Code Pro','Lucida Console','Cascadia Code','Ubuntu Mono','Monospace';
+    height: 22px;
+    width: 100%;
+}
+input[readonly='readonly']{
+	background: #ccc;
+}
+.style_warning{
+    color: #d2713a;
+}
+.style_error{
+    color :#e7483f;
+}
+.style_accept{
+    color: #20901c;
+}
+.style_pending{
+    color: grey;
 }
 
 .ProblemList::-webkit-scrollbar{
