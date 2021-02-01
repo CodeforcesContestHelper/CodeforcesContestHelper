@@ -1,5 +1,14 @@
+var lockStatus = false;
+var blankTip = true;
+var showUnofficialIf = false;
+var Username = "", ContestID = 0;
+var SelectContestTime = false;
+var SelectContestIndex = 0;
+var changeDate = new Date();
+var StartTime, EndTime;
+var RankData = [];
+var CurrentStatus;
 function getChart(data){
-	console.log(data);
 	var chart = Highcharts.chart('highchatrsContainer', {
 		chart: {
 			zoomType: 'x'
@@ -75,7 +84,9 @@ function getChart(data){
 		responsive: {
 			rules: [{
 				condition: {
-					maxWidth: 500
+					maxWidth: 500,
+					maxHeight: 200,
+					minHeight: 200
 				},
 				chartOptions: {
 					legend: {
@@ -91,25 +102,23 @@ function getChart(data){
 		}
 	});
 }
-var openStatus = true;
-var lockStatus = false;
-$('.GraphFolder').click(function(){
-	if(openStatus)
-		$('#highchatrsContainer').css('display','none'),
-		$('.GraphFolder').html('<i class="fa fa-angle-down"></i> Unfold');
-	else
-		$('#highchatrsContainer').css('display','block'),
-		$('.GraphFolder').html('<i class="fa fa-angle-up"></i> Fold');
-	openStatus=!openStatus;
-});
-function lockIf(){
+function lockIfClick(){
 	if(!lockStatus)
 		$('input').attr('readonly',true),
+		$('select').attr('disabled',true),
 		$('.LockButton').html('<i class="fa fa-unlock"></i>');
 	else
 		$('input').attr('readonly',false),
+		$('select').attr('disabled',false),
 		$('.LockButton').html('<i class="fa fa-lock"></i>');
 	lockStatus=!lockStatus;
+}
+function showUnofficialIfClick(){
+	if(!showUnofficialIf)
+		$('.UnofficialButton').html('<i class="fa fa-users"></i>');
+	else
+		$('.UnofficialButton').html('<i class="fa fa-user"></i>');
+	showUnofficialIf=!showUnofficialIf;
 }
 function getTimeLength(x){
 	x = Math.floor(x / 1000 / 60);
@@ -138,11 +147,6 @@ function getTimeLength2(x){
 	if(x!=0)	ret=''+x+':'+ret;
 	return ret;
 }
-var Username = "", ContestID = 0;
-var changeDate = new Date();
-var StartTime, EndTime;
-var RankData = [];
-var CurrentStatus;
 Date.prototype.pattern = function(format) {
     var date = {
        "M+": this.getMonth() + 1,
@@ -179,37 +183,63 @@ function flushTimeIndex(cD){
 	setTimeout(function(){flushTimeIndex(cD);},1000);
 }
 function getProblemList(a,b){
-	console.log(a);
-	console.log(b);
 	$('.ProblemList').html('');
+	if(a.length==0){
+		$('.ProblemList').html('<div style="height:100%;display: flex;align-items: center;justify-content: center;vertical-align:center">Blank</div>');
+		blankTip = true;return;
+	}
+	blankTip = false;
 	for(var i=0;i<a.length;i++)
 		$('.ProblemList').append(`<div class="SingleProblem"><div class="BackgroundPic">${a[i]}</div><span class="ProblemResult ${b[i][3]}">${b[i][0]}</span></br><span class="TimeUsed">${b[i][1]}</span></br><hr><span class="ProblemScore">${b[i][2]}</span></div>`);
 }
 function ProblemListAppend(a,b,c,d){
-	$('.ProblemList').append(`<div class="SingleProblem"><div class="BackgroundPic">#</div><span class="ProblemResult ProblemCoding">${a}</span></br><span class="TimeUsed">${'+'+c+':-'+d}</span></br><hr><span class="ProblemScore">${b}</span></div>`);
+	if(blankTip == true){
+		blankTip = false;
+		$('.ProblemList').html('');
+	}
+	$('.ProblemList').append(`<div class="SingleProblem"><div class="BackgroundPic">#</div><span class="ProblemResult ProblemCoding">${a}</span></br><span class="TimeUsed"><span class="style_accept">+${c}</span>:<span class="style_error">-${d}</span></span></br><hr><span class="ProblemScore">${b}</span></div>`);
 }
 function getApiInfo(cD){
 	if(cD<changeDate)	return;
+	var sTo=setTimeout(function(){getApiInfo(cD);}, 30000);
+	$('.ConnectionStatus').html('<i class="fa fa-spin fa-refresh"></i> Getting Standings...');
+	$('.SendButton').html('<i class="fa fa-spin fa-refresh"></i>');
 	$.getJSON("https://codeforces.com/api/contest.standings",{
 		contestId: ContestID,
 		handles: Username,
-		showUnofficial: false
+		showUnofficial: showUnofficialIf
 	},function(json){
+		if(cD<changeDate)	return;
 		$(".ContestIdNumber").html("#"+ContestID);
 		json = json.result;
 		console.log(json);
+		$('.ContestTypeChosen').html('');
+		for(var i=0;i<json.rows.length;i++)
+			$('.ContestTypeChosen').append(`<option value="${i}">${(new Date(json.rows[i].party.startTimeSeconds*1000)).pattern("YY-MM-dd hh:mm")} ${json.rows[i].party.participantType}</option>`);
+		if(SelectContestIndex<0 || SelectContestIndex>=json.rows.length)
+			SelectContestTime=false;
+		if(!SelectContestTime)
+			SelectContestIndex=json.rows.length-1,
+			SelectContestTime=true;
+		$('.ContestTypeChosen:first').val(SelectContestIndex);
 		StartTime = json.contest.startTimeSeconds;
 		if(json.rows.length!=0)
-			StartTime = json.rows[0].party.startTimeSeconds;
+			StartTime = json.rows[SelectContestIndex].party.startTimeSeconds;
 		EndTime = StartTime + json.contest.durationSeconds;
 		StartTime = new Date(StartTime * 1000);
 		EndTime = new Date(EndTime * 1000);
 		var currT = new Date();
 		$('.ConnectionStatus').html('<i class="fa fa-check style_accept"></i> Updated! ['+currT.pattern("hh:mm:ss")+']');
+		$('.SendButton').html('<i class="fa fa-send"></i>');
+		$('.ContestName').html(json.contest.name);
 		CurrentStatus = json.contest.phase;
+		if(currT<StartTime)	CurrentStatus="BEFORE";
+		else if(currT<EndTime)	CurrentStatus="CODING";
 		if(CurrentStatus=="BEFORE"){
-			$('.ProblemList').html('<div style="text-align:center"></br>Nan</div>');
+			$('.ProblemList').html('<div style="height:100%;display: flex;align-items: center;justify-content: center;vertical-align:center">Blank</div>');
+			blankTip = true;
 			setTimeout(flushTimeIndex(cD), 0);
+			clearTimeout(sTo);
 			setTimeout(function(){getApiInfo(cD);}, min(30000, Number(StartTime) - Number(currT)));
 		}
 		else{
@@ -220,14 +250,23 @@ function getApiInfo(cD){
 			if(json.rows.length==0){
 				$('.ConnectionStatus').html('<i class="fa fa-times style_error"></i> Not In The Contest!');
 				for(var i=0;i<probList.length;i++)
-					realList.push(['?','--:--','0','ProblemUnknown']);
+					reslList.push(['?','--:--','0','ProblemUnknown']);
 				getProblemList(probList, reslList);
+				$('.CurrentRating').html("#?");
+				$('#highchatrsContainer').html('<div style="height:100%;display: flex;align-items: center;justify-content: center;vertical-align:center">Blank</div>');
 				return;
 			}
-			json = json.rows[0];
-			$('.CurrentRating').html('#'+json.rank);
-			RankData.push([Number(new Date()),json.rank]);
-			getChart(RankData);
+			json = json.rows[SelectContestIndex];
+			$('.UserType').html(json.party.participantType);
+			if(json.party.participantType=="PRACTICE"){
+				$('.CurrentRating').html("#?");
+				$('#highchatrsContainer').html('<div style="height:100%;display: flex;align-items: center;justify-content: center;vertical-align:center">Blank</div>');
+			}
+			else{
+				$('.CurrentRating').html('#'+json.rank);
+				RankData.push([Number(new Date())-currT.getTimezoneOffset()*60000,json.rank]);
+				getChart(RankData);
+			}
 			for(var i=0;i<probList.length;i++){
 				var ProblemType = json.problemResults[i].bestSubmissionTimeSeconds!=undefined?"ProblemAccepted":"ProblemWrong";
 				if(ProblemType == "ProblemAccepted" && json.problemResults[i].participantType=="PRELIMINARY" && CurrentStatus=="SYSTEM_TEST")
@@ -240,21 +279,31 @@ function getApiInfo(cD){
 				else if(json.problemResults[i].rejectedAttemptCount==0)	fr='';
 				else fr='-'+json.problemResults[i].rejectedAttemptCount;
 				var se = json.problemResults[i].bestSubmissionTimeSeconds;
-				if(se==undefined)	se='--:--';
+				if(se==undefined || json.party.participantType=="PRACTICE")	se='--:--';
 				else se=getTimeLength(se*1000);
 				reslList.push([fr,se,json.problemResults[i].points,ProblemType]);
 			}
 			getProblemList(probList, reslList);
 			ProblemListAppend(json.penalty, json.points, json.successfulHackCount, json.unsuccessfulHackCount);
-			setTimeout(function(){getApiInfo(cD);}, 30000);
+			if(CurrentStatus == "CODING")
+				setTimeout(flushTimeIndex(cD), 0);
+			else if(CurrentStatus == "PENDING_SYSTEM_TEST")
+				$('.ContestStatus').html('Pending System Test...');
+			else if(CurrentStatus == "SYSTEM_TEST")
+				$('.ContestStatus').html('System Testing...');
+			else if(json.party.participantType=="PRACTICE")
+				$('.ContestStatus').html('Finished');
+			else if(CurrentStatus == "FINISHED")
+				$('.ContestStatus').html('Finished'),
+				clearTimeout(sTo);
 		}
 	}).fail(function(jqXHR, status, error){
 		console.log(jqXHR);
 		var ec = jqXHR.responseJSON.comment, ref = false;
-		$('.ConnectionStatus').html('<i class="fa fa-times style_error"></i> '+(ec.substr(0,8)==='handles:'?'Username Not Found!':(ec.substr(0,10)==='contestId:'?'Contest Not Found!':(ref=true,ec))));
-		if(ref){
-			setTimeout(function(){getApiInfo(cD);}, 30000);
-		}
+		$('.ConnectionStatus').html('<i class="fa fa-times style_error"></i> '+(ec.substr(0,8)==='handles:'?'Username Not Found!':(ec.substr(0,10)==='contestId:'?'Contest Not Found!':(ref=true,"Cannot Get Standings!"))));
+		$('.SendButton').html('<i class="fa fa-send"></i>');
+		if(!ref)
+			clearTimeout(sTo);
 	});
 }
 function changeUserInfo(){
@@ -279,13 +328,23 @@ function changeUserInfo(){
 			$('.ConnectionStatus').html('<i class="fa fa-times style_error"></i> Contest ID Not Correct!');
 			return;
 		}
-	if(Username == un && ContestID == Number(ci))
+	if(Username == un && ContestID == Number(ci)){
+		changeDate = new Date();
+		if($('.ContestTypeChosen').html()!=''){
+			SelectContestTime=true;
+			SelectContestIndex=Number($('.ContestTypeChosen:first').val());
+		}
+		RankData = [];
+		getApiInfo(new Date());
 		return;
+	}
 	changeDate = new Date();
 	Username = un;
 	ContestID = ci;
 	RankData = [];
+	SelectContestTime = false;
 	getApiInfo(new Date());
 }
-$('.LockButton').attr('onclick','lockIf()');
+$('.LockButton').attr('onclick','lockIfClick()');
 $('.SendButton').attr('onclick','changeUserInfo()');
+$('.UnofficialButton').attr('onclick','showUnofficialIfClick()');

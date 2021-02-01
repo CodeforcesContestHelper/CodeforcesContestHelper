@@ -3,8 +3,9 @@ body{
 	font-family: Consolas;
 }
 .ContestStatus{
-	font-size: 20px;
-	height: 20px;
+	font-family: verdana,arial,sans-serif;
+	font-size: 16px;
+	height: 16px;
 	text-align: center;
 }
 .ContestId{
@@ -16,8 +17,9 @@ body{
 	background-color: #ccc;
 }
 .ContestName{
+	font-family: verdana,arial,sans-serif;
 	width: 100%;
-	border-left: 2px solid #66ccff;
+	border-left: 2px solid #ccc;
 	padding-left: 5px;
 	height: 54px;
 	font-size: 15px;
@@ -26,30 +28,33 @@ body{
 	overflow: hidden;
 	-webkit-box-orient: vertical;
 	text-overflow:ellipsis;
-	/*white-space:nowrap;*/
 }
 .ContestIdNumber{
 	font-size: 28px;
 }
 .ProblemList{
-	height: 65px;
+	height: 67px;
 	overflow-x: scroll;
 	overflow-y: none;
 	white-space: nowrap;
 }
 .SingleProblem{
+	font-family: verdana,arial,sans-serif;
 	text-align: center;
 	position: relative;
-	width: 60px;
+	min-width: 60px;
 	height: 55px;
 	border: 1px solid #000;
 	border-radius: 5px;
+	margin: 0px 3px;
 	display: inline-block;
 }
 .BackgroundPic{
+	font-family: Consolas;
+	user-select:none;
 	z-index: -1;
 	position:absolute;
-    left:0px;
+    left:calc(50% - 30px);
     top:0px;
     width: 60px;
     height: 55px;
@@ -57,15 +62,29 @@ body{
     text-align: center;
     color: #ccc;
 }
+.ProblemScore{
+	font-size: 0.9em;
+}
 .ProblemResult{
-	font-family: verdana,arial,sans-serif;
 	font-size: 0.9em;
 }
 .ProblemAccepted{
 	font-weight: bold;
+	color: #0a0;
+}
+.ProblemWrong{
+	font-weight: bold;
+	color: red;
+}
+.ProblemUnknown{
+	font-weight: bold;
+	color: grey;
+}
+.ProblemCoding{
+	color: grey;
 }
 .TimeUsed{
-	font-size: 0.9em;
+	font-size: 9px;
 }
 hr{
 	margin: 2px;
@@ -91,23 +110,71 @@ hr{
 	border-bottom-right-radius: 3px;
 	border-top-right-radius: 3px;
 }
-.GraphFolder{
-	width: 100%;
-	padding: 3px;
-	text-align: center;
-	transition: background-color 0.3s;
+#highchatrsContainer{
+	vertical-align: center;
+	height: 220px;
+	max-height: 220px;
+	min-height: 0px;
 }
-.GraphFolder:hover{
-	background-color: #d7d7d7;
+.ConnectionStatus{
+	margin-left: 2px;
+}
+.UserType{
+	float: left;
+	margin: 1px;
+	padding: 1px;
+	border-radius: 3px;
+	background: #777;
+	color: #fff;
+}
+.ToolList{
+	float: right;
+}
+button{
+	text-align: center;
+	outline: 0px;
+	height: 24px;
+	width: 24px;
+	cursor: pointer;
+	border-radius: 12px;
+	padding: 0px;
+	border: 0px;
+	background: #ccc;
+	transition: background 0.3s;
+}
+button:hover{
+	background: #aaa;
 }
 input{
+	transition: background 0.3s;
     -webkit-tap-highlight-color: rgba(0,0,0,0);
-    border-radius: 0;
+    border-radius: 4px;
     padding: 3px;
+    border: 2px solid grey;
     font-size: 14px;
     font-family: 'Consolas','Fira Code','Source Code Pro','Lucida Console','Cascadia Code','Ubuntu Mono','Monospace';
     height: 22px;
     width: 100%;
+}
+
+select{
+	transition: background 0.3s;
+	font-size: 14px;
+	font-family: Consolas;
+    border: none;
+    outline: none;
+    width: 100%;
+    height: 22px;
+}
+select:hover{
+	background: #eee;
+}
+select[disabled='disabled']{
+	background: #ccc;
+	color: black;
+}
+select[disabled='disabled']:hover{
+	background: #aaa;
 }
 input[readonly='readonly']{
 	background: #ccc;
@@ -136,16 +203,17 @@ input[readonly='readonly']{
     display: none;
 }
 .ProblemList::-webkit-scrollbar{
+	transition: background-color 0.3s;
     width: 5px;
     height: 5px;
 }
 .ProblemList::-webkit-scrollbar-thumb{
-	background-color: #6bb4cb;
+	background-color: #888;
     border-radius: 1px;
 }
 .ProblemList::-webkit-scrollbar-corner{
     display: none;
 }
 .ProblemList::-webkit-scrollbar:hover{
-    background-color: #93d9e5;
+    background-color: #ccc;
 }

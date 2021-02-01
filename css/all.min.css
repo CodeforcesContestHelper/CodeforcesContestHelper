@@ -304,3 +304,16 @@
 .fa-paper-plane:before {
   content: "\f1d8";
 }
+.fa-globe:before {
+  content: "\f0ac";
+}
+.fa-group:before,
+.fa-users:before {
+  content: "\f0c0";
+}
+.fa-user:before {
+  content: "\f007";
+}
+.fa-quote-left:before {
+  content: "\f10d";
+}
