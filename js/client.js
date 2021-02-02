@@ -1,3 +1,4 @@
+var isFold = false;
 var lockStatus = false;
 var blankTip = true;
 var showUnofficialIf = false;
@@ -8,6 +9,9 @@ var changeDate = new Date();
 var StartTime, EndTime;
 var RankData = [];
 var CurrentStatus;
+// var nw = require('nw.gui');
+var win = nw.Window.get();
+win.setAlwaysOnTop(true);
 function getChart(data){
 	var chart = Highcharts.chart('highchatrsContainer', {
 		chart: {
@@ -102,15 +106,35 @@ function getChart(data){
 		}
 	});
 }
+$('.GraphFolder').click(function(){
+	win.setResizable(true);
+	if(!isFold)
+		$('#highchatrsContainer').css('display','none'),
+		$('.GraphFolder').html('<i class="fa fa-angle-down"></i> Unfold'),
+		win.resizeTo(350,385),win.moveBy(0,605-385);
+	else
+		win.resizeTo(350,605),
+		win.moveBy(0,385-605),
+		$('#highchatrsContainer').css('display','block'),
+		$('.GraphFolder').html('<i class="fa fa-angle-down"></i> Fold');
+	isFold = !isFold;
+	win.setResizable(false);
+});
+function closeIf(){
+	if(lockStatus)	return;
+	win.close(true);
+}
 function lockIfClick(){
 	if(!lockStatus)
 		$('input').attr('readonly',true),
 		$('select').attr('disabled',true),
-		$('.LockButton').html('<i class="fa fa-unlock"></i>');
+		$('.CloseButton').html('<i class="fa fa-ban style_error"></i>'),
+		$('.LockButton').html('<i class="fa fa-lock"></i>');
 	else
 		$('input').attr('readonly',false),
 		$('select').attr('disabled',false),
-		$('.LockButton').html('<i class="fa fa-lock"></i>');
+		$('.CloseButton').html('<i class="fa fa-times style_error"></i>'),
+		$('.LockButton').html('<i class="fa fa-unlock"></i>');
 	lockStatus=!lockStatus;
 }
 function showUnofficialIfClick(){
@@ -348,3 +372,4 @@ function changeUserInfo(){
 $('.LockButton').attr('onclick','lockIfClick()');
 $('.SendButton').attr('onclick','changeUserInfo()');
 $('.UnofficialButton').attr('onclick','showUnofficialIfClick()');
+$('.CloseButton').attr('onclick','closeIf()');

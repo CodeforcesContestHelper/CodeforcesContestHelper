@@ -317,3 +317,6 @@
 .fa-quote-left:before {
   content: "\f10d";
 }
+.fa-ban:before {
+  content: "\f05e";
+}

@@ -1,9 +1,22 @@
+@font-face {
+	font-family: 'Consolas';
+	src: url('../fonts/consolas.ttf');
+}
+@font-face {
+	font-family: 'Verdana';
+	src: url('../fonts/Verdana.ttf');
+}
+@font-face {
+	font-family: 'VerdanaBold.ttf';
+	src: url('../fonts/VerdanaBold.ttf.ttf');
+}
 body{
 	font-size: 14px;
 	font-family: Consolas;
+	-webkit-app-region: drag;
 }
 .ContestStatus{
-	font-family: verdana,arial,sans-serif;
+	font-family: Verdana;
 	font-size: 16px;
 	height: 16px;
 	text-align: center;
@@ -17,7 +30,7 @@ body{
 	background-color: #ccc;
 }
 .ContestName{
-	font-family: verdana,arial,sans-serif;
+	font-family: Verdana;
 	width: 100%;
 	border-left: 2px solid #ccc;
 	padding-left: 5px;
@@ -33,13 +46,19 @@ body{
 	font-size: 28px;
 }
 .ProblemList{
+	-webkit-app-region: no-drag;
 	height: 67px;
 	overflow-x: scroll;
 	overflow-y: none;
 	white-space: nowrap;
 }
+.GraphFolder{
+	-webkit-app-region: no-drag;
+	width:100%;
+	text-align:center;
+}
 .SingleProblem{
-	font-family: verdana,arial,sans-serif;
+	font-family: Verdana;
 	text-align: center;
 	position: relative;
 	min-width: 60px;
@@ -69,14 +88,16 @@ body{
 	font-size: 0.9em;
 }
 .ProblemAccepted{
-	font-weight: bold;
+	font-family: VerdanaBold;
 	color: #0a0;
 }
 .ProblemWrong{
+	font-family: VerdanaBold;
 	font-weight: bold;
 	color: red;
 }
 .ProblemUnknown{
+	font-family: VerdanaBold;
 	font-weight: bold;
 	color: grey;
 }
@@ -111,6 +132,7 @@ hr{
 	border-top-right-radius: 3px;
 }
 #highchatrsContainer{
+	-webkit-app-region: no-drag;
 	vertical-align: center;
 	height: 220px;
 	max-height: 220px;
@@ -131,6 +153,7 @@ hr{
 	float: right;
 }
 button{
+	-webkit-app-region: no-drag;
 	text-align: center;
 	outline: 0px;
 	height: 24px;
@@ -146,18 +169,20 @@ button:hover{
 	background: #aaa;
 }
 input{
+	-webkit-app-region: no-drag;
 	transition: background 0.3s;
     -webkit-tap-highlight-color: rgba(0,0,0,0);
     border-radius: 4px;
     padding: 3px;
     border: 2px solid grey;
     font-size: 14px;
-    font-family: 'Consolas','Fira Code','Source Code Pro','Lucida Console','Cascadia Code','Ubuntu Mono','Monospace';
+    font-family: Consolas;
     height: 22px;
     width: 100%;
 }
 
 select{
+	-webkit-app-region: no-drag;
 	transition: background 0.3s;
 	font-size: 14px;
 	font-family: Consolas;

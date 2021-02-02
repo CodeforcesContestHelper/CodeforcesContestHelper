@@ -7,21 +7,23 @@
 		<link rel="stylesheet" href="./css/all.min.css">
 	</head>
 	<body>
-		<div style="width:600px;height:280px;border:2px solid #000">
 		<table style="table-layout:fixed;width:100%;">
 			<tr>
 				<td style="border: 2px solid #ccc;border-radius: 5px;width:289px;">
 					<table style="table-layout:fixed;border-collapse:collapse;padding:0px;width:100%">
-					<tr>
-						<td style="padding:0px;width:130px;"><div class="CurrentRatingDescription"><i class="fa fa-th-list"></i> Rank</div></td>
-						<td style="padding:0px;width:calc(100% - 130px)" rowspan='2'><div class="CurrentRating">#?</div></td>
-					</tr>
-					<tr>
-						<td><div class="RatingGraphDescription" style="width:130px;"><i class="fa fa-line-chart"></i> Rank Graph&nbsp;</div></td>
-					</tr>
-				</table>
-				<div id="highchatrsContainer"><div style="height:100%;display: flex;align-items: center;justify-content: center;vertical-align:center">Blank</div></div>
-				<td style="width:2px"></td>
+						<tr>
+							<td style="padding:0px;width:130px;"><div class="CurrentRatingDescription"><i class="fa fa-th-list"></i> Rank</div></td>
+							<td style="padding:0px;width:calc(100% - 130px)" rowspan='2'><div class="CurrentRating">#?</div></td>
+						</tr>
+						<tr>
+							<td><div class="RatingGraphDescription" style="width:130px;"><i class="fa fa-line-chart"></i> Rank Graph&nbsp;</div></td>
+						</tr>
+					</table>
+					<div id="highchatrsContainer"><div style="height:100%;display: flex;align-items: center;justify-content: center;vertical-align:center">Blank</div></div>
+					<div class="GraphFolder"><i class="fa fa-angle-up"></i> Fold</div>
+				</td>
+			</tr>
+			<tr>
 				<td style="width:289px;">
 					<div class="ContestStatus">Idle</div>
 					<table>
@@ -52,14 +54,14 @@
 					<div class="ConnectionStatus"><i class="fa fa-globe"></i> Fill & Send to update!</div>
 					<span class="UserType">?</span>
 					<div class="ToolList">
-						<button type="button" class="LockButton"><i class="fa fa-lock"></i></button>
+						<button type="button" class="LockButton"><i class="fa fa-unlock"></i></button>
 						<button type="button" class="UnofficialButton"><i class="fa fa-user"></i></button>
 						<button type="button" class="SendButton"><i class="fa fa-send"></i></button>
+						<button type="button" class="CloseButton"><i class="fa fa-times style_error"></i></button>
 					</div>
 				</td>
 			</tr>
 		</table>
-	</div>
 	</body>
 	<footer>
 		<script src="./js/client.js"></script>
