@@ -7,10 +7,11 @@
 	src: url('../fonts/Verdana.ttf');
 }
 @font-face {
-	font-family: 'VerdanaBold.ttf';
-	src: url('../fonts/VerdanaBold.ttf.ttf');
+	font-family: 'VerdanaBold';
+	src: url('../fonts/VerdanaBold.ttf');
 }
 body{
+	user-select:none;
 	font-size: 14px;
 	font-family: Consolas;
 	-webkit-app-region: drag;
@@ -51,6 +52,7 @@ body{
 	overflow-x: scroll;
 	overflow-y: none;
 	white-space: nowrap;
+	transition: 0.3s;
 }
 .GraphFolder{
 	-webkit-app-region: no-drag;
@@ -70,7 +72,6 @@ body{
 }
 .BackgroundPic{
 	font-family: Consolas;
-	user-select:none;
 	z-index: -1;
 	position:absolute;
     left:calc(50% - 30px);
@@ -144,7 +145,7 @@ hr{
 .UserType{
 	float: left;
 	margin: 1px;
-	padding: 1px;
+	padding: 2px;
 	border-radius: 3px;
 	background: #777;
 	color: #fff;

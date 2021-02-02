@@ -116,7 +116,7 @@ $('.GraphFolder').click(function(){
 		win.resizeTo(350,605),
 		win.moveBy(0,385-605),
 		$('#highchatrsContainer').css('display','block'),
-		$('.GraphFolder').html('<i class="fa fa-angle-down"></i> Fold');
+		$('.GraphFolder').html('<i class="fa fa-angle-up"></i> Fold');
 	isFold = !isFold;
 	win.setResizable(false);
 });

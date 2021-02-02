@@ -33,7 +33,7 @@
 						</tr>
 					</table>
 					<hr>
-					<div class="ProblemList">
+					<div class="ProblemList" id="ProblemList">
 						<div style="height:100%;display: flex;align-items: center;justify-content: center;vertical-align:center">Blank</div>
 					</div>
 					<hr>
@@ -65,5 +65,23 @@
 	</body>
 	<footer>
 		<script src="./js/client.js"></script>
+		<script>
+		var scrollDiv = document.getElementById("ProblemList");
+	    var element =  document.documentElement;
+	    if(navigator.userAgent.indexOf("Chrome")>0){
+	    	element = document.body;
+	    }
+	    document.addEventListener('DOMMouseScroll',handler,false)
+	    document.addEventListener('mousewheel',handler,false)
+	    function handler(event){
+			var detail = event.wheelDelta || event.detail;
+			var moveForwardStep = 50;
+			var moveBackStep = -50;
+			var step = 0;	
+			if(detail < 0)	step = moveForwardStep;
+			else	step = moveBackStep;
+			scrollDiv.scrollLeft += step;	
+		}  
+		</script>
 	</footer>
 </html>
