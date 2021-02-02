@@ -10,138 +10,200 @@ var StartTime, EndTime;
 var RankData = [];
 var CurrentStatus;
 var OpenRankMonitor=false;
-// var nw = require('nw.gui');
+var DarkMode = false;
 var win = nw.Window.get();
 win.setAlwaysOnTop(true);
+var DefaultStyle = JSON.parse(JSON.stringify(Highcharts.getOptions()));
+DefaultStyle.yAxis = {gridLineColor: "#E6E6E6"}
+var DarkUnica = {
+    colors: ['#2b908f', '#90ee7e', '#f45b5b', '#7798BF', '#aaeeee', '#ff0066',
+        '#eeaaee', '#55BF3B', '#DF5353', '#7798BF', '#aaeeee'],
+    chart: {
+        backgroundColor: {
+            linearGradient: { x1: 0, y1: 0, x2: 1, y2: 1 },
+            stops: [
+                [0, '#2a2a2b'],
+                [1, '#3e3e40']
+            ]
+        },
+        plotBorderColor: '#606063'
+    },
+    title: {
+        style: {
+            color: '#E0E0E3',
+            textTransform: 'uppercase',
+            fontSize: '20px'
+        }
+    },
+    subtitle: {
+        style: {
+            color: '#E0E0E3',
+            textTransform: 'uppercase'
+        }
+    },
+    tooltip: {
+        backgroundColor: 'rgba(0, 0, 0, 0.85)',
+        style: {
+            color: '#F0F0F0'
+        }
+    },
+    plotOptions: {
+        series: {
+            dataLabels: {
+                color: '#F0F0F3',
+                style: {
+                    fontSize: '13px'
+                }
+            },
+            marker: {
+                lineColor: '#333'
+            }
+        },
+        boxplot: {
+            fillColor: '#505053'
+        },
+        candlestick: {
+            lineColor: 'white'
+        },
+        errorbar: {
+            color: 'white'
+        }
+    },
+    yAxis: {
+    	gridLineColor: "#707073"
+    },
+    legend: {
+        backgroundColor: 'rgba(0, 0, 0, 0.5)',
+        itemStyle: {
+            color: '#E0E0E3'
+        },
+        itemHoverStyle: {
+            color: '#FFF'
+        },
+        itemHiddenStyle: {
+            color: '#606063'
+        },
+        title: {
+            style: {
+                color: '#C0C0C0'
+            }
+        }
+    },
+    labels: {
+        style: {
+            color: '#707073'
+        }
+    },
+};
+var chart = undefined;
 function getChart(data){
-	var chart = Highcharts.chart('highchatrsContainer', {
-		chart: {
-			zoomType: 'x'
-		},
-		title: {
-		    text: null
-		},
-		xAxis: {
-			type: 'datetime',
-			dateTimeLabelFormats: {
-				millisecond: '%H:%M:%S.%L',
-				second: '%H:%M:%S',
-				minute: '%H:%M',
-				hour: '%H:%M',
-				day: '%m-%d',
-				week: '%m-%d',
-				month: '%Y-%m',
-				year: '%Y'
-			}
-		},
-		tooltip: {
-			dateTimeLabelFormats: {
-				millisecond: '%H:%M:%S.%L',
-				second: '%H:%M:%S',
-				minute: '%H:%M',
-				hour: '%H:%M',
-				day: '%Y-%m-%d',
-				week: '%m-%d',
-				month: '%Y-%m',
-				year: '%Y'
-			}
-		},
-		yAxis: {
-			title: {
-				text: null
+	if(data.length!=0){
+		Highcharts.setOptions(DarkMode?DarkUnica:DefaultStyle);
+		if(chart!=undefined)
+			chart.destroy();
+		chart = Highcharts.chart('highchatrsContainer', {
+			chart: {
+				zoomType: 'x'
 			},
-			reversed: true
-		},
-		legend: {
-			enabled: false
-		},
-		plotOptions: {
-			area: {
-				fillColor: {
-					linearGradient: {
-						x1: 0,
-						y1: 0,
-						x2: 0,
-						y2: 1
-					},
-					stops: [
-						[0, new Highcharts.getOptions().colors[0]],
-						[1, new Highcharts.Color(Highcharts.getOptions().colors[0]).setOpacity(0).get('rgba')]
-					]
-				},
-				marker: {
-					radius: 2
-				},
-				lineWidth: 1,
-				states: {
-					hover: {
-						lineWidth: 1
-					}
-				},
-				threshold: null
-			}
-		},
-		series: [{
-			type: 'area',
-			name: 'Rank',
-			data: data
-		}],
-		responsive: {
-			rules: [{
-				condition: {
-					maxWidth: 500,
-					maxHeight: 200,
-					minHeight: 200
-				},
-				chartOptions: {
-					legend: {
-						layout: 'horizontal',
-						align: 'center',
-						verticalAlign: 'bottom'
-					}
+			title: {
+			    text: null
+			},
+			xAxis: {
+				type: 'datetime',
+				dateTimeLabelFormats: {
+					millisecond: '%H:%M:%S.%L',
+					second: '%H:%M:%S',
+					minute: '%H:%M',
+					hour: '%H:%M',
+					day: '%m-%d',
+					week: '%m-%d',
+					month: '%Y-%m',
+					year: '%Y'
 				}
-			}]
-		},
-		credits:{
-		    enabled: false // 禁用版权信息
-		}
-	});
-}
-
-//
-var LastRankInfo = 0;
-var SuatusList = [];
-var UserScore = {};
-var SubmitSeq = [];
-var ScorePool = [];
-var LengthOfSeq = 0;
-function initRankMonitor(){
-	$.getJSON("https://codeforces.com/api/contest.status",{
-		ContestId: ContestID
-	},function(json)){
-		json = json. result;
-		for(var i=0;i<json.length;i++){
-			if(json[i].author.participantType!="CONTESTANT"
-			&& json[i].author.participantType!="VIRTUAL")	continue;
-			StatusList.push(json[i]);
-			if(LengthOfSeq <= json[i].relativeTimeSeconds)
-				while(LengthOfSeq <= json[i].relativeTimeSeconds)
-					++LengthOfSeq,SubmitSeq.push([]);
-			SubmitSeq[json[i].relativeTimeSeconds].push([json[i].author.members[0].handle,json[i].problem.index,json[i]]);
-		}
+			},
+			tooltip: {
+				dateTimeLabelFormats: {
+					millisecond: '%H:%M:%S.%L',
+					second: '%H:%M:%S',
+					minute: '%H:%M',
+					hour: '%H:%M',
+					day: '%Y-%m-%d',
+					week: '%m-%d',
+					month: '%Y-%m',
+					year: '%Y'
+				}
+			},
+			yAxis: {
+				title: {
+					text: null
+				},
+				reversed: true
+			},
+			legend: {
+				enabled: false
+			},
+			plotOptions: {
+				area: {
+					fillColor: {
+						linearGradient: {
+							x1: 0,
+							y1: 0,
+							x2: 0,
+							y2: 1
+						},
+						stops: [
+							[0, new Highcharts.getOptions().colors[0]],
+							[1, new Highcharts.Color(Highcharts.getOptions().colors[0]).setOpacity(0).get('rgba')]
+						]
+					},
+					marker: {
+						radius: 2
+					},
+					lineWidth: 1,
+					states: {
+						hover: {
+							lineWidth: 1
+						}
+					},
+					threshold: null
+				}
+			},
+			series: [{
+				type: 'area',
+				name: 'Rank',
+				data: data
+			}],
+			responsive: {
+				rules: [{
+					condition: {
+						maxWidth: 500,
+						maxHeight: 200,
+						minHeight: 200
+					},
+					chartOptions: {
+						legend: {
+							layout: 'horizontal',
+							align: 'center',
+							verticalAlign: 'bottom'
+						}
+					}
+				}]
+			},
+			credits:{
+			    enabled: false
+			}
+		});
 	}
 }
-//
-
 $('.GraphFolder').click(function(){
 	win.setResizable(true);
 	if(!isFold)
 		$('#highchatrsContainer').css('display','none'),
 		$('.GraphFolder').html('<i class="fa fa-angle-down"></i> Unfold'),
-		win.resizeTo(350,385),win.moveBy(0,605-385);
+		win.resizeTo(335,375),win.moveBy(0,590-375+1);
 	else
-		win.resizeTo(350,605),
-		win.moveBy(0,385-605),
+		win.moveBy(0,375-590+1),
+		win.resizeTo(335,590),
 		$('#highchatrsContainer').css('display','block'),
 		$('.GraphFolder').html('<i class="fa fa-angle-up"></i> Fold');
 	isFold = !isFold;
@@ -263,7 +325,6 @@ function getApiInfo(cD){
 		if(cD<changeDate)	return;
 		$(".ContestIdNumber").html("#"+ContestID);
 		json = json.result;
-		console.log(json);
 		$('.ContestTypeChosen').html('');
 		for(var i=0;i<json.rows.length;i++)
 			$('.ContestTypeChosen').append(`<option value="${i}">${(new Date(json.rows[i].party.startTimeSeconds*1000)).pattern("YY-MM-dd hh:mm")} ${json.rows[i].party.participantType}</option>`);
@@ -315,7 +376,7 @@ function getApiInfo(cD){
 			}
 			else{
 				$('.CurrentRating').html('#'+json.rank);
-				RankData.push([Number(new Date())-currT.getTimezoneOffset()*60000,json.rank]);
+				RankData.push([Number(new Date())-currT.getTimezoneOffset()*60*1000,json.rank]);
 				getChart(RankData);
 			}
 			for(var i=0;i<probList.length;i++){
@@ -349,7 +410,6 @@ function getApiInfo(cD){
 				clearTimeout(sTo);
 		}
 	}).fail(function(jqXHR, status, error){
-		console.log(jqXHR);
 		var ec = jqXHR.responseJSON.comment, ref = false;
 		$('.ConnectionStatus').html('<i class="fa fa-times style_error"></i> '+(ec.substr(0,8)==='handles:'?'Username Not Found!':(ec.substr(0,10)==='contestId:'?'Contest Not Found!':(ref=true,"Cannot Get Standings!"))));
 		$('.SendButton').html('<i class="fa fa-send"></i>');

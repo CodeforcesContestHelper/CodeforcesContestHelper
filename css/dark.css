@@ -1,0 +1,83 @@
+body{
+	background: #222;
+	color: #fff;
+	border: 1px solid #777;
+}
+.ContestId{
+	background-color: #444;
+}
+.ContestName{
+	border-left: 2px solid #444;
+}
+.SingleProblem{
+	border: 1px solid #000;
+}
+.BackgroundPic{
+    color: #777;
+}
+hr{
+	background-color: #fff;
+}
+#highchatrsContainer{
+	background: #222;
+	color: #fff;
+}
+.CurrentRatingDescription{
+	background-color: #444;
+}
+.CurrentRating{
+	background-color: #444;
+}
+.UserType{
+	background: #777;
+	color: #000;
+}
+button{
+	background: #444;
+	color: #fff;
+}
+button:hover{
+	background: #666;
+}
+input{
+	background: #222;
+	color: #fff;
+    -webkit-tap-highlight-color: rgba(0,0,0,0);
+    border: 2px solid grey;
+}
+select{
+	background: #222;
+	color: #fff;
+}
+select:hover{
+	background: #333;
+}
+select[disabled='disabled']{
+	background: #444;
+	color: black;
+}
+select[disabled='disabled']:hover{
+	background: #666;
+}
+input[readonly='readonly']{
+	background: #444;
+}
+.style_warning{
+    color: #d2713a;
+}
+.style_error{
+    color :#e7483f;
+}
+.style_accept{
+    color: #20901c;
+}
+.style_pending{
+    color: grey;
+}
+
+.ProblemList::-webkit-scrollbar-thumb{
+	background-color: #777;
+}
+.ProblemList::-webkit-scrollbar:hover{
+    background-color: #444;
+}

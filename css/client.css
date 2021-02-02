@@ -11,10 +11,12 @@
 	src: url('../fonts/VerdanaBold.ttf');
 }
 body{
+	margin: 0px;
 	user-select:none;
 	font-size: 14px;
 	font-family: Consolas;
 	-webkit-app-region: drag;
+	transition: background-color 0.3s, color 0.3s;
 }
 .ContestStatus{
 	font-family: Verdana;
@@ -28,12 +30,10 @@ body{
 	display: inline-block;
 	border-radius: 5px;
 	padding: 3px;
-	background-color: #ccc;
 }
 .ContestName{
 	font-family: Verdana;
 	width: 100%;
-	border-left: 2px solid #ccc;
 	padding-left: 5px;
 	height: 54px;
 	font-size: 15px;
@@ -52,7 +52,6 @@ body{
 	overflow-x: scroll;
 	overflow-y: none;
 	white-space: nowrap;
-	transition: 0.3s;
 }
 .GraphFolder{
 	cursor: pointer;
@@ -66,7 +65,6 @@ body{
 	position: relative;
 	min-width: 60px;
 	height: 55px;
-	border: 1px solid #000;
 	border-radius: 5px;
 	margin: 0px 3px;
 	display: inline-block;
@@ -81,7 +79,6 @@ body{
     height: 55px;
     font-size: 50px;
     text-align: center;
-    color: #ccc;
 }
 .ProblemScore{
 	font-size: 0.9em;
@@ -107,17 +104,15 @@ body{
 	color: grey;
 }
 .TimeUsed{
-	font-size: 9px;
+	font-size: 12px;
 }
 hr{
 	margin: 2px;
 	height: 1px;
 	border: 0px;
-	background-color: #000;
 }
 .CurrentRatingDescription{
 	padding: 3px;
-	background-color: #ccc;
 	border-bottom-left-radius: 3px;
 	border-top-left-radius: 3px;
 }
@@ -128,7 +123,6 @@ hr{
 	font-size: 44px;
 	text-align: right;
 	width: 100%;
-	background-color: #ccc;
 	border-bottom-left-radius: 3px;
 	border-bottom-right-radius: 3px;
 	border-top-right-radius: 3px;
@@ -148,8 +142,6 @@ hr{
 	margin: 1px;
 	padding: 2px;
 	border-radius: 3px;
-	background: #777;
-	color: #fff;
 }
 .ToolList{
 	float: right;
@@ -164,19 +156,13 @@ button{
 	border-radius: 12px;
 	padding: 0px;
 	border: 0px;
-	background: #ccc;
 	transition: background 0.3s;
-}
-button:hover{
-	background: #aaa;
 }
 input{
 	-webkit-app-region: no-drag;
 	transition: background 0.3s;
-    -webkit-tap-highlight-color: rgba(0,0,0,0);
     border-radius: 4px;
     padding: 3px;
-    border: 2px solid grey;
     font-size: 14px;
     font-family: Consolas;
     height: 22px;
@@ -192,31 +178,6 @@ select{
     outline: none;
     width: 100%;
     height: 22px;
-}
-select:hover{
-	background: #eee;
-}
-select[disabled='disabled']{
-	background: #ccc;
-	color: black;
-}
-select[disabled='disabled']:hover{
-	background: #aaa;
-}
-input[readonly='readonly']{
-	background: #ccc;
-}
-.style_warning{
-    color: #d2713a;
-}
-.style_error{
-    color :#e7483f;
-}
-.style_accept{
-    color: #20901c;
-}
-.style_pending{
-    color: grey;
 }
 
 .ProblemList::-webkit-scrollbar{
@@ -235,12 +196,8 @@ input[readonly='readonly']{
     height: 5px;
 }
 .ProblemList::-webkit-scrollbar-thumb{
-	background-color: #888;
     border-radius: 1px;
 }
 .ProblemList::-webkit-scrollbar-corner{
     display: none;
-}
-.ProblemList::-webkit-scrollbar:hover{
-    background-color: #ccc;
 }

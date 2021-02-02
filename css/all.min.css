@@ -320,3 +320,9 @@
 .fa-ban:before {
   content: "\f05e";
 }
+.fa-sun-o:before {
+  content: "\f185";
+}
+.fa-moon-o:before {
+  content: "\f186";
+}

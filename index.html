@@ -4,6 +4,7 @@
 		<script src="./js/jquery.min.js"></script>
 		<script src="./js/json3.min.js"></script>
 		<link rel="stylesheet" href="./css/client.css">
+		<link class="ThemeTypeIf" rel="stylesheet" href="./css/default.css">
 		<link rel="stylesheet" href="./css/all.min.css">
 	</head>
 	<body>
@@ -54,6 +55,7 @@
 					<div class="ConnectionStatus"><i class="fa fa-globe"></i> Fill & Send to update!</div>
 					<span class="UserType">?</span>
 					<div class="ToolList">
+						<button type="button" class="ThemeButton"><i class="fa fa-sun-o"></i></button>
 						<button type="button" class="LockButton"><i class="fa fa-unlock"></i></button>
 						<button type="button" class="UnofficialButton"><i class="fa fa-user"></i></button>
 						<button type="button" class="SendButton"><i class="fa fa-send"></i></button>
@@ -66,22 +68,33 @@
 	<footer>
 		<script src="./js/client.js"></script>
 		<script>
-		var scrollDiv = document.getElementById("ProblemList");
-	    var element =  document.documentElement;
-	    if(navigator.userAgent.indexOf("Chrome")>0){
-	    	element = document.body;
-	    }
-	    document.addEventListener('DOMMouseScroll',handler,false)
-	    document.addEventListener('mousewheel',handler,false)
-	    function handler(event){
-			var detail = event.wheelDelta || event.detail;
-			var moveForwardStep = 50;
-			var moveBackStep = -50;
-			var step = 0;	
-			if(detail < 0)	step = moveForwardStep;
-			else	step = moveBackStep;
-			scrollDiv.scrollLeft += step;	
-		}  
+			var scrollDiv = document.getElementById("ProblemList");
+		    var element =  document.documentElement;
+		    if(navigator.userAgent.indexOf("Chrome")>0){
+		    	element = document.body;
+		    }
+		    document.addEventListener('DOMMouseScroll',handler,false)
+		    document.addEventListener('mousewheel',handler,false)
+		    function handler(event){
+				var detail = event.wheelDelta || event.detail;
+				var moveForwardStep = 50;
+				var moveBackStep = -50;
+				var step = 0;	
+				if(detail < 0)	step = moveForwardStep;
+				else	step = moveBackStep;
+				scrollDiv.scrollLeft += step;	
+			}
+			function ChangeTheme(){
+				if(!DarkMode)
+					$('.ThemeTypeIf').attr('href','./css/dark.css'),
+					$('.ThemeButton').html('<i class="fa fa-moon-o"></i>');
+				else
+					$('.ThemeTypeIf').attr('href','./css/default.css'),
+					$('.ThemeButton').html('<i class="fa fa-sun-o"></i>');
+				DarkMode = !DarkMode;
+				getChart(RankData);
+			}
+			$('.ThemeButton').attr('onclick','ChangeTheme()');
 		</script>
 	</footer>
 </html>
