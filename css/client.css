@@ -55,6 +55,7 @@ body{
 	transition: 0.3s;
 }
 .GraphFolder{
+	cursor: pointer;
 	-webkit-app-region: no-drag;
 	width:100%;
 	text-align:center;

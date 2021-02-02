@@ -9,6 +9,7 @@ var changeDate = new Date();
 var StartTime, EndTime;
 var RankData = [];
 var CurrentStatus;
+var OpenRankMonitor=false;
 // var nw = require('nw.gui');
 var win = nw.Window.get();
 win.setAlwaysOnTop(true);
@@ -106,6 +107,32 @@ function getChart(data){
 		}
 	});
 }
+
+//
+var LastRankInfo = 0;
+var SuatusList = [];
+var UserScore = {};
+var SubmitSeq = [];
+var ScorePool = [];
+var LengthOfSeq = 0;
+function initRankMonitor(){
+	$.getJSON("https://codeforces.com/api/contest.status",{
+		ContestId: ContestID
+	},function(json)){
+		json = json. result;
+		for(var i=0;i<json.length;i++){
+			if(json[i].author.participantType!="CONTESTANT"
+			&& json[i].author.participantType!="VIRTUAL")	continue;
+			StatusList.push(json[i]);
+			if(LengthOfSeq <= json[i].relativeTimeSeconds)
+				while(LengthOfSeq <= json[i].relativeTimeSeconds)
+					++LengthOfSeq,SubmitSeq.push([]);
+			SubmitSeq[json[i].relativeTimeSeconds].push([json[i].author.members[0].handle,json[i].problem.index,json[i]]);
+		}
+	}
+}
+//
+
 $('.GraphFolder').click(function(){
 	win.setResizable(true);
 	if(!isFold)
@@ -335,21 +362,21 @@ function changeUserInfo(){
 	var ci = $('.ContestIDInput:first').val();
 	$('.ConnectionStatus').html('<i class="fa fa-spin fa-refresh"></i> Checking Information...');
 	if(un.length<3 || un.length>24){
-		$('.ConnectionStatus').html('<i class="fa fa-times style_error"></i> Username Not Correct!');
+		$('.ConnectionStatus').html('<i class="fa fa-times style_error"></i> Username Incorrect!');
 		return;
 	}
 	for(var i=0;i<un.length;i++)
-		if(!((un[i]>='a' && un[i]<='z') || (un[i]>='A' && un[i]<='Z') || (un[i]>='0' && un[i]<='9') || un[i]=='_')){
-			$('.ConnectionStatus').html('<i class="fa fa-times style_error"></i> Username Not Correct!');
+		if(!((un[i]>='a' && un[i]<='z') || (un[i]>='A' && un[i]<='Z') || (un[i]>='0' && un[i]<='9') || un[i]=='_' || un[i]=='.')){
+			$('.ConnectionStatus').html('<i class="fa fa-times style_error"></i> Username Inorrect!');
 			return;
 		}
 	if(ci.length==0){
-		$('.ConnectionStatus').html('<i class="fa fa-times style_error"></i> Contest ID Not Correct!');
+		$('.ConnectionStatus').html('<i class="fa fa-times style_error"></i> Contest ID Incorrect!');
 		return;
 	}
 	for(var i=0;i<ci.length;i++)
 		if(ci[i]<'0' || ci[i]>'9'){
-			$('.ConnectionStatus').html('<i class="fa fa-times style_error"></i> Contest ID Not Correct!');
+			$('.ConnectionStatus').html('<i class="fa fa-times style_error"></i> Contest ID Incorrect!');
 			return;
 		}
 	if(Username == un && ContestID == Number(ci)){
