@@ -107,6 +107,7 @@ body{
 	font-size: 12px;
 }
 hr{
+	display: block;
 	margin: 2px;
 	height: 1px;
 	border: 0px;
@@ -143,8 +144,18 @@ hr{
 	padding: 2px;
 	border-radius: 3px;
 }
+.ContestType{
+	text-align: center;
+	display: inline-block;
+	width: 60px;
+	margin: 1px;
+	padding: 2px;
+	border-radius: 3px;
+	height: 18.4px;
+}
 .ToolList{
 	float: right;
+	margin-right: 2px;
 }
 button{
 	-webkit-app-region: no-drag;
@@ -168,7 +179,10 @@ input{
     height: 22px;
     width: 100%;
 }
-
+.ContestIDInput{
+	width: calc(100% - 66px);
+	display: inline-block;
+}
 select{
 	-webkit-app-region: no-drag;
 	transition: background 0.3s;
@@ -179,7 +193,22 @@ select{
     width: 100%;
     height: 22px;
 }
-
+.SmallContestName, .SmallTime{
+	float: left;
+}
+.SmallUsername{
+	float: right;
+}
+.SmallRank{
+	float: right;
+	font-size: 32px;
+}
+.SmallRankInfo{
+	height: 52px;
+	border-radius: 3px;
+	margin: 3px;
+	padding: 3px;
+}
 .ProblemList::-webkit-scrollbar{
     width: 5px;
     height: 5px;

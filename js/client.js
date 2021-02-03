@@ -248,20 +248,34 @@ function getChart(data){
 		});
 	}
 }
-var WinHeight = win.height;
+var WinHeight = 585;
+var lastSet = 585;
 function setSize(y){
 	win.resizeTo(win.width,y);
-	win.moveBy(0,WinHeight-win.height);
-	WinHeight = win.height;
+	win.moveBy(0,WinHeight-y);
+	WinHeight = y;
+	lastSet = y;
+}
+function setSmall(){
+	$('.BigInterface').css('display','none');
+	$('.SmallInterface').css('display','block');
+	win.resizeTo(win.width,186);
+	win.moveBy(0,WinHeight-186);
+	WinHeight = 186;
+}
+function setBig(){
+	setSize(lastSet);
+	$('.SmallInterface').css('display','none');
+	$('.BigInterface').css('display','block');
 }
 $('.GraphFolder').click(function(){
 	win.setResizable(true);
 	if(!isFold)
 		$('#highchatrsContainer').css('display','none'),
 		$('.GraphFolder').html('<i class="fa fa-angle-down"></i> Unfold'),
-		setSize(375);
+		setSize(367);
 	else
-		setSize(590),
+		setSize(585),
 		$('#highchatrsContainer').css('display','block'),
 		$('.GraphFolder').html('<i class="fa fa-angle-up"></i> Fold');
 	isFold = !isFold;
@@ -275,27 +289,27 @@ function lockIfClick(){
 	if(!lockStatus)
 		$('input').attr('readonly',true),
 		$('select').attr('disabled',true),
-		$('.CloseButton').html('<i class="fa fa-ban style_error"></i>'),
-		$('.LockButton').html('<i class="fa fa-lock"></i>');
+		$('.CloseButton').html('<i class="fa fa-ban style_error"></i>').attr('title','Unlock to close'),
+		$('.LockButton').html('<i class="fa fa-lock"></i>').attr('title','Unlock');
 	else
 		$('input').attr('readonly',false),
 		$('select').attr('disabled',false),
-		$('.CloseButton').html('<i class="fa fa-times style_error"></i>'),
-		$('.LockButton').html('<i class="fa fa-unlock"></i>');
+		$('.CloseButton').html('<i class="fa fa-times style_error"></i>').attr('title','Close'),
+		$('.LockButton').html('<i class="fa fa-unlock"></i>').attr('title','Lock');
 	lockStatus=!lockStatus;
 }
 function showUnofficialIfClick(){
 	if(!showUnofficialIf)
-		$('.UnofficialButton').html('<i class="fa fa-users"></i>');
+		$('.UnofficialButton').html('<i class="fa fa-users"></i>').attr('title','Hide Unofficial');
 	else
-		$('.UnofficialButton').html('<i class="fa fa-user"></i>');
+		$('.UnofficialButton').html('<i class="fa fa-user"></i>').attr('title','Show Unofficial');
 	showUnofficialIf=!showUnofficialIf;
 }
 function getVirtualRankIf(){
 	if(!VirtualRank)
-		$('.VirtualRankButton').html('<i class="fa fa-calculator"></i>');
+		$('.VirtualRankButton').html('<i class="fa fa-calculator"></i>').attr('title','Disable Rank Predictor');
 	else
-		$('.VirtualRankButton').html('<i class="fa fa-database"></i>');
+		$('.VirtualRankButton').html('<i class="fa fa-database"></i>').attr('title','Enable Rank Predictor');
 	VirtualRank = !VirtualRank;
 }
 function getTimeLength(x){
@@ -386,8 +400,11 @@ function killGetStandings(){
 function refreshStandings(){
 	var currP = new Date();
 	var currT = new Date();
+	$('.CurrentRating').html('...');
+	$('.SmallRank').html('...');
 	if(CurrentStatus == "FINISHED"){
 		$('.CurrentRating').html('#'+globalJson.rank);
+		$('.SmallRank').html('#'+globalJson.rank);
 		var killLoader = setTimeout(function(){
 			$('#highchatrsContainer > div').append('<button class="fa fa-refresh" onclick="killGetStandings();refreshStandings();"></button>');
 		}, 15 * 1000);
@@ -398,8 +415,15 @@ function refreshStandings(){
 			showUnofficial: showUnofficialIf
 		},function(json1){
 			LoadingStatus = false;
-			StandingsID = ContestID;
 			clearTimeout(killLoader);
+			if(json1.status != "OK"){
+				if(currP > changeDate)
+					$('#highchatrsContainer').html('<div style="height:100%;display: flex;align-items: center;justify-content: center;vertical-align:center">Cannot Get Virtual Rank!</div>');
+				else
+					$('#highchatrsContainer').html('<div style="height:100%;display: flex;align-items: center;justify-content: center;vertical-align:center">Blank</div>');
+				return;
+			}
+			StandingsID = ContestID;
 			StandingsList = [];
 			for(var i=0;i<json1.result.rows.length;i++)
 				if(json1.result.rows[i].party.participantType=="CONTESTANT"
@@ -418,7 +442,7 @@ function refreshStandings(){
 	else if(StandingsID == ContestID){
 		var p = getPredictedRank(globalJson.points,globalJson.penalty,(Number(currT)-Number(StartTime))/1000,(Number(EndTime)-Number(currT))/1000<=30*60);
 		if(currP > changeDate)
-			$('.CurrentRating').html('#'+p),
+			$('.CurrentRating').html('#'+p),$('.SmallRank').html('#'+p),
 			RankData.push([Number(new Date())-currT.getTimezoneOffset()*60*1000,p]),
 			getChart(RankData);
 	}
@@ -434,6 +458,13 @@ function refreshStandings(){
 		},function(json1){
 			LoadingStatus = false;
 			clearTimeout(killLoader);
+			if(json1.status != "OK"){
+				if(currP > changeDate)
+					$('#highchatrsContainer').html('<div style="height:100%;display: flex;align-items: center;justify-content: center;vertical-align:center">Cannot Get Virtual Rank!</div>');
+				else
+					$('#highchatrsContainer').html('<div style="height:100%;display: flex;align-items: center;justify-content: center;vertical-align:center">Blank</div>');
+				return;
+			}
 			StandingsID = ContestID;
 			StandingsList = [];
 			for(var i=0;i<json1.result.rows.length;i++)
@@ -443,7 +474,7 @@ function refreshStandings(){
 			json1 = [];
 			var p = getPredictedRank(globalJson.points,globalJson.penalty,(Number(currT)-Number(StartTime))/1000,(Number(EndTime)-Number(currT))/1000<=30*60);
 			if(currP > changeDate)
-				$('.CurrentRating').html('#'+p),
+				$('.CurrentRating').html('#'+p),$('.SmallRank').html('#'+p),
 				RankData.push([Number(new Date())-currT.getTimezoneOffset()*60*1000,p]),
 				getChart(RankData);
 		}).fail(function(jqXHR, status, error){
@@ -454,19 +485,33 @@ function refreshStandings(){
 		});
 	}
 }
+var refreshApiInfo = undefined;
+var ApiLoadingStatus = false;
+function killApiLoad(){
+	if(ApiLoadingStatus)
+		ApiLoadingStatus = false, refreshApiInfo.abort();
+}
 function getApiInfo(cD){
 	if(cD<changeDate)	return;
 	var sTo=setTimeout(function(){getApiInfo(cD);}, 30000);
 	$('.ConnectionStatus').html('<i class="fa fa-spin fa-refresh"></i> Getting Standings...');
 	$('.SendButton').html('<i class="fa fa-spin fa-refresh"></i>');
-	$.getJSON("https://codeforces.com/api/contest.standings",{
+	ApiLoadingStatus = true;
+	refreshApiInfo = $.getJSON("https://codeforces.com/api/contest.standings",{
 		contestId: ContestID,
 		handles: Username,
 		showUnofficial: showUnofficialIf
 	},function(json){
+		ApiLoadingStatus = false;
+		if(json.status != "OK"){
+			$('.ConnectionStatus').html('<i class="fa fa-times style_error"></i> Cannot Get Standings!');
+			$('.SendButton').html('<i class="fa fa-send"></i>');
+			return;
+		}
 		if(cD<changeDate)	return;
-		if(json.status != "OK")	return;
 		$(".ContestIdNumber").html("#"+ContestID);
+		$(".SmallContestName").html("#"+ContestID);
+		$('.SmallUsername').html('@'+Username);
 		json = json.result;
 		$('.ContestTypeChosen').html('');
 		for(var i=0;i<json.rows.length;i++)
@@ -477,7 +522,12 @@ function getApiInfo(cD){
 			SelectContestIndex=json.rows.length-1,
 			SelectContestTime=true;
 		$('.ContestTypeChosen:first').val(SelectContestIndex);
+		if(json.rows.length!=0)
+			$('.SmallTime').html($('.ContestTypeChosen option:selected').text().substr(0,14));
+		else
+			$('.SmallTime').html('-');
 		ContestType = json.contest.type;
+		$('.ContestType').html(json.contest.type);
 		StartTime = json.contest.startTimeSeconds;
 		if(json.rows.length!=0)
 			StartTime = json.rows[SelectContestIndex].party.startTimeSeconds;
@@ -511,6 +561,7 @@ function getApiInfo(cD){
 					reslList.push(['?','--:--','0','ProblemUnknown']);
 				getProblemList(probList, reslList);
 				$('.CurrentRating').html("#?");
+				$('.SmallRank').html('#?');
 				$('#highchatrsContainer').html('<div style="height:100%;display: flex;align-items: center;justify-content: center;vertical-align:center">Blank</div>');
 				return;
 			}
@@ -521,19 +572,23 @@ function getApiInfo(cD){
 			||  json.party.participantType=="VIRTUAL"))
 			|| (json.party.participantType=="VIRTUAL" && CurrentStatus == "CODING")){
 				$('.VirtualRankButton').css('display','inline-block');
-				if(VirtualRank)
-					globalJson = json,
-					refreshStandings(json);
+				if(VirtualRank){
+					globalJson = json;
+					if(!LoadingStatus)
+						refreshStandings(json);
+				}
 			}
 			else
 				$('.VirtualRankButton').css('display','none');
 			if(json.party.participantType=="PRACTICE"){
 				$('.CurrentRating').html("#?");
+				$('.SmallRank').html('#?');
 				$('#highchatrsContainer').html('<div style="height:100%;display: flex;align-items: center;justify-content: center;vertical-align:center">Blank</div>');
 			}
 			else{
 				if(!VirtualRank)
 					$('.CurrentRating').html('#'+json.rank),
+					$('.SmallRank').html('#'+json.rank),
 					RankData.push([Number(new Date())-currT.getTimezoneOffset()*60*1000,json.rank]),
 					getChart(RankData);
 			}
@@ -568,6 +623,12 @@ function getApiInfo(cD){
 				clearTimeout(sTo);
 		}
 	}).fail(function(jqXHR, status, error){
+		ApiLoadingStatus = false;
+		if(jqXHR.responseJSON == undefined){
+			$('.ConnectionStatus').html('<i class="fa fa-times style_error"></i> Cannot Get Standings!');
+			$('.SendButton').html('<i class="fa fa-send"></i>');
+			return;
+		}
 		var ec = jqXHR.responseJSON.comment, ref = false;
 		$('.ConnectionStatus').html('<i class="fa fa-times style_error"></i> '+(ec.substr(0,8)==='handles:'?'Username Not Found!':(ec.substr(0,10)==='contestId:'?'Contest Not Found!':(ref=true,"Cannot Get Standings!"))));
 		$('.SendButton').html('<i class="fa fa-send"></i>');
@@ -605,6 +666,7 @@ function changeUserInfo(){
 		}
 		RankData = [];
 		killGetStandings();
+		killApiLoad();
 		getApiInfo(new Date());
 		return;
 	}
@@ -614,6 +676,7 @@ function changeUserInfo(){
 	RankData = [];
 	SelectContestTime = false;
 	killGetStandings();
+	killApiLoad();
 	getApiInfo(new Date());
 }
 $('.LockButton').attr('onclick','lockIfClick()');
@@ -621,3 +684,5 @@ $('.SendButton').attr('onclick','changeUserInfo()');
 $('.UnofficialButton').attr('onclick','showUnofficialIfClick()');
 $('.CloseButton').attr('onclick','closeIf()');
 $('.VirtualRankButton').attr('onclick','getVirtualRankIf()');
+$('.FoldButton').attr('onclick','setSmall()');
+$('.UnfoldButton').attr('onclick','setBig()');

@@ -8,68 +8,92 @@
 		<link rel="stylesheet" href="./css/all.min.css">
 	</head>
 	<body>
-		<table style="table-layout:fixed;width:100%;">
-			<tr>
-				<td style="border: 2px solid #ccc;border-radius: 5px;width:289px;">
-					<table style="table-layout:fixed;border-collapse:collapse;padding:0px;width:100%">
-						<tr>
-							<td style="padding:0px;width:130px;"><div class="CurrentRatingDescription"><i class="fa fa-th-list"></i> Rank</div></td>
-							<td style="padding:0px;width:calc(100% - 130px)" rowspan='2'><div class="CurrentRating">#?</div></td>
-						</tr>
-						<tr>
-							<td><div class="RatingGraphDescription" style="width:130px;"><i class="fa fa-line-chart"></i> Rank Graph&nbsp;</div></td>
-						</tr>
-					</table>
-					<div id="highchatrsContainer"><div style="height:100%;display: flex;align-items: center;justify-content: center;vertical-align:center">Blank</div></div>
-					<div class="GraphFolder"><i class="fa fa-angle-up"></i> Fold</div>
-				</td>
-			</tr>
-			<tr>
-				<td style="width:289px;">
-					<div class="ContestStatus">Idle</div>
-					<table>
-						<tr>
-							<td><div class="ContestId"><i class="fa fa-calendar"></i> Contest Id:</br><span class="ContestIdNumber">?</span></div></td>
-							<td><div class="ContestName">?</div></td>
-						</tr>
-					</table>
-					<hr>
-					<div class="ProblemList" id="ProblemList">
-						<div style="height:100%;display: flex;align-items: center;justify-content: center;vertical-align:center">Blank</div>
-					</div>
-					<hr>
-					<table style="width:100%;table-layout:fixed;">
-						<tr>
-							<td style="width: 60px;">Name: </td>
-							<td><input type="text" class="UsernameInput" /></td>
-						</tr>
-						<tr>
-							<td style="width: 60px;">ID: </td>
-							<td><input type="text" class="ContestIDInput" /></td>
-						</tr>
-						<tr>
-							<td style="width: 60px;">Time: </td>
-							<td><select class="ContestTypeChosen"></select></td>
-						</tr>
-					</table>
-					<div class="ConnectionStatus"><i class="fa fa-globe"></i> Fill & Send to update!</div>
-					<span class="UserType">?</span>
-					<div class="ToolList">
-						<button type="button" class="VirtualRankButton" style="display:none"><i class="fa fa-database"></i></button>
-						<button type="button" class="ThemeButton"><i class="fa fa-sun-o"></i></button>
-						<button type="button" class="LockButton"><i class="fa fa-unlock"></i></button>
-						<button type="button" class="UnofficialButton"><i class="fa fa-user"></i></button>
-						<button type="button" class="SendButton"><i class="fa fa-send"></i></button>
-						<button type="button" class="CloseButton"><i class="fa fa-times style_error"></i></button>
-					</div>
-				</td>
-			</tr>
-		</table>
+		<div class="BigInterface">
+			<table style="table-layout:fixed;width:100%;">
+				<tr>
+					<td style="border: 2px solid #ccc;border-radius: 5px;width:289px;">
+						<table style="table-layout:fixed;border-collapse:collapse;padding:0px;width:100%">
+							<tr>
+								<td style="padding:0px;width:130px;"><div class="CurrentRatingDescription"><i class="fa fa-th-list"></i> Rank</div></td>
+								<td style="padding:0px;width:calc(100% - 130px)" rowspan='2'><div class="CurrentRating">#?</div></td>
+							</tr>
+							<tr>
+								<td><div class="RatingGraphDescription" style="width:130px;"><i class="fa fa-line-chart"></i> Rank Graph&nbsp;</div></td>
+							</tr>
+						</table>
+						<div id="highchatrsContainer"><div style="height:100%;display: flex;align-items: center;justify-content: center;vertical-align:center">Blank</div></div>
+						<div class="GraphFolder"><i class="fa fa-angle-up"></i> Fold</div>
+					</td>
+				</tr>
+				<tr>
+					<td style="width:289px;">
+						<div class="ContestStatus">Idle</div>
+						<table>
+							<tr>
+								<td><div class="ContestId"><i class="fa fa-calendar"></i> Contest Id:</br><span class="ContestIdNumber">?</span></div></td>
+								<td><div class="ContestName">?</div></td>
+							</tr>
+						</table>
+						<hr>
+						<div class="ProblemList" id="ProblemList">
+							<div style="height:100%;display: flex;align-items: center;justify-content: center;vertical-align:center">Blank</div>
+						</div>
+						<hr>
+						<table style="width:100%;table-layout:fixed;">
+							<tr>
+								<td style="width: 60px;">Name: </td>
+								<td><input type="text" class="UsernameInput" /></td>
+							</tr>
+							<tr>
+								<td style="width: 60px;">ID: </td>
+								<td><input type="text" class="ContestIDInput" /><div class="ContestType">/</div></td>
+							</tr>
+							<tr>
+								<td style="width: 60px;">Time: </td>
+								<td><select class="ContestTypeChosen"></select></td>
+							</tr>
+						</table>
+						<div class="ConnectionStatus"><i class="fa fa-globe"></i> Fill & Send to update!</div>
+						<span class="UserType">?</span>
+						<div class="ToolList">
+							<button type="button" class="VirtualRankButton" title="Enable Rank Predictor" style="display:none"><i class="fa fa-database"></i></button>
+							<button type="button" class="FoldButton" title="Fold Window"><i class="fa fa-angle-down"></i></button>
+							<button type="button" class="ThemeButton" title="Change Theme"><i class="fa fa-sun-o"></i></button>
+							<button type="button" class="LockButton" title="Lock"><i class="fa fa-unlock"></i></button>
+							<button type="button" class="UnofficialButton" title="Show Unofficial"><i class="fa fa-user"></i></button>
+							<button type="button" class="SendButton" title="Send"><i class="fa fa-send"></i></button>
+							<button type="button" class="CloseButton" title="Close"><i class="fa fa-times style_error"></i></button>
+						</div>
+					</td>
+				</tr>
+			</table>
+		</div>
+		<div class="SmallInterface">
+			<div class="ContestStatus">Idle</div>
+			<table style="table-layout:fixed;width:100%;"><tr><td>
+			<div class="SmallRankInfo">
+			<span class="SmallContestName">#?</span>
+			<span class="SmallUsername">@?</span>
+			</br><span class="SmallTime">-</span>
+			<span class="SmallRank">#?</span>
+			</div>
+			<hr>
+			<div class="ProblemList" id="ProblemList">
+				<div style="height:100%;display: flex;align-items: center;justify-content: center;vertical-align:center">Blank</div>
+			</div>
+			<hr>
+			<span class="UserType">?</span>
+			<div class="ToolList">
+				<button type="button" class="UnfoldButton" title="Unfold Window"><i class="fa fa-angle-up"></i></button>
+				<button type="button" class="ThemeButton" title="Change Theme"><i class="fa fa-sun-o"></i></button>
+				<button type="button" class="CloseButton" title="Close"><i class="fa fa-times style_error"></i></button>
+			</div>
+			</td></tr></table>
+		</div>
 	</body>
 	<footer>
 		<script src="./js/client.js"></script>
 		<script>
-			var scrollDiv = document.getElementById("ProblemList");
 		    var element =  document.documentElement;
 		    if(navigator.userAgent.indexOf("Chrome")>0){
 		    	element = document.body;
@@ -83,7 +107,9 @@
 				var step = 0;
 				if(detail < 0)	step = moveForwardStep;
 				else	step = moveBackStep;
-				scrollDiv.scrollLeft += step;	
+				$(".ProblemList").each(function(){
+					$(this).scrollLeft($(this).scrollLeft() + step);
+				});
 			}
 			function ChangeTheme(){
 				if(!DarkMode)
@@ -96,6 +122,7 @@
 				getChart(RankData);
 			}
 			$('.ThemeButton').attr('onclick','ChangeTheme()');
+			$('.SmallInterface').css('display','none');
 		</script>
 	</footer>
 </html>

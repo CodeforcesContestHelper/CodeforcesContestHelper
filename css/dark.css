@@ -10,7 +10,7 @@ body{
 	border-left: 2px solid #444;
 }
 .SingleProblem{
-	border: 1px solid #000;
+	border: 1px solid #fff;
 }
 .BackgroundPic{
     color: #777;
@@ -28,7 +28,7 @@ hr{
 .CurrentRating{
 	background-color: #444;
 }
-.UserType{
+.UserType, .ContestType{
 	background: #777;
 	color: #000;
 }
@@ -54,7 +54,7 @@ select:hover{
 }
 select[disabled='disabled']{
 	background: #444;
-	color: black;
+	color: white;
 }
 select[disabled='disabled']:hover{
 	background: #666;
@@ -73,6 +73,10 @@ input[readonly='readonly']{
 }
 .style_pending{
     color: grey;
+}
+.SmallRankInfo{
+	background: #444;
+	color: #fff;
 }
 
 .ProblemList::-webkit-scrollbar-thumb{
