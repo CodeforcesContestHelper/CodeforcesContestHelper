@@ -584,7 +584,7 @@ function changeUserInfo(){
 		return;
 	}
 	for(var i=0;i<un.length;i++)
-		if(!((un[i]>='a' && un[i]<='z') || (un[i]>='A' && un[i]<='Z') || (un[i]>='0' && un[i]<='9') || un[i]=='_' || un[i]=='.')){
+		if(!((un[i]>='a' && un[i]<='z') || (un[i]>='A' && un[i]<='Z') || (un[i]>='0' && un[i]<='9') || un[i]=='_' || un[i]=='.' || un[i]=='-')){
 			$('.ConnectionStatus').html('<i class="fa fa-times style_error"></i> Username Inorrect!');
 			return;
 		}
