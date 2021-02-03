@@ -3,7 +3,7 @@
   "name": "CodeForces-Contest-Helper",
   "description": "Codeforces Contest Helper",
   "version": "1.0.0",
-  "chromium-args" : "--enable-webgl --ignore-gpu-blacklist",
+  "chromium-args" : "--enable-webgl --ignore-gpu-blacklist --disable-password-generation  --disable-gpu --disable-gpu-compositing  --process-per-site --disable-crash-handler=true --disable-breakpad --disable-notifications --disable-glsl-translator --disable-java --disable-speech-api --disable-voice-input --disable-sync  --disable-app-window-cycling --disable-client-side-phishing-detection --disable-cloud-import --disable-datasaver-prompt --disable-demo-mode --disable-device-discovery-notifications --disable-logging --disable-network-portal-notification --ignore-certificate-errors --in-process-gpu",
   "keywords": [ "Codeforces", "node-webkit" ],
   "window": {
     "title": "Codeforces Contest Helper", 

@@ -377,6 +377,71 @@ function ProblemListAppend(a,b,c,d){
 	}
 	$('.ProblemList').append(`<div class="SingleProblem"><div class="BackgroundPic">#</div><span class="ProblemResult ProblemCoding">${a}</span></br><span class="TimeUsed"><span class="style_accept">+${c}</span>:<span class="style_error">-${d}</span></span></br><hr><span class="ProblemScore">${b}</span></div>`);
 }
+var globalJson;
+function refreshStandings(){
+	var currP = new Date();
+	if(CurrentStatus == "FINISHED"){
+		$('.CurrentRating').html('#'+globalJson.rank);
+		StandingsID = ContestID;
+		var killLoader = setTimeout(function(){
+			$('#highchatrsContainer > div').append('<button class="fa fa-refresh" onclick="getStadingsJSONStatus.abort();refreshStandings();"></button>');
+		}, 15 * 1000);
+		$('#highchatrsContainer').html('<div style="height:100%;display: flex;align-items: center;justify-content: center;vertical-align:center">Loading Virtual Rank...</div>')
+		getStadingsJSONStatus = $.getJSON("https://codeforces.com/api/contest.standings",{
+			contestId: ContestID,
+			showUnofficial: showUnofficialIf
+		},function(json1){
+			clearTimeout(killLoader);
+			StandingsList = [];
+			for(var i=0;i<json1.result.rows.length;i++)
+				if(json1.result.rows[i].party.participantType=="CONTESTANT"
+				|| json1.result.rows[i].party.participantType=="VIRTUAL")
+					StandingsList.push(json1.result.rows[i]);
+			var p = getOverallPredictedRank(globalJson);
+			if(currP > changeDate)
+				RankData=p,getChart(RankData);
+		}).fail(function(jqXHR, status, error){
+			if(currP > changeDate)
+				$('#highchatrsContainer').html('<div style="height:100%;display: flex;align-items: center;justify-content: center;vertical-align:center">Cannot Get Virtual Rank!</div>')
+		});
+	}
+	else if(StandingsID == ContestID){
+		var p = getPredictedRank(globalJson.points,globalJson.penalty,(Number(currT)-Number(StartTime))/1000,(Number(EndTime)-Number(currT))/1000<=30*60);
+		console.log(p);
+		if(currP > changeDate)
+			$('.CurrentRating').html('#'+p),
+			RankData.push([Number(new Date())-currT.getTimezoneOffset()*60*1000,p]),
+			getChart(RankData);
+	}
+	else{
+		StandingsID = ContestID;
+		$('#highchatrsContainer').html('<div style="height:100%;display: flex;align-items: center;justify-content: center;vertical-align:center">Loading Virtual Rank...</div>')
+		var killLoader = setTimeout(function(){
+			$('#highchatrsContainer > div').append(' <button class="fa fa-refresh" onclick="getStadingsJSONStatus.abort();refreshStandings();"></button>');
+		}, 15 * 1000);
+		getStadingsJSONStatus = $.getJSON("https://codeforces.com/api/contest.standings",{
+			contestId: ContestID,
+			showUnofficial: showUnofficialIf
+		},function(json1){
+			clearTimeout(killLoader);
+			StandingsList = [];
+			for(var i=0;i<json1.result.rows.length;i++)
+				if(json1.result.rows[i].party.participantType=="CONTESTANT"
+				|| json1.result.rows[i].party.participantType=="VIRTUAL")
+					StandingsList.push(json1.result.rows[i]);
+			json1 = [];
+			var p = getPredictedRank(globalJson.points,globalJson.penalty,(Number(currT)-Number(StartTime))/1000,(Number(EndTime)-Number(currT))/1000<=30*60);
+			console.log(p);
+			if(currP > changeDate)
+				$('.CurrentRating').html('#'+p),
+				RankData.push([Number(new Date())-currT.getTimezoneOffset()*60*1000,p]),
+				getChart(RankData);
+		}).fail(function(jqXHR, status, error){
+			if(currP > changeDate)
+				$('#highchatrsContainer').html(' <div style="height:100%;display: flex;align-items: center;justify-content: center;vertical-align:center">Cannot Get Virtual Rank!</div>')
+		});
+	}
+}
 function getApiInfo(cD){
 	if(cD<changeDate)	return;
 	var sTo=setTimeout(function(){getApiInfo(cD);}, 30000);
@@ -388,6 +453,7 @@ function getApiInfo(cD){
 		showUnofficial: showUnofficialIf
 	},function(json){
 		if(cD<changeDate)	return;
+		if(json.status != "OK")	return;
 		$(".ContestIdNumber").html("#"+ContestID);
 		json = json.result;
 		$('.ContestTypeChosen').html('');
@@ -443,61 +509,9 @@ function getApiInfo(cD){
 			||  json.party.participantType=="VIRTUAL"))
 			|| (json.party.participantType=="VIRTUAL" && CurrentStatus == "CODING")){
 				$('.VirtualRankButton').css('display','inline-block');
-				if(VirtualRank){
-					var currP = new Date();
-					if(CurrentStatus == "FINISHED"){
-						$('.CurrentRating').html('#'+json.rank);
-						StandingsID = ContestID;
-						$('#highchatrsContainer').html('<div style="height:100%;display: flex;align-items: center;justify-content: center;vertical-align:center">Loading Virtual Rank...</div>')
-						$.getJSON("https://codeforces.com/api/contest.standings",{
-							contestId: ContestID,
-							showUnofficial: showUnofficialIf
-						},function(json1){
-							StandingsList = [];
-							for(var i=0;i<json1.result.rows.length;i++)
-								if(json1.result.rows[i].party.participantType=="CONTESTANT"
-								|| json1.result.rows[i].party.participantType=="VIRTUAL")
-									StandingsList.push(json1.result.rows[i]);
-							var p = getOverallPredictedRank(json);
-							if(currP > changeDate)
-								RankData=p,getChart(RankData);
-						}).fail(function(jqXHR, status, error){
-							if(currP > changeDate)
-								$('#highchatrsContainer').html('<div style="height:100%;display: flex;align-items: center;justify-content: center;vertical-align:center">Cannot Get Virtual Rank!</div>')
-						});
-					}
-					else if(StandingsID == ContestID){
-						var p = getPredictedRank(json.points,json.penalty,(Number(currT)-Number(StartTime))/1000,(Number(EndTime)-Number(currT))/1000<=30*60);
-						console.log(p);
-						if(currP > changeDate)
-							$('.CurrentRating').html('#'+p),
-							RankData.push([Number(new Date())-currT.getTimezoneOffset()*60*1000,p]),
-							getChart(RankData);
-					}
-					else{
-						StandingsID = ContestID;
-						$('#highchatrsContainer').html('<div style="height:100%;display: flex;align-items: center;justify-content: center;vertical-align:center">Loading Virtual Rank...</div>')
-						$.getJSON("https://codeforces.com/api/contest.standings",{
-							contestId: ContestID,
-							showUnofficial: showUnofficialIf
-						},function(json1){
-							StandingsList = [];
-							for(var i=0;i<json1.result.rows.length;i++)
-								if(json1.result.rows[i].party.participantType=="CONTESTANT"
-								|| json1.result.rows[i].party.participantType=="VIRTUAL")
-									StandingsList.push(json1.result.rows[i]);
-							var p = getPredictedRank(json.points,json.penalty,(Number(currT)-Number(StartTime))/1000,(Number(EndTime)-Number(currT))/1000<=30*60);
-							console.log(p);
-							if(currP > changeDate)
-								$('.CurrentRating').html('#'+p),
-								RankData.push([Number(new Date())-currT.getTimezoneOffset()*60*1000,p]),
-								getChart(RankData);
-						}).fail(function(jqXHR, status, error){
-							if(currP > changeDate)
-								$('#highchatrsContainer').html('<div style="height:100%;display: flex;align-items: center;justify-content: center;vertical-align:center">Cannot Get Virtual Rank!</div>')
-						});
-					}
-				}
+				if(VirtualRank)
+					globalJson = json,
+					refreshStandings(json);
 			}
 			else
 				$('.VirtualRankButton').css('display','none');
