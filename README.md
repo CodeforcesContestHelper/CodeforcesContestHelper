@@ -4,7 +4,7 @@ Project developed by [@tiger2005](https://www.luogu.com.cn/user/60864), packed b
 See license [here](https://github.com/tiger2005/CodeforcesContestHelper/blob/main/LICENSE)
 
 ## Download for Chinese users(Windows version, supports Windows 10):  
-link：[here]()  
+link：[here](https://pan.baidu.com/s/1eclLaRHdhucjyIm_S9KXwg)  
 code：cflg 
 
 ## Download for users outside China:
