@@ -55,6 +55,7 @@
 					<div class="ConnectionStatus"><i class="fa fa-globe"></i> Fill & Send to update!</div>
 					<span class="UserType">?</span>
 					<div class="ToolList">
+						<button type="button" class="VirtualRankButton" style="display:none"><i class="fa fa-database"></i></button>
 						<button type="button" class="ThemeButton"><i class="fa fa-sun-o"></i></button>
 						<button type="button" class="LockButton"><i class="fa fa-unlock"></i></button>
 						<button type="button" class="UnofficialButton"><i class="fa fa-user"></i></button>
@@ -79,7 +80,7 @@
 				var detail = event.wheelDelta || event.detail;
 				var moveForwardStep = 50;
 				var moveBackStep = -50;
-				var step = 0;	
+				var step = 0;
 				if(detail < 0)	step = moveForwardStep;
 				else	step = moveBackStep;
 				scrollDiv.scrollLeft += step;	

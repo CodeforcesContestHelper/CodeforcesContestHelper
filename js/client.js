@@ -8,9 +8,62 @@ var SelectContestIndex = 0;
 var changeDate = new Date();
 var StartTime, EndTime;
 var RankData = [];
+var StandingsList = [];
+var StandingsID = 0;
 var CurrentStatus;
+var ContestType;
 var OpenRankMonitor=false;
 var DarkMode = false;
+var VirtualRank = false;
+function getPredictedRank(points,penalty,time,openHack){
+	if(penalty==undefined)	penalty = 0;
+	var returnValue = 1;
+	for(var i=0;i<StandingsList.length;i++){
+		var _points = 0, _penalty = 0;
+		for(var j=0;j<StandingsList[i].problemResults.length;j++){
+			if(StandingsList[i].problemResults[j].bestSubmissionTimeSeconds!=undefined
+			&& Math.floor(StandingsList[i].problemResults[j].bestSubmissionTimeSeconds/60)<=Math.floor(time/60)){
+				_points += StandingsList[i].problemResults[j].points;
+				var _dalta = StandingsList[i].problemResults[j].penalty;
+				_penalty += (_dalta == undefined ? 0 : _dalta);
+			}
+		}
+		if(ContestType == "CF" && openHack)
+			_points = _points + StandingsList[i].successfulHackCount * 100 - StandingsList[i].unsuccessfulHackCount * 50;
+		if(points < _points || (points == _points && penalty > _penalty))
+			++ returnValue;
+	}
+	return returnValue;
+}
+function getOverallPredictedRank(json){
+	var currT = StartTime;
+	var Step = 60 * 1000;
+	var returnValue = [];
+	var p = new Date();
+	var NoteNumber = Number(EndTime) - Number(StartTime);
+	NoteNumber = Math.floor(NoteNumber / Step) + 1;
+	var T = 0;
+	while(currT <= EndTime){
+		$('#highchatrsContainer').children('div').html(`Calculate Rank... [${++T} of ${NoteNumber}]`);
+		var currS = 0, currP = 0;
+		if(p < changeDate)	return [];
+		var openHack = ((Number(EndTime) - Number(currT))/1000<=30*60);
+		var time = (Number(currT)-Number(StartTime))/1000;
+		for(var j=0;j<json.problemResults.length;j++){
+			if(json.problemResults[j].bestSubmissionTimeSeconds!=undefined
+			&& json.problemResults[j].bestSubmissionTimeSeconds<=time){
+				currS += json.problemResults[j].points;
+				var _dalta = json.problemResults[j].penalty;
+				currP += (_dalta == undefined ? 0 : _dalta);
+			}
+		}
+		if(ContestType == "CF" && openHack)
+			currS = currS + json.successfulHackCount * 100 - json.unsuccessfulHackCount * 50;
+		returnValue.push([Number(currT)-currT.getTimezoneOffset()*60*1000,getPredictedRank(currS,currP,time,openHack)]);
+		currT = new Date(Number(currT) + Step);
+	}
+	return returnValue;
+}
 var win = nw.Window.get();
 win.setAlwaysOnTop(true);
 var DefaultStyle = JSON.parse(JSON.stringify(Highcharts.getOptions()));
@@ -195,15 +248,20 @@ function getChart(data){
 		});
 	}
 }
+var WinHeight = win.height;
+function setSize(y){
+	win.resizeTo(win.width,y);
+	win.moveBy(0,WinHeight-win.height);
+	WinHeight = win.height;
+}
 $('.GraphFolder').click(function(){
 	win.setResizable(true);
 	if(!isFold)
 		$('#highchatrsContainer').css('display','none'),
 		$('.GraphFolder').html('<i class="fa fa-angle-down"></i> Unfold'),
-		win.resizeTo(335,375),win.moveBy(0,590-375+1);
+		setSize(375);
 	else
-		win.moveBy(0,375-590+1),
-		win.resizeTo(335,590),
+		setSize(590),
 		$('#highchatrsContainer').css('display','block'),
 		$('.GraphFolder').html('<i class="fa fa-angle-up"></i> Fold');
 	isFold = !isFold;
@@ -232,6 +290,13 @@ function showUnofficialIfClick(){
 	else
 		$('.UnofficialButton').html('<i class="fa fa-user"></i>');
 	showUnofficialIf=!showUnofficialIf;
+}
+function getVirtualRankIf(){
+	if(!VirtualRank)
+		$('.VirtualRankButton').html('<i class="fa fa-calculator"></i>');
+	else
+		$('.VirtualRankButton').html('<i class="fa fa-database"></i>');
+	VirtualRank = !VirtualRank;
 }
 function getTimeLength(x){
 	x = Math.floor(x / 1000 / 60);
@@ -334,6 +399,7 @@ function getApiInfo(cD){
 			SelectContestIndex=json.rows.length-1,
 			SelectContestTime=true;
 		$('.ContestTypeChosen:first').val(SelectContestIndex);
+		ContestType = json.contest.type;
 		StartTime = json.contest.startTimeSeconds;
 		if(json.rows.length!=0)
 			StartTime = json.rows[SelectContestIndex].party.startTimeSeconds;
@@ -347,6 +413,8 @@ function getApiInfo(cD){
 		CurrentStatus = json.contest.phase;
 		if(currT<StartTime)	CurrentStatus="BEFORE";
 		else if(currT<EndTime)	CurrentStatus="CODING";
+		if(json.rows.length==0)
+			$('.VirtualRankButton').css('display','none');
 		if(CurrentStatus=="BEFORE"){
 			$('.ProblemList').html('<div style="height:100%;display: flex;align-items: center;justify-content: center;vertical-align:center">Blank</div>');
 			blankTip = true;
@@ -370,14 +438,78 @@ function getApiInfo(cD){
 			}
 			json = json.rows[SelectContestIndex];
 			$('.UserType').html(json.party.participantType);
+			if((CurrentStatus == "FINISHED" && (
+				json.party.participantType=="CONTESTANT"
+			||  json.party.participantType=="VIRTUAL"))
+			|| (json.party.participantType=="VIRTUAL" && CurrentStatus == "CODING")){
+				$('.VirtualRankButton').css('display','inline-block');
+				if(VirtualRank){
+					var currP = new Date();
+					if(CurrentStatus == "FINISHED"){
+						$('.CurrentRating').html('#'+json.rank);
+						StandingsID = ContestID;
+						$('#highchatrsContainer').html('<div style="height:100%;display: flex;align-items: center;justify-content: center;vertical-align:center">Loading Virtual Rank...</div>')
+						$.getJSON("https://codeforces.com/api/contest.standings",{
+							contestId: ContestID,
+							showUnofficial: showUnofficialIf
+						},function(json1){
+							StandingsList = [];
+							for(var i=0;i<json1.result.rows.length;i++)
+								if(json1.result.rows[i].party.participantType=="CONTESTANT"
+								|| json1.result.rows[i].party.participantType=="VIRTUAL")
+									StandingsList.push(json1.result.rows[i]);
+							var p = getOverallPredictedRank(json);
+							if(currP > changeDate)
+								RankData=p,getChart(RankData);
+						}).fail(function(jqXHR, status, error){
+							if(currP > changeDate)
+								$('#highchatrsContainer').html('<div style="height:100%;display: flex;align-items: center;justify-content: center;vertical-align:center">Cannot Get Virtual Rank!</div>')
+						});
+					}
+					else if(StandingsID == ContestID){
+						var p = getPredictedRank(json.points,json.penalty,(Number(currT)-Number(StartTime))/1000,(Number(EndTime)-Number(currT))/1000<=30*60);
+						console.log(p);
+						if(currP > changeDate)
+							$('.CurrentRating').html('#'+p),
+							RankData.push([Number(new Date())-currT.getTimezoneOffset()*60*1000,p]),
+							getChart(RankData);
+					}
+					else{
+						StandingsID = ContestID;
+						$('#highchatrsContainer').html('<div style="height:100%;display: flex;align-items: center;justify-content: center;vertical-align:center">Loading Virtual Rank...</div>')
+						$.getJSON("https://codeforces.com/api/contest.standings",{
+							contestId: ContestID,
+							showUnofficial: showUnofficialIf
+						},function(json1){
+							StandingsList = [];
+							for(var i=0;i<json1.result.rows.length;i++)
+								if(json1.result.rows[i].party.participantType=="CONTESTANT"
+								|| json1.result.rows[i].party.participantType=="VIRTUAL")
+									StandingsList.push(json1.result.rows[i]);
+							var p = getPredictedRank(json.points,json.penalty,(Number(currT)-Number(StartTime))/1000,(Number(EndTime)-Number(currT))/1000<=30*60);
+							console.log(p);
+							if(currP > changeDate)
+								$('.CurrentRating').html('#'+p),
+								RankData.push([Number(new Date())-currT.getTimezoneOffset()*60*1000,p]),
+								getChart(RankData);
+						}).fail(function(jqXHR, status, error){
+							if(currP > changeDate)
+								$('#highchatrsContainer').html('<div style="height:100%;display: flex;align-items: center;justify-content: center;vertical-align:center">Cannot Get Virtual Rank!</div>')
+						});
+					}
+				}
+			}
+			else
+				$('.VirtualRankButton').css('display','none');
 			if(json.party.participantType=="PRACTICE"){
 				$('.CurrentRating').html("#?");
 				$('#highchatrsContainer').html('<div style="height:100%;display: flex;align-items: center;justify-content: center;vertical-align:center">Blank</div>');
 			}
 			else{
-				$('.CurrentRating').html('#'+json.rank);
-				RankData.push([Number(new Date())-currT.getTimezoneOffset()*60*1000,json.rank]);
-				getChart(RankData);
+				if(!VirtualRank)
+					$('.CurrentRating').html('#'+json.rank),
+					RankData.push([Number(new Date())-currT.getTimezoneOffset()*60*1000,json.rank]),
+					getChart(RankData);
 			}
 			for(var i=0;i<probList.length;i++){
 				var ProblemType = json.problemResults[i].bestSubmissionTimeSeconds!=undefined?"ProblemAccepted":"ProblemWrong";
@@ -460,3 +592,4 @@ $('.LockButton').attr('onclick','lockIfClick()');
 $('.SendButton').attr('onclick','changeUserInfo()');
 $('.UnofficialButton').attr('onclick','showUnofficialIfClick()');
 $('.CloseButton').attr('onclick','closeIf()');
+$('.VirtualRankButton').attr('onclick','getVirtualRankIf()');

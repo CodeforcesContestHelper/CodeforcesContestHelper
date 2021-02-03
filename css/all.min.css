@@ -326,3 +326,9 @@
 .fa-moon-o:before {
   content: "\f186";
 }
+.fa-calculator:before{
+  content:"\f1ec";
+}
+.fa-database:before{
+  content:"\f1c0";
+}
