@@ -1,5 +1,5 @@
-// var win = nw.Window.get();
-// win.setAlwaysOnTop(true);
+var win = nw.Window.get();
+win.setAlwaysOnTop(true);
 var isFold = false;
 var lockStatus = false;
 var blankTip = true;
