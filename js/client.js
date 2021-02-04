@@ -248,20 +248,20 @@ function getChart(data){
 		});
 	}
 }
-var WinHeight = 585;
-var lastSet = 585;
+var WinHeight = 595;
+var lastSet = 595;
 function setSize(y){
+	win.setResizable(true);
 	win.resizeTo(win.width,y);
 	win.moveBy(0,WinHeight-y);
 	WinHeight = y;
-	lastSet = y;
+	if(y!=190)	lastSet = y;
+	win.setResizable(false);
 }
 function setSmall(){
 	$('.BigInterface').css('display','none');
 	$('.SmallInterface').css('display','block');
-	win.resizeTo(win.width,186);
-	win.moveBy(0,WinHeight-186);
-	WinHeight = 186;
+	setSize(190);
 }
 function setBig(){
 	setSize(lastSet);
@@ -269,17 +269,15 @@ function setBig(){
 	$('.BigInterface').css('display','block');
 }
 $('.GraphFolder').click(function(){
-	win.setResizable(true);
 	if(!isFold)
 		$('#highchatrsContainer').css('display','none'),
 		$('.GraphFolder').html('<i class="fa fa-angle-down"></i> Unfold'),
-		setSize(367);
+		setSize(375);
 	else
-		setSize(585),
+		setSize(595),
 		$('#highchatrsContainer').css('display','block'),
 		$('.GraphFolder').html('<i class="fa fa-angle-up"></i> Fold');
 	isFold = !isFold;
-	win.setResizable(false);
 });
 function closeIf(){
 	if(lockStatus)	return;
