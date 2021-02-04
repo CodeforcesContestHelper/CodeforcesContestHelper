@@ -1,5 +1,5 @@
-var win = nw.Window.get();
-win.setAlwaysOnTop(true);
+// var win = nw.Window.get();
+// win.setAlwaysOnTop(true);
 var isFold = false;
 var lockStatus = false;
 var blankTip = true;
@@ -9,96 +9,29 @@ var SelectContestTime = false;
 var SelectContestIndex = 0;
 var changeDate = new Date();
 var StartTime, EndTime;
+var RealContestStartTime, RealContestEndTime;
 var RankData = [], ScoreData = [];
-var StandingsList = [];
+var StandingsList = [], hackList = {};
 var StandingsID = 0;
 var CurrentStatus;
 var ContestType;
 var OpenRankMonitor=false;
 var DarkMode = false;
 var VirtualRank = false;
-function getPredictedRank(points,penalty,time,openHack){
-	if(penalty==undefined)	penalty = 0;
-	var returnValue = 1;
-	for(var i=0;i<StandingsList.length;i++){
-		var _points = 0, _penalty = 0;
-		for(var j=0;j<StandingsList[i].problemResults.length;j++){
-			if(StandingsList[i].problemResults[j].bestSubmissionTimeSeconds!=undefined
-			&& Math.floor(StandingsList[i].problemResults[j].bestSubmissionTimeSeconds/60)<=Math.floor(time/60)){
-				_points += StandingsList[i].problemResults[j].points;
-				var _dalta = StandingsList[i].problemResults[j].penalty;
-				if(ContestType == "ICPC")
-					_dalta = Math.floor(StandingsList[i].problemResults[j].bestSubmissionTimeSeconds/60)+StandingsList[i].problemResults[j].rejectedAttemptCount*10;
-				_penalty += (_dalta == undefined ? 0 : _dalta);
-			}
-		}
-		if(ContestType == "CF" && openHack)
-			_points = _points + StandingsList[i].successfulHackCount * 100 - StandingsList[i].unsuccessfulHackCount * 50;
-		if(points < _points || (points == _points && penalty > _penalty))
-			++ returnValue;
-	}
-	return returnValue;
-}
-function getOverallPredictedRank(json){
-	var currT = StartTime;
-	var Step = 60 * 1000;
-	var returnValue = [];
-	var p = new Date();
-	var NoteNumber = Number(EndTime) - Number(StartTime);
-	NoteNumber = Math.floor(NoteNumber / Step) + 1;
-	var T = 0;
-	while(currT <= EndTime){
-		$('#highchatrsContainer').children('div').html(`Calculate Rank... [${++T} of ${NoteNumber}]`);
-		var currS = 0, currP = 0;
-		if(p < changeDate)	return [];
-		var openHack = ((Number(EndTime) - Number(currT))/1000<=30*60);
-		var time = (Number(currT)-Number(StartTime))/1000;
-		for(var j=0;j<json.problemResults.length;j++){
-			if(json.problemResults[j].bestSubmissionTimeSeconds!=undefined
-			&& json.problemResults[j].bestSubmissionTimeSeconds<=time){
-				currS += json.problemResults[j].points;
-				var _dalta = json.problemResults[j].penalty;
-				if(ContestType == "ICPC")
-					_dalta = Math.floor(json.problemResults[j].bestSubmissionTimeSeconds/60)+json.problemResults[j].rejectedAttemptCount*10;
-				currP += (_dalta == undefined ? 0 : _dalta);
-			}
-		}
-		if(ContestType == "CF" && openHack)
-			currS = currS + json.successfulHackCount * 100 - json.unsuccessfulHackCount * 50;
-		returnValue.push([Number(currT)-currT.getTimezoneOffset()*60*1000,getPredictedRank(currS,currP,time,openHack)]);
-		currT = new Date(Number(currT) + Step);
-	}
-	return returnValue;
-}
-function getOverallScore(json){
-	var currT = StartTime;
-	var Step = 60 * 1000;
-	var returnValue = [];
-	var p = new Date();
-	var NoteNumber = Number(EndTime) - Number(StartTime);
-	NoteNumber = Math.floor(NoteNumber / Step) + 1;
-	var T = 0;
-	while(currT <= EndTime){
-		$('#highchatrsContainer').children('div').html(`Calculate Score... [${++T} of ${NoteNumber}]`);
-		var currS = 0;
-		if(p < changeDate)	return [];
-		var openHack = ((Number(EndTime) - Number(currT))/1000<=30*60);
-		var time = (Number(currT)-Number(StartTime))/1000;
-		for(var j=0;j<json.problemResults.length;j++){
-			if(json.problemResults[j].bestSubmissionTimeSeconds!=undefined
-			&& json.problemResults[j].bestSubmissionTimeSeconds<=time){
-				currS += json.problemResults[j].points;
-			}
-		}
-		if(ContestType == "CF" && openHack)
-			currS = currS + json.successfulHackCount * 100 - json.unsuccessfulHackCount * 50;
-		returnValue.push([Number(currT)-currT.getTimezoneOffset()*60*1000,currS]);
-		currT = new Date(Number(currT) + Step);
-	}
-	return returnValue;
-}
+var globalJson;
+var getStandingsJSONStatus;
+var getHacksJSONStatus;
+var LoadingStatus = false;
+var LoadingStatus2 = false;
+var refreshApiInfo = undefined;
+var ApiLoadingStatus = false;
+var WinHeight = 595;
+var lastSet = 595;
+var chart = undefined;
 var DefaultStyle = JSON.parse(JSON.stringify(Highcharts.getOptions()));
+DefaultStyle.legend.backgroundColor = '#fff';
 DefaultStyle.yAxis = {gridLineColor: "#E6E6E6"}
+Highcharts.setOptions(DefaultStyle);
 var DarkUnica = {
     colors: ['#2b908f', '#90ee7e', '#f45b5b', '#7798BF', '#aaeeee', '#ff0066',
         '#eeaaee', '#55BF3B', '#DF5353', '#7798BF', '#aaeeee'],
@@ -126,7 +59,7 @@ var DarkUnica = {
         }
     },
     tooltip: {
-        backgroundColor: 'rgba(0, 0, 0, 0.85)',
+        backgroundColor: 'rgba(0, 0, 0, 0.5)',
         style: {
             color: '#F0F0F0'
         }
@@ -157,7 +90,7 @@ var DarkUnica = {
     	gridLineColor: "#707073"
     },
     legend: {
-        backgroundColor: 'rgba(0, 0, 0, 0.5)',
+        backgroundColor: '#383839',
         itemStyle: {
             color: '#E0E0E3'
         },
@@ -179,7 +112,97 @@ var DarkUnica = {
         }
     },
 };
-var chart = undefined;
+function getPredictedRank(points,penalty,time){
+	if(penalty==undefined)	penalty = 0;
+	var returnValue = 1;
+	for(var i=0;i<StandingsList.length;i++){
+		var _points = 0, _penalty = 0;
+		for(var j=0;j<StandingsList[i].problemResults.length;j++){
+			if(StandingsList[i].problemResults[j].bestSubmissionTimeSeconds!=undefined
+			&& Math.floor(StandingsList[i].problemResults[j].bestSubmissionTimeSeconds/60)<=Math.floor(time/60)){
+				_points += StandingsList[i].problemResults[j].points;
+				var _dalta = StandingsList[i].problemResults[j].penalty;
+				if(ContestType == "ICPC")
+					_dalta = Math.floor(StandingsList[i].problemResults[j].bestSubmissionTimeSeconds/60)+StandingsList[i].problemResults[j].rejectedAttemptCount*10;
+				_penalty += (_dalta == undefined ? 0 : _dalta);
+			}
+		}
+		if(ContestType == "CF" && hackList[StandingsList[i].party.members[0].handle]!=undefined){
+			for(var j=0;j<hackList[StandingsList[i].party.members[0].handle].length;j++){
+				if(hackList[StandingsList[i].party.members[0].handle][j][0]>time)	break;
+				_points += hackList[StandingsList[i].party.members[0].handle][j][1];
+			}
+		}
+		if(points < _points || (points == _points && penalty > _penalty))
+			++ returnValue;
+	}
+	return returnValue;
+}
+function getOverallPredictedRank(json){
+	var currT = StartTime;
+	var Step = 60 * 1000;
+	var returnValue = [];
+	var p = new Date();
+	var NoteNumber = Number(EndTime) - Number(StartTime);
+	NoteNumber = Math.floor(NoteNumber / Step) + 1;
+	var T = 0;
+	while(currT <= EndTime){
+		$('#highchartsContainer > div').html(`Calculating Rank... (${++T} of ${NoteNumber})`);
+		var currS = 0, currP = 0;
+		if(p < changeDate)	return [];
+		var time = (Number(currT)-Number(StartTime))/1000;
+		for(var j=0;j<json.problemResults.length;j++){
+			if(json.problemResults[j].bestSubmissionTimeSeconds!=undefined
+			&& json.problemResults[j].bestSubmissionTimeSeconds<=time){
+				currS += json.problemResults[j].points;
+				var _dalta = json.problemResults[j].penalty;
+				if(ContestType == "ICPC")
+					_dalta = Math.floor(json.problemResults[j].bestSubmissionTimeSeconds/60)+json.problemResults[j].rejectedAttemptCount*10;
+				currP += (_dalta == undefined ? 0 : _dalta);
+			}
+		}
+		if(ContestType == "CF" && hackList[json.party.members[0].handle]!=undefined){
+			for(var j=0;j<hackList[json.party.members[0].handle].length;j++){
+				if(hackList[json.party.members[0].handle][j][0]>time)	break;
+				currS += hackList[json.party.members[0].handle][j][1];
+			}
+		}
+		returnValue.push([Number(currT)-currT.getTimezoneOffset()*60*1000,getPredictedRank(currS,currP,time)]);
+		currT = new Date(Number(currT) + Step);
+	}
+	return returnValue;
+}
+function getOverallScore(json){
+	var currT = StartTime;
+	var Step = 60 * 1000;
+	var returnValue = [];
+	var p = new Date();
+	var NoteNumber = Number(EndTime) - Number(StartTime);
+	NoteNumber = Math.floor(NoteNumber / Step) + 1;
+	var T = 0;
+	while(currT <= EndTime){
+		$('#highchartsContainer > div').html(`Calculating Score... (${++T} of ${NoteNumber})`);
+		var currS = 0;
+		if(p < changeDate)	return [];
+		var openHack = ((Number(EndTime) - Number(currT))/1000<=30*60);
+		var time = (Number(currT)-Number(StartTime))/1000;
+		for(var j=0;j<json.problemResults.length;j++){
+			if(json.problemResults[j].bestSubmissionTimeSeconds!=undefined
+			&& json.problemResults[j].bestSubmissionTimeSeconds<=time){
+				currS += json.problemResults[j].points;
+			}
+		}
+		if(ContestType == "CF" && hackList[json.party.members[0].handle]!=undefined){
+			for(var j=0;j<hackList[json.party.members[0].handle].length;j++){
+				if(hackList[json.party.members[0].handle][j][0]>time)	break;
+				currS += hackList[json.party.members[0].handle][j][1];
+			}
+		}
+		returnValue.push([Number(currT)-currT.getTimezoneOffset()*60*1000,currS]);
+		currT = new Date(Number(currT) + Step);
+	}
+	return returnValue;
+}
 function getChart(){
 	if(RankData.length!=0){
 		Highcharts.setOptions(DarkMode?DarkUnica:DefaultStyle);
@@ -289,8 +312,6 @@ function getChart(){
 		});
 	}
 }
-var WinHeight = 595;
-var lastSet = 595;
 function setSize(y){
 	win.setResizable(true);
 	win.resizeTo(win.width,y);
@@ -430,11 +451,11 @@ function ProblemListAppend(a,b,c,d){
 	}
 	$('.ProblemList').append(`<div class="SingleProblem"><div class="BackgroundPic">#</div><span class="ProblemResult ProblemCoding">${a}</span></br><span class="TimeUsed"><span class="style_accept">+${c}</span>:<span class="style_error">-${d}</span></span></br><hr><span class="ProblemScore">${b}</span></div>`);
 }
-var globalJson;
-var LoadingStatus = false;
 function killGetStandings(){
 	if(LoadingStatus)
 		LoadingStatus = false, getStandingsJSONStatus.abort();
+	if(LoadingStatus2)
+		LoadingStatus2 = false, getHacksJSONStatus.abort();
 }
 function toMemoryInfo(limit){  
     var size = "";
@@ -461,73 +482,116 @@ function refreshStandings(){
 	if(CurrentStatus == "FINISHED"){
 		$('.CurrentRating').html('#'+globalJson.rank);
 		$('.SmallRank').html('#'+globalJson.rank);
-		var killLoader = setTimeout(function(){
-			$('#highchatrsContainer > div').append('</br><button class="fa fa-refresh" onclick="killGetStandings();refreshStandings();"></button>');
-		}, 15 * 1000);
 		LoadingStatus = true;
-		$('#highchatrsContainer').html('<div style="height:100%;display: flex;align-items: center;justify-content: center;vertical-align:center"><span>Pending...</span></div>')
+		$('#highchatrsContainer').html('<div style="height:100%;display: flex;align-items: center;justify-content: center;vertical-align:center"><span>Pending for Standings...</span></div>');
 		getStandingsJSONStatus = $.ajax({
 			url: "https://codeforces.com/api/contest.standings",
 			type: "GET",
 			data: {contestId: ContestID,showUnofficial: showUnofficialIf},
 			success: function(json1){
 				LoadingStatus = false;
-				clearTimeout(killLoader);
 				if(json1.status != "OK"){
 					if(currP > changeDate)
-						$('#highchatrsContainer').html('<div style="height:100%;display: flex;align-items: center;justify-content: center;vertical-align:center"><span>Cannot Get Virtual Rank!</span></div>');
+						$('#highchatrsContainer').html('<div style="height:100%;display: flex;align-items: center;justify-content: center;vertical-align:center"><span>Cannot Get Standings!</span></div>');
 					else
 						$('#highchatrsContainer').html('<div style="height:100%;display: flex;align-items: center;justify-content: center;vertical-align:center"><span>Blank</span></div>');
 					return;
 				}
-				StandingsID = ContestID;
 				StandingsList = [];
 				for(var i=0;i<json1.result.rows.length;i++)
 					if(json1.result.rows[i].party.participantType!="PRACTICE")
 						StandingsList.push(json1.result.rows[i]);
-				var p = getOverallPredictedRank(globalJson);
-				var q = getOverallScore(globalJson);
-				if(currP > changeDate)
-					RankData=p,ScoreData=q,getChart();
+				json1 = [];
+				if(ContestType == "CF"){
+					LoadingStatus2 = true;
+					$('#highchatrsContainer').html('<div style="height:100%;display: flex;align-items: center;justify-content: center;vertical-align:center"><span>Pending for Hacks...</span></div>');
+					getHacksStandingsJSONStatus = $.ajax({
+						url: "https://codeforces.com/api/contest.hacks",
+						type: "GET",
+						data: {contestId: ContestID},
+						success: function(json2){
+							LoadingStatus2 = false;
+							if(json2.status != "OK"){
+								if(currP > changeDate)
+									$('#highchatrsContainer').html('<div style="height:100%;display: flex;align-items: center;justify-content: center;vertical-align:center"><span>Cannot Get Hack Info!</span></div>');
+								else
+									$('#highchatrsContainer').html('<div style="height:100%;display: flex;align-items: center;justify-content: center;vertical-align:center"><span>Blank</span></div>');
+								return;
+							}
+							StandingsID = ContestID;
+							hackList = {};
+							for(var j=0;j<json2.result.length;j++)
+								if(json2.result[j].creationTimeSeconds*1000<=RealContestEndTime){
+									var from = json2.result[j].hacker.members[0].handle;
+									if(hackList[from] == undefined)
+										hackList[from] = [];
+									if(json2.result[j].verdict=="HACK_SUCCESSFUL")
+										hackList[from].push([(Number(json2.result[j].creationTimeSeconds*1000)-Number(RealContestStartTime))/1000,100]);
+									if(json2.result[j].verdict=="HACK_UNSUCCESSFUL")
+										hackList[from].push([(Number(json2.result[j].creationTimeSeconds*1000)-Number(RealContestStartTime))/1000,-50]);
+								}
+							json2 = [];
+							var p = getOverallPredictedRank(globalJson);
+							var q = getOverallScore(globalJson);
+							if(currP > changeDate)
+								RankData=p,ScoreData=q,getChart();
+						},
+						error: function(jqXHR, status, error){
+							LoadingStatus = false;
+							clearTimeout(killLoader);
+							if(currP > changeDate)
+								$('#highchatrsContainer').html('<div style="height:100%;display: flex;align-items: center;justify-content: center;vertical-align:center"><span>Cannot Get Virtual Rank!</span></div>')
+						},
+						xhr: function() {
+				            var xhr = new XMLHttpRequest();
+				            xhr.addEventListener('progress', function (e) {
+				                $('#highchatrsContainer > div > span').html("Loading Hacks... ("+toMemoryInfo(e.loaded)+" Loaded)");
+				            })
+				            return xhr;
+				        }
+					});
+				}
+				else{
+					var p = getOverallPredictedRank(globalJson);
+					var q = getOverallScore(globalJson);
+					if(currP > changeDate)
+						RankData=p,ScoreData=q,getChart();
+				}
 			},
 			error: function(jqXHR, status, error){
 				LoadingStatus = false;
-				clearTimeout(killLoader);
 				if(currP > changeDate)
 					$('#highchatrsContainer').html('<div style="height:100%;display: flex;align-items: center;justify-content: center;vertical-align:center"><span>Cannot Get Virtual Rank!</span></div>')
 			},
 			xhr: function() {
 	            var xhr = new XMLHttpRequest();
 	            xhr.addEventListener('progress', function (e) {
-	                $('#highchatrsContainer > div > span').html("Loading... ("+toMemoryInfo(e.loaded)+" Loaded)");
+	                $('#highchatrsContainer > div > span').html("Loading Standings... ("+toMemoryInfo(e.loaded)+" Loaded)");
 	            })
 	            return xhr;
 	        }
 		});
 	}
 	else if(StandingsID == ContestID){
-		var p = getPredictedRank(globalJson.points,globalJson.penalty,(Number(currT)-Number(StartTime))/1000,(Number(EndTime)-Number(currT))/1000<=30*60);
-		if(currP > changeDate)
+		var p = getPredictedRank(globalJson.points,globalJson.penalty,(Number(currT)-Number(StartTime))/1000);
+		if(currP > changeDate){
+			var fir = Number(new Date())-currT.getTimezoneOffset()*60*1000
 			$('.CurrentRating').html('#'+p),$('.SmallRank').html('#'+p),
-			RankData.push([Number(new Date())-currT.getTimezoneOffset()*60*1000,p]),
-			ScoreData.push([Number(new Date())-currT.getTimezoneOffset()*60*1000,globalJson.points]),getChart();
+			RankData.push([fir,p]),ScoreData.push([fir,globalJson.points]),getChart();
+		}
 	}
 	else{
-		var killLoader = setTimeout(function(){
-			$('#highchatrsContainer > div').append('</br><button class="fa fa-refresh" onclick="killGetStandings();refreshStandings();"></button>');
-		}, 15 * 1000);
 		LoadingStatus = true;
-		$('#highchatrsContainer').html('<div style="height:100%;display: flex;align-items: center;justify-content: center;vertical-align:center"><span>Pending...</span></div>')
+		$('#highchatrsContainer').html('<div style="height:100%;display: flex;align-items: center;justify-content: center;vertical-align:center"><span>Pending for Standings...</span></div>')
 		getStandingsJSONStatus = $.ajax({
 			url: "https://codeforces.com/api/contest.standings",
 			type: "GET",
 			data: {contestId: ContestID,showUnofficial: showUnofficialIf},
 			success: function(json1){
 				LoadingStatus = false;
-				clearTimeout(killLoader);
 				if(json1.status != "OK"){
 					if(currP > changeDate)
-						$('#highchatrsContainer').html('<div style="height:100%;display: flex;align-items: center;justify-content: center;vertical-align:center"><span>Cannot Get Virtual Rank!</span></div>');
+						$('#highchatrsContainer').html('<div style="height:100%;display: flex;align-items: center;justify-content: center;vertical-align:center"><span>Cannot Get Standings!</span></div>');
 					else
 						$('#highchatrsContainer').html('<div style="height:100%;display: flex;align-items: center;justify-content: center;vertical-align:center"><span>Blank</span></div>');
 					return;
@@ -538,31 +602,82 @@ function refreshStandings(){
 					if(json1.result.rows[i].party.participantType!="PRACTICE")
 						StandingsList.push(json1.result.rows[i]);
 				json1 = [];
-				var p = getPredictedRank(globalJson.points,globalJson.penalty,(Number(currT)-Number(StartTime))/1000,(Number(EndTime)-Number(currT))/1000<=30*60);
-				if(currP > changeDate)
-					$('.CurrentRating').html('#'+p),$('.SmallRank').html('#'+p),
-					RankData.push([Number(new Date())-currT.getTimezoneOffset()*60*1000,p]),
-					ScoreData.push([Number(new Date())-currT.getTimezoneOffset()*60*1000,globalJson.points]),
-					getChart();
+				if(ContestType == "CF"){
+
+					LoadingStatus2 = true;
+					$('#highchatrsContainer').html('<div style="height:100%;display: flex;align-items: center;justify-content: center;vertical-align:center"><span>Pending for Hacks...</span></div>');
+					getHacksStandingsJSONStatus = $.ajax({
+						url: "https://codeforces.com/api/contest.hacks",
+						type: "GET",
+						data: {contestId: ContestID},
+						success: function(json2){
+							LoadingStatus2 = false;
+							if(json2.status != "OK"){
+								if(currP > changeDate)
+									$('#highchatrsContainer').html('<div style="height:100%;display: flex;align-items: center;justify-content: center;vertical-align:center"><span>Cannot Get Hack Info!</span></div>');
+								else
+									$('#highchatrsContainer').html('<div style="height:100%;display: flex;align-items: center;justify-content: center;vertical-align:center"><span>Blank</span></div>');
+								return;
+							}
+							StandingsID = ContestID;
+							hackList = {};
+							for(var j=0;j<json2.result.length;j++)
+								if(json2.result[j].creationTimeSeconds*1000<=RealContestEndTime){
+									var from = json2.result[j].hacker.members[0].handle;
+									if(hackList[from] == undefined)
+										hackList[from] = [];
+									if(json2.result[j].verdict=="HACK_SUCCESSFUL")
+										hackList[from].push([(Number(json2.result[j].creationTimeSeconds*1000)-Number(RealContestStartTime))/1000,100]);
+									if(json2.result[j].verdict=="HACK_UNSUCCESSFUL")
+										hackList[from].push([(Number(json2.result[j].creationTimeSeconds*1000)-Number(RealContestStartTime))/1000,-50]);
+								}
+							json2 = [];
+							var p = getPredictedRank(globalJson.points,globalJson.penalty,(Number(currT)-Number(StartTime))/1000);
+							if(currP > changeDate){
+								var fir = Number(new Date())-currT.getTimezoneOffset()*60*1000;
+								$('.CurrentRating').html('#'+p),$('.SmallRank').html('#'+p),
+								RankData.push([fir,p]),ScoreData.push([fir,globalJson.points]),getChart();
+							}
+						},
+						error: function(jqXHR, status, error){
+							LoadingStatus = false;
+							clearTimeout(killLoader);
+							if(currP > changeDate)
+								$('#highchatrsContainer').html('<div style="height:100%;display: flex;align-items: center;justify-content: center;vertical-align:center"><span>Cannot Get Virtual Rank!</span></div>')
+						},
+						xhr: function() {
+				            var xhr = new XMLHttpRequest();
+				            xhr.addEventListener('progress', function (e) {
+				                $('#highchatrsContainer > div > span').html("Loading Hacks... ("+toMemoryInfo(e.loaded)+" Loaded)");
+				            })
+				            return xhr;
+				        }
+					});
+				}
+				else{
+					var p = getPredictedRank(globalJson.points,globalJson.penalty,(Number(currT)-Number(StartTime))/1000);
+					if(currP > changeDate){
+						var fir = Number(new Date())-currT.getTimezoneOffset()*60*1000;
+						$('.CurrentRating').html('#'+p),$('.SmallRank').html('#'+p),
+						RankData.push([fir,p]),ScoreData.push([fir,globalJson.points]),getChart();
+					}
+				}
 			},
 			error: function(jqXHR, status, error){
 				LoadingStatus = false;
-				clearTimeout(killLoader);
 				if(currP > changeDate)
 					$('#highchatrsContainer').html('<div style="height:100%;display: flex;align-items: center;justify-content: center;vertical-align:center"><span>Cannot Get Virtual Rank!</span></div>')
 			},
 			xhr: function() {
 	            var xhr = new XMLHttpRequest();
 	            xhr.addEventListener('progress', function (e) {
-	                $('#highchatrsContainer > div > span').html("Loading... ("+toMemoryInfo(e.loaded)+" Loaded)");
+	                $('#highchatrsContainer > div > span').html("Loading Standings... ("+toMemoryInfo(e.loaded)+" Loaded)");
 	            })
 	            return xhr;
 	        }
 		});
 	}
 }
-var refreshApiInfo = undefined;
-var ApiLoadingStatus = false;
 function killApiLoad(){
 	if(ApiLoadingStatus)
 		ApiLoadingStatus = false, refreshApiInfo.abort();
@@ -604,12 +719,15 @@ function getApiInfo(cD){
 			$('.SmallTime').html('-');
 		ContestType = json.contest.type;
 		$('.ContestType').html(json.contest.type);
-		StartTime = json.contest.startTimeSeconds;
+		RealContestStartTime = StartTime = json.contest.startTimeSeconds;
 		if(json.rows.length!=0)
 			StartTime = json.rows[SelectContestIndex].party.startTimeSeconds;
 		EndTime = StartTime + json.contest.durationSeconds;
+		RealContestEndTime = RealContestStartTime + json.contest.durationSeconds;
 		StartTime = new Date(StartTime * 1000);
 		EndTime = new Date(EndTime * 1000);
+		RealContestStartTime = new Date(RealContestStartTime * 1000);
+		RealContestEndTime = new Date(RealContestEndTime * 1000);
 		var currT = new Date();
 		$('.ConnectionStatus').html('<i class="fa fa-check style_accept"></i> Updated! ['+currT.pattern("hh:mm:ss")+']');
 		$('.SendButton').html('<i class="fa fa-send"></i>');
