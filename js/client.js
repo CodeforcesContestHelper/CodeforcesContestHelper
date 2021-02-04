@@ -315,7 +315,7 @@ $('.GraphFolder').click(function(){
 		$('.GraphFolder').html('<i class="fa fa-angle-down"></i> Unfold'),
 		setSize(375);
 	else
-		setSize(595),
+		setSize(600),
 		$('#highchatrsContainer').css('display','block'),
 		$('.GraphFolder').html('<i class="fa fa-angle-up"></i> Fold');
 	isFold = !isFold;
@@ -704,6 +704,7 @@ function changeUserInfo(){
 			SelectContestIndex=Number($('.ContestTypeChosen:first').val());
 		}
 		RankData = [];
+		ScoreData = [];
 		killGetStandings();
 		killApiLoad();
 		getApiInfo(new Date());
@@ -713,6 +714,7 @@ function changeUserInfo(){
 	Username = un;
 	ContestID = ci;
 	RankData = [];
+	ScoreData = [];
 	SelectContestTime = false;
 	killGetStandings();
 	killApiLoad();
