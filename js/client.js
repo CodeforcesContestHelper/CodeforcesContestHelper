@@ -1,3 +1,5 @@
+var win = nw.Window.get();
+win.setAlwaysOnTop(true);
 var isFold = false;
 var lockStatus = false;
 var blankTip = true;
@@ -95,8 +97,6 @@ function getOverallScore(json){
 	}
 	return returnValue;
 }
-var win = nw.Window.get();
-win.setAlwaysOnTop(true);
 var DefaultStyle = JSON.parse(JSON.stringify(Highcharts.getOptions()));
 DefaultStyle.yAxis = {gridLineColor: "#E6E6E6"}
 var DarkUnica = {
@@ -436,6 +436,23 @@ function killGetStandings(){
 	if(LoadingStatus)
 		LoadingStatus = false, getStandingsJSONStatus.abort();
 }
+function toMemoryInfo(limit){  
+    var size = "";
+    if( limit < 0.1 * 1024 ) 
+        size = limit.toFixed(2) + "B";    
+    else if(limit < 0.1 * 1024 * 1024 )
+        size = (limit / 1024).toFixed(2) + "KB";              
+    else if(limit < 0.1 * 1024 * 1024 * 1024)
+        size = (limit / (1024 * 1024)).toFixed(2) + "MB";  
+    else
+        size = (limit / (1024 * 1024 * 1024)).toFixed(2) + "GB";  
+    var sizestr = size + "";
+    var len = sizestr.indexOf("\.");
+    var dec = sizestr.substr(len + 1, 2);
+    if(dec == "00") 
+        return sizestr.substring(0,len) + sizestr.substr(len + 3,2);
+    return sizestr;  
+}
 function refreshStandings(){
 	var currP = new Date();
 	var currT = new Date();
@@ -445,37 +462,47 @@ function refreshStandings(){
 		$('.CurrentRating').html('#'+globalJson.rank);
 		$('.SmallRank').html('#'+globalJson.rank);
 		var killLoader = setTimeout(function(){
-			$('#highchatrsContainer > div').append('<button class="fa fa-refresh" onclick="killGetStandings();refreshStandings();"></button>');
+			$('#highchatrsContainer > div').append('</br><button class="fa fa-refresh" onclick="killGetStandings();refreshStandings();"></button>');
 		}, 15 * 1000);
-		$('#highchatrsContainer').html('<div style="height:100%;display: flex;align-items: center;justify-content: center;vertical-align:center">Loading Virtual Rank...</div>')
 		LoadingStatus = true;
-		getStandingsJSONStatus = $.getJSON("https://codeforces.com/api/contest.standings",{
-			contestId: ContestID,
-			showUnofficial: showUnofficialIf
-		},function(json1){
-			LoadingStatus = false;
-			clearTimeout(killLoader);
-			if(json1.status != "OK"){
+		$('#highchatrsContainer').html('<div style="height:100%;display: flex;align-items: center;justify-content: center;vertical-align:center"><span>Pending...</span></div>')
+		getStandingsJSONStatus = $.ajax({
+			url: "https://codeforces.com/api/contest.standings",
+			type: "GET",
+			data: {contestId: ContestID,showUnofficial: showUnofficialIf},
+			success: function(json1){
+				LoadingStatus = false;
+				clearTimeout(killLoader);
+				if(json1.status != "OK"){
+					if(currP > changeDate)
+						$('#highchatrsContainer').html('<div style="height:100%;display: flex;align-items: center;justify-content: center;vertical-align:center"><span>Cannot Get Virtual Rank!</span></div>');
+					else
+						$('#highchatrsContainer').html('<div style="height:100%;display: flex;align-items: center;justify-content: center;vertical-align:center"><span>Blank</span></div>');
+					return;
+				}
+				StandingsID = ContestID;
+				StandingsList = [];
+				for(var i=0;i<json1.result.rows.length;i++)
+					if(json1.result.rows[i].party.participantType!="PRACTICE")
+						StandingsList.push(json1.result.rows[i]);
+				var p = getOverallPredictedRank(globalJson);
+				var q = getOverallScore(globalJson);
 				if(currP > changeDate)
-					$('#highchatrsContainer').html('<div style="height:100%;display: flex;align-items: center;justify-content: center;vertical-align:center">Cannot Get Virtual Rank!</div>');
-				else
-					$('#highchatrsContainer').html('<div style="height:100%;display: flex;align-items: center;justify-content: center;vertical-align:center">Blank</div>');
-				return;
-			}
-			StandingsID = ContestID;
-			StandingsList = [];
-			for(var i=0;i<json1.result.rows.length;i++)
-				if(json1.result.rows[i].party.participantType!="PRACTICE")
-					StandingsList.push(json1.result.rows[i]);
-			var p = getOverallPredictedRank(globalJson);
-			var q = getOverallScore(globalJson);
-			if(currP > changeDate)
-				RankData=p,ScoreData=q,getChart();
-		}).fail(function(jqXHR, status, error){
-			LoadingStatus = false;
-			clearTimeout(killLoader);
-			if(currP > changeDate)
-				$('#highchatrsContainer').html('<div style="height:100%;display: flex;align-items: center;justify-content: center;vertical-align:center">Cannot Get Virtual Rank!</div>')
+					RankData=p,ScoreData=q,getChart();
+			},
+			error: function(jqXHR, status, error){
+				LoadingStatus = false;
+				clearTimeout(killLoader);
+				if(currP > changeDate)
+					$('#highchatrsContainer').html('<div style="height:100%;display: flex;align-items: center;justify-content: center;vertical-align:center"><span>Cannot Get Virtual Rank!</span></div>')
+			},
+			xhr: function() {
+	            var xhr = new XMLHttpRequest();
+	            xhr.addEventListener('progress', function (e) {
+	                $('#highchatrsContainer > div > span').html("Loading... ("+toMemoryInfo(e.loaded)+" Loaded)");
+	            })
+	            return xhr;
+	        }
 		});
 	}
 	else if(StandingsID == ContestID){
@@ -486,41 +513,51 @@ function refreshStandings(){
 			ScoreData.push([Number(new Date())-currT.getTimezoneOffset()*60*1000,globalJson.points]),getChart();
 	}
 	else{
-		$('#highchatrsContainer').html('<div style="height:100%;display: flex;align-items: center;justify-content: center;vertical-align:center">Loading Virtual Rank...</div>')
 		var killLoader = setTimeout(function(){
-			$('#highchatrsContainer > div').append(' <button class="fa fa-refresh" onclick="killGetStandings();refreshStandings();"></button>');
+			$('#highchatrsContainer > div').append('</br><button class="fa fa-refresh" onclick="killGetStandings();refreshStandings();"></button>');
 		}, 15 * 1000);
 		LoadingStatus = true;
-		getStandingsJSONStatus = $.getJSON("https://codeforces.com/api/contest.standings",{
-			contestId: ContestID,
-			showUnofficial: showUnofficialIf
-		},function(json1){
-			LoadingStatus = false;
-			clearTimeout(killLoader);
-			if(json1.status != "OK"){
+		$('#highchatrsContainer').html('<div style="height:100%;display: flex;align-items: center;justify-content: center;vertical-align:center"><span>Pending...</span></div>')
+		getStandingsJSONStatus = $.ajax({
+			url: "https://codeforces.com/api/contest.standings",
+			type: "GET",
+			data: {contestId: ContestID,showUnofficial: showUnofficialIf},
+			success: function(json1){
+				LoadingStatus = false;
+				clearTimeout(killLoader);
+				if(json1.status != "OK"){
+					if(currP > changeDate)
+						$('#highchatrsContainer').html('<div style="height:100%;display: flex;align-items: center;justify-content: center;vertical-align:center"><span>Cannot Get Virtual Rank!</span></div>');
+					else
+						$('#highchatrsContainer').html('<div style="height:100%;display: flex;align-items: center;justify-content: center;vertical-align:center"><span>Blank</span></div>');
+					return;
+				}
+				StandingsID = ContestID;
+				StandingsList = [];
+				for(var i=0;i<json1.result.rows.length;i++)
+					if(json1.result.rows[i].party.participantType!="PRACTICE")
+						StandingsList.push(json1.result.rows[i]);
+				json1 = [];
+				var p = getPredictedRank(globalJson.points,globalJson.penalty,(Number(currT)-Number(StartTime))/1000,(Number(EndTime)-Number(currT))/1000<=30*60);
 				if(currP > changeDate)
-					$('#highchatrsContainer').html('<div style="height:100%;display: flex;align-items: center;justify-content: center;vertical-align:center">Cannot Get Virtual Rank!</div>');
-				else
-					$('#highchatrsContainer').html('<div style="height:100%;display: flex;align-items: center;justify-content: center;vertical-align:center">Blank</div>');
-				return;
-			}
-			StandingsID = ContestID;
-			StandingsList = [];
-			for(var i=0;i<json1.result.rows.length;i++)
-				if(json1.result.rows[i].party.participantType!="PRACTICE")
-					StandingsList.push(json1.result.rows[i]);
-			json1 = [];
-			var p = getPredictedRank(globalJson.points,globalJson.penalty,(Number(currT)-Number(StartTime))/1000,(Number(EndTime)-Number(currT))/1000<=30*60);
-			if(currP > changeDate)
-				$('.CurrentRating').html('#'+p),$('.SmallRank').html('#'+p),
-				RankData.push([Number(new Date())-currT.getTimezoneOffset()*60*1000,p]),
-				ScoreData.push([Number(new Date())-currT.getTimezoneOffset()*60*1000,globalJson.points]),
-				getChart();
-		}).fail(function(jqXHR, status, error){
-			LoadingStatus = false;
-			clearTimeout(killLoader);
-			if(currP > changeDate)
-				$('#highchatrsContainer').html(' <div style="height:100%;display: flex;align-items: center;justify-content: center;vertical-align:center">Cannot Get Virtual Rank!</div>')
+					$('.CurrentRating').html('#'+p),$('.SmallRank').html('#'+p),
+					RankData.push([Number(new Date())-currT.getTimezoneOffset()*60*1000,p]),
+					ScoreData.push([Number(new Date())-currT.getTimezoneOffset()*60*1000,globalJson.points]),
+					getChart();
+			},
+			error: function(jqXHR, status, error){
+				LoadingStatus = false;
+				clearTimeout(killLoader);
+				if(currP > changeDate)
+					$('#highchatrsContainer').html('<div style="height:100%;display: flex;align-items: center;justify-content: center;vertical-align:center"><span>Cannot Get Virtual Rank!</span></div>')
+			},
+			xhr: function() {
+	            var xhr = new XMLHttpRequest();
+	            xhr.addEventListener('progress', function (e) {
+	                $('#highchatrsContainer > div > span').html("Loading... ("+toMemoryInfo(e.loaded)+" Loaded)");
+	            })
+	            return xhr;
+	        }
 		});
 	}
 }
