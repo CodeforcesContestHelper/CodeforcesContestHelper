@@ -7,7 +7,7 @@ var SelectContestTime = false;
 var SelectContestIndex = 0;
 var changeDate = new Date();
 var StartTime, EndTime;
-var RankData = [];
+var RankData = [], ScoreData = [];
 var StandingsList = [];
 var StandingsID = 0;
 var CurrentStatus;
@@ -25,6 +25,8 @@ function getPredictedRank(points,penalty,time,openHack){
 			&& Math.floor(StandingsList[i].problemResults[j].bestSubmissionTimeSeconds/60)<=Math.floor(time/60)){
 				_points += StandingsList[i].problemResults[j].points;
 				var _dalta = StandingsList[i].problemResults[j].penalty;
+				if(ContestType == "ICPC")
+					_dalta = Math.floor(StandingsList[i].problemResults[j].bestSubmissionTimeSeconds/60)+StandingsList[i].problemResults[j].rejectedAttemptCount*10;
 				_penalty += (_dalta == undefined ? 0 : _dalta);
 			}
 		}
@@ -54,12 +56,41 @@ function getOverallPredictedRank(json){
 			&& json.problemResults[j].bestSubmissionTimeSeconds<=time){
 				currS += json.problemResults[j].points;
 				var _dalta = json.problemResults[j].penalty;
+				if(ContestType == "ICPC")
+					_dalta = Math.floor(json.problemResults[j].bestSubmissionTimeSeconds/60)+json.problemResults[j].rejectedAttemptCount*10;
 				currP += (_dalta == undefined ? 0 : _dalta);
 			}
 		}
 		if(ContestType == "CF" && openHack)
 			currS = currS + json.successfulHackCount * 100 - json.unsuccessfulHackCount * 50;
 		returnValue.push([Number(currT)-currT.getTimezoneOffset()*60*1000,getPredictedRank(currS,currP,time,openHack)]);
+		currT = new Date(Number(currT) + Step);
+	}
+	return returnValue;
+}
+function getOverallScore(json){
+	var currT = StartTime;
+	var Step = 60 * 1000;
+	var returnValue = [];
+	var p = new Date();
+	var NoteNumber = Number(EndTime) - Number(StartTime);
+	NoteNumber = Math.floor(NoteNumber / Step) + 1;
+	var T = 0;
+	while(currT <= EndTime){
+		$('#highchatrsContainer').children('div').html(`Calculate Score... [${++T} of ${NoteNumber}]`);
+		var currS = 0;
+		if(p < changeDate)	return [];
+		var openHack = ((Number(EndTime) - Number(currT))/1000<=30*60);
+		var time = (Number(currT)-Number(StartTime))/1000;
+		for(var j=0;j<json.problemResults.length;j++){
+			if(json.problemResults[j].bestSubmissionTimeSeconds!=undefined
+			&& json.problemResults[j].bestSubmissionTimeSeconds<=time){
+				currS += json.problemResults[j].points;
+			}
+		}
+		if(ContestType == "CF" && openHack)
+			currS = currS + json.successfulHackCount * 100 - json.unsuccessfulHackCount * 50;
+		returnValue.push([Number(currT)-currT.getTimezoneOffset()*60*1000,currS]);
 		currT = new Date(Number(currT) + Step);
 	}
 	return returnValue;
@@ -149,8 +180,8 @@ var DarkUnica = {
     },
 };
 var chart = undefined;
-function getChart(data){
-	if(data.length!=0){
+function getChart(){
+	if(RankData.length!=0){
 		Highcharts.setOptions(DarkMode?DarkUnica:DefaultStyle);
 		if(chart!=undefined)
 			chart.destroy();
@@ -184,16 +215,22 @@ function getChart(data){
 					week: '%m-%d',
 					month: '%Y-%m',
 					year: '%Y'
-				}
+				},
+				shared: true
 			},
-			yAxis: {
+			yAxis:[ {
 				title: {
 					text: null
 				},
 				reversed: true
-			},
+			},{
+				title: {
+					text: null
+				},
+				opposite: true
+			}],
 			legend: {
-				enabled: false
+				enabled: true
 			},
 			plotOptions: {
 				area: {
@@ -224,7 +261,11 @@ function getChart(data){
 			series: [{
 				type: 'area',
 				name: 'Rank',
-				data: data
+				data: RankData
+			},{
+				yAxis: 1,
+				name: 'Score',
+				data: ScoreData
 			}],
 			responsive: {
 				rules: [{
@@ -424,12 +465,12 @@ function refreshStandings(){
 			StandingsID = ContestID;
 			StandingsList = [];
 			for(var i=0;i<json1.result.rows.length;i++)
-				if(json1.result.rows[i].party.participantType=="CONTESTANT"
-				|| json1.result.rows[i].party.participantType=="VIRTUAL")
+				if(json1.result.rows[i].party.participantType!="PRACTICE")
 					StandingsList.push(json1.result.rows[i]);
 			var p = getOverallPredictedRank(globalJson);
+			var q = getOverallScore(globalJson);
 			if(currP > changeDate)
-				RankData=p,getChart(RankData);
+				RankData=p,ScoreData=q,getChart();
 		}).fail(function(jqXHR, status, error){
 			LoadingStatus = false;
 			clearTimeout(killLoader);
@@ -442,7 +483,7 @@ function refreshStandings(){
 		if(currP > changeDate)
 			$('.CurrentRating').html('#'+p),$('.SmallRank').html('#'+p),
 			RankData.push([Number(new Date())-currT.getTimezoneOffset()*60*1000,p]),
-			getChart(RankData);
+			ScoreData.push([Number(new Date())-currT.getTimezoneOffset()*60*1000,globalJson.points]),getChart();
 	}
 	else{
 		$('#highchatrsContainer').html('<div style="height:100%;display: flex;align-items: center;justify-content: center;vertical-align:center">Loading Virtual Rank...</div>')
@@ -466,15 +507,15 @@ function refreshStandings(){
 			StandingsID = ContestID;
 			StandingsList = [];
 			for(var i=0;i<json1.result.rows.length;i++)
-				if(json1.result.rows[i].party.participantType=="CONTESTANT"
-				|| json1.result.rows[i].party.participantType=="VIRTUAL")
+				if(json1.result.rows[i].party.participantType!="PRACTICE")
 					StandingsList.push(json1.result.rows[i]);
 			json1 = [];
 			var p = getPredictedRank(globalJson.points,globalJson.penalty,(Number(currT)-Number(StartTime))/1000,(Number(EndTime)-Number(currT))/1000<=30*60);
 			if(currP > changeDate)
 				$('.CurrentRating').html('#'+p),$('.SmallRank').html('#'+p),
 				RankData.push([Number(new Date())-currT.getTimezoneOffset()*60*1000,p]),
-				getChart(RankData);
+				ScoreData.push([Number(new Date())-currT.getTimezoneOffset()*60*1000,globalJson.points]),
+				getChart();
 		}).fail(function(jqXHR, status, error){
 			LoadingStatus = false;
 			clearTimeout(killLoader);
@@ -588,7 +629,7 @@ function getApiInfo(cD){
 					$('.CurrentRating').html('#'+json.rank),
 					$('.SmallRank').html('#'+json.rank),
 					RankData.push([Number(new Date())-currT.getTimezoneOffset()*60*1000,json.rank]),
-					getChart(RankData);
+					ScoreData.push([Number(new Date())-currT.getTimezoneOffset()*60*1000,json.points]),getChart();
 			}
 			for(var i=0;i<probList.length;i++){
 				var ProblemType = json.problemResults[i].bestSubmissionTimeSeconds!=undefined?"ProblemAccepted":"ProblemWrong";
