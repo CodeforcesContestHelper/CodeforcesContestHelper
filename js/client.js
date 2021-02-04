@@ -95,8 +95,8 @@ function getOverallScore(json){
 	}
 	return returnValue;
 }
-// var win = nw.Window.get();
-// win.setAlwaysOnTop(true);
+var win = nw.Window.get();
+win.setAlwaysOnTop(true);
 var DefaultStyle = JSON.parse(JSON.stringify(Highcharts.getOptions()));
 DefaultStyle.yAxis = {gridLineColor: "#E6E6E6"}
 var DarkUnica = {
