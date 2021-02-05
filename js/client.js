@@ -25,6 +25,8 @@ var LoadingStatus = false;
 var LoadingStatus2 = false;
 var refreshApiInfo = undefined;
 var ApiLoadingStatus = false;
+var getContestList = undefined
+var ApiLoadingStatus2 = false;
 var WinHeight = 595;
 var lastSet = 595;
 var chart = undefined;
@@ -123,7 +125,8 @@ function getPredictedRank(points,penalty,time){
 				_points += StandingsList[i].problemResults[j].points;
 				var _dalta = StandingsList[i].problemResults[j].penalty;
 				if(ContestType == "ICPC")
-					_dalta = Math.floor(StandingsList[i].problemResults[j].bestSubmissionTimeSeconds/60)+StandingsList[i].problemResults[j].rejectedAttemptCount*10;
+					_dalta = Math.floor(StandingsList[i].problemResults[j].bestSubmissionTimeSeconds/60)
+						+StandingsList[i].problemResults[j].rejectedAttemptCount*10;
 				_penalty += (_dalta == undefined ? 0 : _dalta);
 			}
 		}
@@ -681,6 +684,8 @@ function refreshStandings(){
 function killApiLoad(){
 	if(ApiLoadingStatus)
 		ApiLoadingStatus = false, refreshApiInfo.abort();
+	if(ApiLoadingStatus2)
+		ApiLoadingStatus2 = false, getContestList.abort();
 }
 function getApiInfo(cD){
 	if(cD<changeDate)	return;
@@ -742,7 +747,7 @@ function getApiInfo(cD){
 			blankTip = true;
 			setTimeout(flushTimeIndex(cD), 0);
 			clearTimeout(sTo);
-			setTimeout(function(){getApiInfo(cD);}, min(30000, Number(StartTime) - Number(currT)));
+			setTimeout(function(){getApiInfo(cD);}, Math.min(30000, Number(StartTime) - Number(currT)));
 		}
 		else{
 			var probList = [];
@@ -824,10 +829,61 @@ function getApiInfo(cD){
 			return;
 		}
 		var ec = jqXHR.responseJSON.comment, ref = false;
-		$('.ConnectionStatus').html('<i class="fa fa-times style_error"></i> '+(ec.substr(0,8)==='handles:'?'Username Not Found!':(ec.substr(0,10)==='contestId:'?'Contest Not Found!':(ref=true,"Cannot Get Standings!"))));
-		$('.SendButton').html('<i class="fa fa-send"></i>');
-		if(!ref)
-			clearTimeout(sTo);
+		if(ec.substr(0,10)==='contestId:'){
+			ApiLoadingStatus2 = true;
+			getContestList = $.getJSON("https://codeforces.com/api/contest.list",function(json2){
+				ApiLoadingStatus2 = false;
+				if(json2.status != "OK"){
+					$('.ConnectionStatus').html('<i class="fa fa-times style_error"></i> Contest Not Found!');
+					$('.SendButton').html('<i class="fa fa-send"></i>');
+					return;
+				}
+				json2=json2.result;
+				for(var i=0;i<json2.length;i++){
+					if(json2[i].phase == "FINISHED")	break;
+					if(json2[i].id == ContestID){
+						$(".ContestIdNumber").html("#"+ContestID);
+						$(".SmallContestName").html("#"+ContestID);
+						$('.SmallUsername').html('@'+Username);
+						$('.ContestTypeChosen').html('');
+						SelectContestTime = false;
+						RealContestStartTime = StartTime = json2[i].startTimeSeconds;
+						EndTime = StartTime + json2[i].durationSeconds;
+						RealContestEndTime = RealContestStartTime + json2[i].durationSeconds;
+						StartTime = new Date(StartTime * 1000);
+						EndTime = new Date(EndTime * 1000);
+						RealContestStartTime = new Date(RealContestStartTime * 1000);
+						RealContestEndTime = new Date(RealContestEndTime * 1000);
+						var currT = new Date();
+						$('.ConnectionStatus').html('<i class="fa fa-check style_accept"></i> Updated! ['+currT.pattern("hh:mm:ss")+']');
+						$('.SendButton').html('<i class="fa fa-send"></i>');
+						$('.ContestName').html(json2[i].name);
+						CurrentStatus = json2[i].phase;
+						if(currT<StartTime)	CurrentStatus="BEFORE";
+						else if(currT<EndTime)	CurrentStatus="CODING";
+						$('.VirtualRankButton').css('display','none');
+						$('.ProblemList').html('<div style="height:100%;display: flex;align-items: center;justify-content: center;vertical-align:center">Blank</div>');
+						blankTip = true;
+						$('.UserType').html('UNKNOWN');
+						$('.CurrentRating').html("#?");
+						$('.SmallRank').html('#?');
+						$('#highchatrsContainer').html('<div style="height:100%;display: flex;align-items: center;justify-content: center;vertical-align:center">Blank</div>');
+						setTimeout(flushTimeIndex(cD), 0);
+						clearTimeout(sTo);
+						setTimeout(function(){getApiInfo(cD);}, Math.min(30000, Number(StartTime) - Number(currT)));
+					}
+				}
+			}).fail(function(jqXHR, status, error){
+				$('.ConnectionStatus').html('<i class="fa fa-times style_error"></i> Contest Not Found!');
+				$('.SendButton').html('<i class="fa fa-send"></i>');
+			});
+		}
+		else{
+			$('.ConnectionStatus').html('<i class="fa fa-times style_error"></i> '+(ec.substr(0,8)==='handles:'?'Username Not Found!':(ec.substr(0,10)==='contestId:'?'Contest Not Found!':(ref=true,"Cannot Get Standings!"))));
+			$('.SendButton').html('<i class="fa fa-send"></i>');
+			if(!ref)
+				clearTimeout(sTo);
+		}
 	});
 }
 function changeUserInfo(){
