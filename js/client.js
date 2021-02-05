@@ -423,8 +423,12 @@ Date.prototype.pattern = function(format) {
     }
     return format;
 }
+var flushTimeRunned = false;
 function flushTimeIndex(cD){
-	if(cD<changeDate)	return;
+	if(cD<changeDate){
+		flushTimeRunned=false;
+		return;
+	}
 	var currT = new Date();
 	if(currT<=StartTime){
 		var diff = Number(StartTime) - Number(currT);
@@ -745,7 +749,8 @@ function getApiInfo(cD){
 		if(CurrentStatus=="BEFORE"){
 			$('.ProblemList').html('<div style="height:100%;display: flex;align-items: center;justify-content: center;vertical-align:center">Blank</div>');
 			blankTip = true;
-			setTimeout(flushTimeIndex(cD), 0);
+			if(!flushTimeRunned)
+				flushTimeRunned=true,setTimeout(flushTimeIndex(cD), 0);
 			clearTimeout(sTo);
 			setTimeout(function(){getApiInfo(cD);}, Math.min(30000, Number(StartTime) - Number(currT)));
 		}
@@ -809,8 +814,10 @@ function getApiInfo(cD){
 			}
 			getProblemList(probList, reslList);
 			ProblemListAppend(json.penalty, json.points, json.successfulHackCount, json.unsuccessfulHackCount);
-			if(CurrentStatus == "CODING")
-				setTimeout(flushTimeIndex(cD), 0);
+			if(CurrentStatus == "CODING"){
+				if(!flushTimeRunned)
+					flushTimeRunned=true, setTimeout(flushTimeIndex(cD), 0);
+			}
 			else if(CurrentStatus == "PENDING_SYSTEM_TEST")
 				$('.ContestStatus').html('Pending System Test...');
 			else if(CurrentStatus == "SYSTEM_TEST")
@@ -868,7 +875,8 @@ function getApiInfo(cD){
 						$('.CurrentRating').html("#?");
 						$('.SmallRank').html('#?');
 						$('#highchatrsContainer').html('<div style="height:100%;display: flex;align-items: center;justify-content: center;vertical-align:center">Blank</div>');
-						setTimeout(flushTimeIndex(cD), 0);
+						if(!flushTimeRunned)
+							flushTimeRunned=true,setTimeout(flushTimeIndex(cD), 0);
 						clearTimeout(sTo);
 						setTimeout(function(){getApiInfo(cD);}, Math.min(30000, Number(StartTime) - Number(currT)));
 					}
