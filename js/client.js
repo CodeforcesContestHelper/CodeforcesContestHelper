@@ -713,8 +713,8 @@ function loadRatingChanges(json,un){
 		if(json[i].handle == un){
 			var x = Number(json[i].oldRating);
 			var y = Number(json[i].newRating);
-			$(".ContestRatingChanges").html(`<span style="color:${CodeforcesRatingColor(x)};font-family: Verdana;">${x}</span></br>${calcDelta(y-x)} <i class="fa fa-angle-double-right"></i> <span style="color:${CodeforcesRatingColor(y)};font-family:Verdana">${y}</span>`);
-			$(".SmallRatingChanges").html(`<span style="color:${CodeforcesRatingColor(x)};font-family: Verdana;">${x}</span> |${calcDelta(y-x)}| <i class="fa fa-angle-double-right"></i> <span style="color:${CodeforcesRatingColor(y)};font-family:Verdana">${y}</span>`);
+			$(".ContestRatingChanges").html(`<span style="color:${CodeforcesRatingColor(x)};font-family: VerdanaBold;">${x}</span></br>${calcDelta(y-x)} <i class="fa fa-angle-double-right"></i> <span style="color:${CodeforcesRatingColor(y)};font-family:VerdanaBold">${y}</span>`);
+			$(".SmallRatingChanges").html(`<span style="color:${CodeforcesRatingColor(x)};font-family: VerdanaBold;">${x}</span> |${calcDelta(y-x)}| <i class="fa fa-angle-double-right"></i> <span style="color:${CodeforcesRatingColor(y)};font-family:VerdanaBold">${y}</span>`);
 			return;
 		}
 	}
