@@ -342,3 +342,15 @@
 .fa-download:before {
   content: "\f019";
 }
+.fa-spinner:before {
+  content: "\f110";
+}
+.fa-history:before {
+  content: "\f1da";
+}
+.fa-github:before {
+  content: "\f09b";
+}
+.fa-upload:before {
+  content: "\f093";
+}

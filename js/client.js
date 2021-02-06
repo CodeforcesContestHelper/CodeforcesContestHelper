@@ -327,12 +327,12 @@ function setSize(y){
 }
 function setSmall(){
 	$('.BigInterface').css('display','none');
-	$('.SmallInterface').css('display','block');
 	setSize(190);
+	$('.SmallInterface').css('display','block');
 }
 function setBig(){
-	setSize(lastSet);
 	$('.SmallInterface').css('display','none');
+	setSize(lastSet);
 	$('.BigInterface').css('display','block');
 }
 $('.GraphFolder').click(function(){
@@ -724,8 +724,8 @@ function loadRatingChanges(json,un){
 function getApiInfo(cD){
 	if(cD<changeDate)	return;
 	var sTo=setTimeout(function(){getApiInfo(cD);}, 30000);
-	$('.ConnectionStatus').html('<i class="fa fa-spin fa-refresh"></i> Getting Standings...');
-	$('.SendButton').html('<i class="fa fa-spin fa-refresh"></i>');
+	$('.ConnectionStatus').html('<i class="fa fa-spin fa-spinner"></i> Getting Standings...');
+	$('.SendButton').html('<i class="fa fa-spin fa-spinner"></i>');
 	ApiLoadingStatus = true;
 	refreshApiInfo = $.getJSON("https://codeforces.com/api/contest.standings",{
 		contestId: ContestID,
@@ -860,8 +860,8 @@ function getApiInfo(cD){
 				$('.ContestStatus').html('Finished'),
 				clearTimeout(sTo);
 			if(json.party.participantType == "CONTESTANT"){
-				$('.ContestRatingChanges').html("<i class='fa fa-spin fa-refresh'></i>");
-				$('.SmallRatingChanges').html("<i class='fa fa-spin fa-refresh'></i>");
+				$('.ContestRatingChanges').html("<i class='fa fa-spin fa-spinner'></i>");
+				$('.SmallRatingChanges').html("<i class='fa fa-spin fa-spinner'></i>");
 				ApiLoadingStatus3 = true;
 				if(CurrentStatus == "FINISHED"){
 					getRatingChanges = $.ajax({
@@ -992,7 +992,7 @@ function getApiInfo(cD){
 function changeUserInfo(){
 	var un = $('.UsernameInput:first').val();
 	var ci = $('.ContestIDInput:first').val();
-	$('.ConnectionStatus').html('<i class="fa fa-spin fa-refresh"></i> Checking Information...');
+	$('.ConnectionStatus').html('<i class="fa fa-spin fa-spinner"></i> Checking Information...');
 	if(un.length<3 || un.length>24){
 		$('.ConnectionStatus').html('<i class="fa fa-times style_error"></i> Username Incorrect!');
 		return;
@@ -1034,6 +1034,23 @@ function changeUserInfo(){
 	killApiLoad();
 	getApiInfo(new Date());
 }
+var BranchLink;
+var RepoLink = "https://github.com/tiger2005/CodeforcesContestHelper"
+function openURL(x){nw.Shell.openExternal(x);}
+function getNewestRepo(){
+	$('.ConnectionStatus').html('<i class="fa fa-spin fa-spinner"></i> Loading Repo Info...');
+	$.getJSON("https://api.github.com/repos/tiger2005/CodeforcesContestHelper/commits",function(json){
+		json=json[0];
+		var UpdateTime = json.commit.committer.date.replace('T',' ');
+		UpdateTime=UpdateTime.substr(0,UpdateTime.length-1);
+		UpdateTime=new Date(UpdateTime.replace(/-/g,'/'));
+		UpdateTime=new Date(Number(UpdateTime)-UpdateTime.getTimezoneOffset()*60*1000);
+		BranchLink=json.html_url;
+		$('.ConnectionStatus').html(`<i class="fa fa-check style_accept"></i> Last Update at ${UpdateTime.pattern("YY-MM-dd hh:mm:ss")} <span onclick="openURL(BranchLink)" class="fa fa-history" style="cursor:pointer;"></span> <span onclick="openURL(RepoLink)" class="fa fa-github" style="cursor:pointer;"></span>`);
+	}).fail(function(){
+		$('.ConnectionStatus').html('<i class="fa fa-times style_error"></i> Connection Error!');
+	});
+}
 $('.LockButton').attr('onclick','lockIfClick()');
 $('.SendButton').attr('onclick','changeUserInfo()');
 $('.UnofficialButton').attr('onclick','showUnofficialIfClick()');
@@ -1041,3 +1058,4 @@ $('.CloseButton').attr('onclick','closeIf()');
 $('.VirtualRankButton').attr('onclick','getVirtualRankIf()');
 $('.FoldButton').attr('onclick','setSmall()');
 $('.UnfoldButton').attr('onclick','setBig()');
+$('.UpdateButton').attr('onclick','getNewestRepo()');

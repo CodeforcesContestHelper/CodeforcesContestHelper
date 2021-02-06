@@ -11,6 +11,7 @@
 	src: url('../fonts/VerdanaBold.ttf');
 }
 body{
+	overflow-y: hidden;
 	margin: 0px;
 	user-select:none;
 	font-size: 14px;
@@ -147,6 +148,7 @@ hr{
 	min-height: 0px;
 }
 .ConnectionStatus{
+	-webkit-app-region: no-drag;
 	margin-left: 2px;
 }
 .UserType{
@@ -240,4 +242,7 @@ select{
 }
 .ProblemList::-webkit-scrollbar-corner{
     display: none;
+}
+a{
+	color: inherit;
 }
