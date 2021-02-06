@@ -127,8 +127,9 @@ hr{
 	border-top-right-radius: 3px;
 }
 .CurrentRating{
+	margin: 8px;
 	float: right;
-	font-size: 44px;
+	font-size: 32px;
 }
 .ContestRatingChanges{
 	margin: 8px;
