@@ -23,6 +23,8 @@ var getStandingsJSONStatus;
 var getHacksJSONStatus;
 var LoadingStatus = false;
 var LoadingStatus2 = false;
+var ApiLoadingStatus3 = false;
+var getRatingChanges = undefined;
 var refreshApiInfo = undefined;
 var ApiLoadingStatus = false;
 var getContestList = undefined
@@ -464,6 +466,15 @@ function killGetStandings(){
 	if(LoadingStatus2)
 		LoadingStatus2 = false, getHacksJSONStatus.abort();
 }
+function CodeforcesRatingColor(x){
+	if(x >= 2400)	return "rgb(255, 26, 26)";
+	if(x >= 2100)	return "rgb(236, 134, 9)";
+	if(x >= 1900)	return "rgb(255, 85, 255)";
+	if(x >= 1600)	return "rgb(51, 125, 255)";
+	if(x >= 1400)	return "rgb(29, 195, 190)";
+	if(x >= 1200)	return "rgb(18, 197, 18)";
+	return "rgb(152, 143, 129)";
+}
 function toMemoryInfo(limit){  
     var size = "";
     if( limit < 0.1 * 1024 ) 
@@ -610,7 +621,6 @@ function refreshStandings(){
 						StandingsList.push(json1.result.rows[i]);
 				json1 = [];
 				if(ContestType == "CF"){
-
 					LoadingStatus2 = true;
 					$('#highchatrsContainer').html('<div style="height:100%;display: flex;align-items: center;justify-content: center;vertical-align:center"><span>Pending for Hacks...</span></div>');
 					getHacksStandingsJSONStatus = $.ajax({
@@ -690,6 +700,26 @@ function killApiLoad(){
 		ApiLoadingStatus = false, refreshApiInfo.abort();
 	if(ApiLoadingStatus2)
 		ApiLoadingStatus2 = false, getContestList.abort();
+	if(ApiLoadingStatus3)
+		ApiLoadingStatus3 = false, getRatingChanges.abort();
+}
+function calcDelta(y){
+	if(y>0)	return '<span class="ProblemAccepted" style="font-size:12px">+'+y+'</span>';
+	return '<span class="ProblemCoding" style="font-size:12px;font-family:VerdanaBold">'+y+'</span>';
+}
+function loadRatingChanges(json,un){
+	json = json.result;
+	for(var i=0;i<json.length;i++){
+		if(json[i].handle == un){
+			var x = Number(json[i].oldRating);
+			var y = Number(json[i].newRating);
+			$(".ContestRatingChanges").html(`<span style="color:${CodeforcesRatingColor(x)};font-family: Verdana;">${x}</span></br>${calcDelta(y-x)} <i class="fa fa-angle-double-right"></i> <span style="color:${CodeforcesRatingColor(y)};font-family:Verdana">${y}</span>`);
+			$(".SmallRatingChanges").html(`<span style="color:${CodeforcesRatingColor(x)};font-family: Verdana;">${x}</span> |${calcDelta(y-x)}| <i class="fa fa-angle-double-right"></i> <span style="color:${CodeforcesRatingColor(y)};font-family:Verdana">${y}</span>`);
+			return;
+		}
+	}
+	$(".ContestRatingChanges").html("?");
+	$(".SmallRatingChanges").html("?");
 }
 function getApiInfo(cD){
 	if(cD<changeDate)	return;
@@ -712,6 +742,8 @@ function getApiInfo(cD){
 		$(".ContestIdNumber").html("#"+ContestID);
 		$(".SmallContestName").html("#"+ContestID);
 		$('.SmallUsername').html('@'+Username);
+		$('.ContestRatingChanges').html("");
+		$('.SmallRatingChanges').html("");
 		json = json.result;
 		$('.ContestTypeChosen').html('');
 		for(var i=0;i<json.rows.length;i++)
@@ -827,6 +859,69 @@ function getApiInfo(cD){
 			else if(CurrentStatus == "FINISHED")
 				$('.ContestStatus').html('Finished'),
 				clearTimeout(sTo);
+			if(json.party.participantType == "CONTESTANT"){
+				$('.ContestRatingChanges').html("<i class='fa fa-spin fa-refresh'></i>");
+				$('.SmallRatingChanges').html("<i class='fa fa-spin fa-refresh'></i>");
+				ApiLoadingStatus3 = true;
+				if(CurrentStatus == "FINISHED"){
+					getRatingChanges = $.ajax({
+						url: "https://codeforces.com/api/contest.ratingChanges",
+						type: "GET",
+						data: {contestId: ContestID},
+						success: function(json3){
+							ApiLoadingStatus3 = false;
+							if(json3.status != "OK"){
+								$('.ContestRatingChanges').html("<i class='fa fa-unlink'></i>");
+								$('.SmallRatingChanges').html("<i class='fa fa-unlink'></i>");
+								return;
+							}
+							loadRatingChanges(json3, Username);
+						},
+						error: function(){
+							ApiLoadingStatus3 = false;
+							$('.ContestRatingChanges').html("<i class='fa fa-unlink'></i>");
+							$('.SmallRatingChanges').html("<i class='fa fa-unlink'></i>");
+						},
+						xhr: function() {
+				            var xhr = new XMLHttpRequest();
+				            xhr.addEventListener('progress', function (e) {
+				                $('.ContestRatingChanges').html("<i class='fa fa-download'></i> </br>"+toMemoryInfo(e.loaded));
+				            	$('.SmallRatingChanges').html("<i class='fa fa-download'></i> "+toMemoryInfo(e.loaded));
+				            });
+				            return xhr;
+				        }
+					});
+				}
+				else{
+					getRatingChanges = $.ajax({
+						url: "https://cf-predictor-frontend.herokuapp.com/GetNextRatingServlet",
+						type: "GET",
+						data: {contestId: ContestID},
+						success: function(json3){
+							ApiLoadingStatus3 = false;
+							if(json3.status != "OK"){
+								$('.ContestRatingChanges').html("<i class='fa fa-unlink'></i>");
+								$('.SmallRatingChanges').html("<i class='fa fa-unlink'></i>");
+								return;
+							}
+							loadRatingChanges(json3, Username);
+						},
+						error: function(){
+							ApiLoadingStatus3 = false;
+							$('.ContestRatingChanges').html("<i class='fa fa-unlink'></i>");
+							$('.SmallRatingChanges').html("<i class='fa fa-unlink'></i>");
+						},
+						xhr: function() {
+				            var xhr = new XMLHttpRequest();
+				            xhr.addEventListener('progress', function (e) {
+				                $('.ContestRatingChanges').html("<i class='fa fa-download'></i> </br>"+toMemoryInfo(e.loaded));
+				            	$('.SmallRatingChanges').html("<i class='fa fa-download'></i> "+toMemoryInfo(e.loaded));
+				            });
+				            return xhr;
+				        }
+					});
+				}
+			}
 		}
 	}).fail(function(jqXHR, status, error){
 		ApiLoadingStatus = false;

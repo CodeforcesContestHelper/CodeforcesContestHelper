@@ -120,13 +120,23 @@ hr{
 .RatingGraphDescription{
 	padding: 3px;
 }
-.CurrentRating{
-	font-size: 44px;
+.ContestRatingTd{
 	text-align: right;
-	width: 100%;
 	border-bottom-left-radius: 3px;
 	border-bottom-right-radius: 3px;
 	border-top-right-radius: 3px;
+}
+.CurrentRating{
+	float: right;
+	font-size: 44px;
+}
+.ContestRatingChanges{
+	margin: 8px;
+	float: right;
+	font-size: 14px;
+}
+.SmallRatingChanges{
+	font-size: 14px;
 }
 #highchatrsContainer{
 	-webkit-app-region: no-drag;
