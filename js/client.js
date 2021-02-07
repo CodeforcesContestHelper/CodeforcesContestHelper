@@ -653,10 +653,19 @@ function refreshStandings(){
 	}
 	else if(StandingsID == ContestID){
 		var p = getPredictedRank(globalJson.points,globalJson.penalty,(Number(currT)-Number(StartTime))/1000);
+		var q = [];
+		for(var j=0;j<FriendSuccessList.length;j++)
+			q.push(getPredictedRank(getRealScore(FriendJson[FriendSuccessList[j]],(Number(currT)-Number(StartTime))/1000),getRealPenalty(FriendJson[FriendSuccessList[j]],(Number(currT)-Number(StartTime))/1000),(Number(currT)-Number(StartTime))/1000));
 		if(currP > changeDate){
-			var fir = Number(new Date())-currT.getTimezoneOffset()*60*1000
+			var fir = Number(new Date())-currT.getTimezoneOffset()*60*1000;
 			$('.CurrentRating').html('#'+p),$('.SmallRank').html('#'+p),
-			RankData.push([fir,p]),ScoreData.push([fir,globalJson.points]),getChart();
+			RankData.push([fir,p]),ScoreData.push([fir,globalJson.points]);
+			for(var j=0;j<FriendSuccessList.length;j++){
+				if(FriendRankData[FriendSuccessList[j]]==undefined)
+					FriendRankData[FriendSuccessList[j]]=[];
+				FriendRankData[FriendSuccessList[j]].push([fir,q[j]]);
+			}
+			getChart();
 		}
 	}
 	else{
@@ -718,8 +727,11 @@ function refreshStandings(){
 								var fir = Number(new Date())-currT.getTimezoneOffset()*60*1000;
 								$('.CurrentRating').html('#'+p),$('.SmallRank').html('#'+p),
 								RankData.push([fir,p]),ScoreData.push([fir,globalJson.points]);
-								for(var j=0;j<FriendSuccessList.length;j++)
-									FriendRankData[FriendSuccessList[j]].push(fir,q[j]);
+								for(var j=0;j<FriendSuccessList.length;j++){
+									if(FriendRankData[FriendSuccessList[j]]==undefined)
+										FriendRankData[FriendSuccessList[j]]=[];
+									FriendRankData[FriendSuccessList[j]].push([fir,q[j]]);
+								}
 								getChart();
 							}
 						},
@@ -747,8 +759,11 @@ function refreshStandings(){
 						var fir = Number(new Date())-currT.getTimezoneOffset()*60*1000;
 						$('.CurrentRating').html('#'+p),$('.SmallRank').html('#'+p),
 						RankData.push([fir,p]),ScoreData.push([fir,globalJson.points]);
-						for(var j=0;j<FriendSuccessList.length;j++)
-							FriendRankData[FriendSuccessList[j]].push(fir,q[j]);
+						for(var j=0;j<FriendSuccessList.length;j++){
+							if(FriendRankData[FriendSuccessList[j]]==undefined)
+								FriendRankData[FriendSuccessList[j]]=[];
+							FriendRankData[FriendSuccessList[j]].push([fir,q[j]]);
+						}
 						getChart();
 					}
 				}
@@ -794,6 +809,9 @@ function loadRatingChanges(json,un){
 	$(".ContestRatingChanges").html("?");
 	$(".SmallRatingChanges").html("?");
 }
+function sortRows(x,y){
+	return x.party.startTimeSeconds - y.party.startTimeSeconds;
+}
 function getApiInfo(cD){
 	if(cD<changeDate)	return;
 	var sTo=setTimeout(function(){getApiInfo(cD);}, 30000);
@@ -814,6 +832,8 @@ function getApiInfo(cD){
 			$('.SendButton').html('<i class="fa fa-send"></i>');
 			return;
 		}
+		json.result.rows.sort(sortRows);
+		console.log(json.result.rows);
 		if(cD<changeDate)	return;
 		$(".ContestIdNumber").text("#"+ContestID);
 		$(".SmallContestName").text("#"+ContestID);
