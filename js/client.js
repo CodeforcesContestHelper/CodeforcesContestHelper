@@ -883,8 +883,6 @@ function getApiInfo(cD){
 			else if(currT<EndTime)	CurrentStatus="CODING";
 			if(realLength==0)
 				$('.VirtualRankButton').css('display','none');
-			
-
 			var FriendResultInfo = {};
 			for(var i=0;i<json.rows.length;i++){
 				var nam = json.rows[i].party.members[0].handle;
@@ -900,7 +898,7 @@ function getApiInfo(cD){
 			for(var i=0;i<CurrDiffDetail.length;i++){
 				var nam = CurrDiffDetail[i].handle;
 				for(var j=0;j<CurrDiffDetail[i].contestInfo.length;j++){
-					var Q = nam + '-' + CurrDiffDetail[i].contestInfo[j];
+					var Q = nam + '[' + CurrDiffDetail[i].contestInfo[j] + ']';
 					if(CurrDiffDetail[i].contestInfo[j]=="C"){
 						if(FriendResultInfo[nam]["CONTESTANT"]!=undefined)
 							FriendJson[Q] = FriendResultInfo[nam]["CONTESTANT"][0],
@@ -924,7 +922,6 @@ function getApiInfo(cD){
 					}
 				}
 			}
-
 			if(CurrentStatus=="BEFORE"){
 				$('.ProblemList').html('<div style="height:100%;display: flex;align-items: center;justify-content: center;vertical-align:center">Blank</div>');
 				blankTip = true;
