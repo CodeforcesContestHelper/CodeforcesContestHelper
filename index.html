@@ -11,7 +11,7 @@
 		<div class="BigInterface">
 			<table style="table-layout:fixed;width:100%;">
 				<tr>
-					<td style="border: 2px solid #ccc;border-radius: 5px;width:289px;">
+					<td style="border: 2px solid #ccc;border-radius: 5px;width:289px;box-shadow: 0px 0px 10px #666">
 						<table style="table-layout:fixed;border-collapse:collapse;padding:0px;width:100%">
 							<tr>
 								<td style="padding:0px;width:130px;"><div class="CurrentRatingDescription"><i class="fa fa-th-list"></i> Rank</div></td>
@@ -103,17 +103,23 @@
 		    if(navigator.userAgent.indexOf("Chrome")>0){
 		    	element = document.body;
 		    }
-		    document.addEventListener('DOMMouseScroll',handler,false)
-		    document.addEventListener('mousewheel',handler,false)
+		    document.addEventListener('DOMMouseScroll',handler,false);
+		    document.addEventListener('mousewheel',handler,false);
+		    var scrollAnimation = false;
 		    function handler(event){
+		    	if(scrollAnimation)
+		    		return;
 				var detail = event.wheelDelta || event.detail;
 				var moveForwardStep = 50;
 				var moveBackStep = -50;
 				var step = 0;
 				if(detail < 0)	step = moveForwardStep;
 				else	step = moveBackStep;
+				scrollAnimation = true;
 				$(".ProblemList").each(function(){
-					$(this).scrollLeft($(this).scrollLeft() + step);
+					$(this).animate({'scrollLeft': $(this).scrollLeft() + step}, 125, "swing", function(){
+						scrollAnimation = false;
+					});
 				});
 			}
 			function ChangeTheme(){
