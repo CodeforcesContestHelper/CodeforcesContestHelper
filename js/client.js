@@ -818,327 +818,340 @@ function getApiInfo(cD){
 	var handleList = Username;
 	for(var p=0;p<CurrDiffDetail.length;p++)
 		handleList += (';' + CurrDiffDetail[p].handle);
-	$('.ConnectionStatus').html('<i class="fa fa-spin fa-spinner"></i> Getting Standings...');
+	$('.ConnectionStatus').html('<i class="fa fa-spin fa-spinner"></i> Pending for Standings...');
 	$('.SendButton').html('<i class="fa fa-spin fa-spinner"></i>');
 	ApiLoadingStatus = true;
-	refreshApiInfo = $.getJSON("https://codeforces.com/api/contest.standings",{
-		contestId: ContestID,
-		handles: handleList,
-		showUnofficial: showUnofficialIf
-	},function(json){
-		ApiLoadingStatus = false;
-		if(json.status != "OK"){
-			$('.ConnectionStatus').html('<i class="fa fa-times style_error"></i> Cannot Get Standings!');
-			$('.SendButton').html('<i class="fa fa-send"></i>');
-			return;
-		}
-		json.result.rows.sort(sortRows);
-		console.log(json.result.rows);
-		if(cD<changeDate)	return;
-		$(".ContestIdNumber").text("#"+ContestID);
-		$(".SmallContestName").text("#"+ContestID);
-		$('.SmallUsername').text('@'+Username);
-		$('.ContestRatingChanges').html("");
-		$('.SmallRatingChanges').html("");
-		win.title = `${Username} At #${ContestID}`;
-		json = json.result;
-		var realLength = 0;
-		var realList = [];
-		$('.ContestTypeChosen').html('');
-		for(var i=0;i<json.rows.length;i++)
-			if(json.rows[i].party.members[0].handle==Username)
-				++realLength, realList.push(json.rows[i]), 
-				$('.ContestTypeChosen').append(`<option value="${realLength-1}">${(new Date(json.rows[i].party.startTimeSeconds*1000)).pattern("YY-MM-dd hh:mm")} ${json.rows[i].party.participantType}</option>`);
-		if(SelectContestIndex<0 || SelectContestIndex>=realLength)
-			SelectContestTime=false;
-		if(!SelectContestTime)
-			SelectContestIndex=realLength-1,
-			SelectContestTime=true;
-		$('.ContestTypeChosen:first').val(SelectContestIndex);
-		if(realLength!=0)
-			$('.SmallTime').text($('.ContestTypeChosen option:selected').text().substr(0,14));
-		else
-			$('.SmallTime').text('-');
-		ContestType = json.contest.type;
-		$('.ContestType').html(json.contest.type);
-		RealContestStartTime = StartTime = json.contest.startTimeSeconds;
-		if(realLength!=0)
-			StartTime = realList[SelectContestIndex].party.startTimeSeconds;
-		EndTime = StartTime + json.contest.durationSeconds;
-		RealContestEndTime = RealContestStartTime + json.contest.durationSeconds;
-		StartTime = new Date(StartTime * 1000);
-		EndTime = new Date(EndTime * 1000);
-		RealContestStartTime = new Date(RealContestStartTime * 1000);
-		RealContestEndTime = new Date(RealContestEndTime * 1000);
-		var currT = new Date();
-		$('.ConnectionStatus').html('<i class="fa fa-check style_accept"></i> Updated! ['+currT.pattern("hh:mm:ss")+']');
-		$('.SendButton').html('<i class="fa fa-send"></i>');
-		$('.ContestName').text(json.contest.name);
-		CurrentStatus = json.contest.phase;
-		if(currT<StartTime)	CurrentStatus="BEFORE";
-		else if(currT<EndTime)	CurrentStatus="CODING";
-		if(realLength==0)
-			$('.VirtualRankButton').css('display','none');
-		
-
-		var FriendResultInfo = {};
-		for(var i=0;i<json.rows.length;i++){
-			var nam = json.rows[i].party.members[0].handle;
-			if(FriendResultInfo[nam] == undefined)
-				FriendResultInfo[nam] = {};
-			if(FriendResultInfo[nam][json.rows[i].party.participantType] == undefined)
-				FriendResultInfo[nam][json.rows[i].party.participantType] = [];
-			FriendResultInfo[nam][json.rows[i].party.participantType].push(json.rows[i]);
-		}
-		console.log(FriendResultInfo);
-		FriendJson = {};
-		FriendSuccessList = [];
-		for(var i=0;i<CurrDiffDetail.length;i++){
-			var nam = CurrDiffDetail[i].handle;
-			for(var j=0;j<CurrDiffDetail[i].contestInfo.length;j++){
-				var Q = nam + '-' + CurrDiffDetail[i].contestInfo[j];
-				if(CurrDiffDetail[i].contestInfo[j]=="C"){
-					if(FriendResultInfo[nam]["CONTESTANT"]!=undefined)
-						FriendJson[Q] = FriendResultInfo[nam]["CONTESTANT"][0],
-						FriendSuccessList.push(Q);
-				}
-				else if(CurrDiffDetail[i].contestInfo[j]=="O"){
-					if(FriendResultInfo[nam]["OUT_OF_COMPETITION"]!=undefined)
-						FriendJson[Q] = FriendResultInfo[nam]["OUT_OF_COMPETITION"][0],
-						FriendSuccessList.push(Q);
-				}
-				else{
-					if(FriendResultInfo[nam]["VIRTUAL"]==undefined)
-						continue;
-					var p=CurrDiffDetail[i].contestInfo[j];
-					p=Number(p.substr(1,p.length-1));
-					if(p>=0)	p=p-1;
-					else if(p<0)	p=FriendResultInfo[nam]["VIRTUAL"].length+p;
-					if(p<0 || p>=FriendResultInfo[nam]["VIRTUAL"].length)	continue;
-					FriendJson[Q] = FriendResultInfo[nam]["VIRTUAL"][p],
-					FriendSuccessList.push(Q);
-				}
-			}
-		}
-
-		if(CurrentStatus=="BEFORE"){
-			$('.ProblemList').html('<div style="height:100%;display: flex;align-items: center;justify-content: center;vertical-align:center">Blank</div>');
-			blankTip = true;
-			if(!flushTimeRunned)
-				flushTimeRunned=true,setTimeout(flushTimeIndex(cD), 0);
-			clearTimeout(sTo);
-			setTimeout(function(){getApiInfo(cD);}, Math.min(30000, Number(StartTime) - Number(currT)));
-		}
-		else{
-			var probList = [];
-			for(var i=0;i<json.problems.length;i++)
-				probList.push(json.problems[i].index);
-			var reslList = [];
-			if(realLength==0){
-				$('.ConnectionStatus').html('<i class="fa fa-times style_error"></i> Not In The Contest!');
-				for(var i=0;i<probList.length;i++)
-					reslList.push(['?','--:--','0','ProblemUnknown']);
-				getProblemList(probList, reslList);
-				$('.CurrentRating').html("#?");
-				$('.SmallRank').html('#?');
-				$('#highchatrsContainer').html('<div style="height:100%;display: flex;align-items: center;justify-content: center;vertical-align:center">Blank</div>');
+	refreshApiInfo = $.ajax({
+		url: "https://codeforces.com/api/contest.standings",
+		type: "GET",
+		data: {
+			contestId: ContestID,
+			handles: handleList,
+			showUnofficial: showUnofficialIf
+		},
+		success: function(json){
+			ApiLoadingStatus = false;
+			if(json.status != "OK"){
+				$('.ConnectionStatus').html('<i class="fa fa-times style_error"></i> Cannot Get Standings!');
+				$('.SendButton').html('<i class="fa fa-send"></i>');
 				return;
 			}
-			json = realList[SelectContestIndex];
-			win.title = `${Username} At #${ContestID} As ${json.party.participantType}`;
-			$('.UserType').html(json.party.participantType);
-			if((CurrentStatus == "FINISHED" && (
-				json.party.participantType=="CONTESTANT"
-			||  json.party.participantType=="VIRTUAL"))
-			|| (json.party.participantType=="VIRTUAL" && CurrentStatus == "CODING")){
-				$('.VirtualRankButton').css('display','inline-block');
-				if(VirtualRank){
-					globalJson = json;
-					if(!LoadingStatus)
-						refreshStandings(json);
+			json.result.rows.sort(sortRows);
+			console.log(json.result.rows);
+			if(cD<changeDate)	return;
+			$(".ContestIdNumber").text("#"+ContestID);
+			$(".SmallContestName").text("#"+ContestID);
+			$('.SmallUsername').text('@'+Username);
+			$('.ContestRatingChanges').html("");
+			$('.SmallRatingChanges').html("");
+			win.title = `${Username} At #${ContestID}`;
+			json = json.result;
+			var realLength = 0;
+			var realList = [];
+			$('.ContestTypeChosen').html('');
+			for(var i=0;i<json.rows.length;i++)
+				if(json.rows[i].party.members[0].handle==Username)
+					++realLength, realList.push(json.rows[i]), 
+					$('.ContestTypeChosen').append(`<option value="${realLength-1}">${(new Date(json.rows[i].party.startTimeSeconds*1000)).pattern("YY-MM-dd hh:mm")} ${json.rows[i].party.participantType}</option>`);
+			if(SelectContestIndex<0 || SelectContestIndex>=realLength)
+				SelectContestTime=false;
+			if(!SelectContestTime)
+				SelectContestIndex=realLength-1,
+				SelectContestTime=true;
+			$('.ContestTypeChosen:first').val(SelectContestIndex);
+			if(realLength!=0)
+				$('.SmallTime').text($('.ContestTypeChosen option:selected').text().substr(0,14));
+			else
+				$('.SmallTime').text('-');
+			ContestType = json.contest.type;
+			$('.ContestType').html(json.contest.type);
+			RealContestStartTime = StartTime = json.contest.startTimeSeconds;
+			if(realLength!=0)
+				StartTime = realList[SelectContestIndex].party.startTimeSeconds;
+			EndTime = StartTime + json.contest.durationSeconds;
+			RealContestEndTime = RealContestStartTime + json.contest.durationSeconds;
+			StartTime = new Date(StartTime * 1000);
+			EndTime = new Date(EndTime * 1000);
+			RealContestStartTime = new Date(RealContestStartTime * 1000);
+			RealContestEndTime = new Date(RealContestEndTime * 1000);
+			var currT = new Date();
+			$('.ConnectionStatus').html('<i class="fa fa-check style_accept"></i> Updated! ['+currT.pattern("hh:mm:ss")+']');
+			$('.SendButton').html('<i class="fa fa-send"></i>');
+			$('.ContestName').text(json.contest.name);
+			CurrentStatus = json.contest.phase;
+			if(currT<StartTime)	CurrentStatus="BEFORE";
+			else if(currT<EndTime)	CurrentStatus="CODING";
+			if(realLength==0)
+				$('.VirtualRankButton').css('display','none');
+			
+
+			var FriendResultInfo = {};
+			for(var i=0;i<json.rows.length;i++){
+				var nam = json.rows[i].party.members[0].handle;
+				if(FriendResultInfo[nam] == undefined)
+					FriendResultInfo[nam] = {};
+				if(FriendResultInfo[nam][json.rows[i].party.participantType] == undefined)
+					FriendResultInfo[nam][json.rows[i].party.participantType] = [];
+				FriendResultInfo[nam][json.rows[i].party.participantType].push(json.rows[i]);
+			}
+			console.log(FriendResultInfo);
+			FriendJson = {};
+			FriendSuccessList = [];
+			for(var i=0;i<CurrDiffDetail.length;i++){
+				var nam = CurrDiffDetail[i].handle;
+				for(var j=0;j<CurrDiffDetail[i].contestInfo.length;j++){
+					var Q = nam + '-' + CurrDiffDetail[i].contestInfo[j];
+					if(CurrDiffDetail[i].contestInfo[j]=="C"){
+						if(FriendResultInfo[nam]["CONTESTANT"]!=undefined)
+							FriendJson[Q] = FriendResultInfo[nam]["CONTESTANT"][0],
+							FriendSuccessList.push(Q);
+					}
+					else if(CurrDiffDetail[i].contestInfo[j]=="O"){
+						if(FriendResultInfo[nam]["OUT_OF_COMPETITION"]!=undefined)
+							FriendJson[Q] = FriendResultInfo[nam]["OUT_OF_COMPETITION"][0],
+							FriendSuccessList.push(Q);
+					}
+					else{
+						if(FriendResultInfo[nam]["VIRTUAL"]==undefined)
+							continue;
+						var p=CurrDiffDetail[i].contestInfo[j];
+						p=Number(p.substr(1,p.length-1));
+						if(p>=0)	p=p-1;
+						else if(p<0)	p=FriendResultInfo[nam]["VIRTUAL"].length+p;
+						if(p<0 || p>=FriendResultInfo[nam]["VIRTUAL"].length)	continue;
+						FriendJson[Q] = FriendResultInfo[nam]["VIRTUAL"][p],
+						FriendSuccessList.push(Q);
+					}
 				}
 			}
-			else
-				$('.VirtualRankButton').css('display','none');
-			if(json.party.participantType=="PRACTICE"){
-				$('.CurrentRating').html("#?");
-				$('.SmallRank').html('#?');
-				$('#highchatrsContainer').html('<div style="height:100%;display: flex;align-items: center;justify-content: center;vertical-align:center">Blank</div>');
+
+			if(CurrentStatus=="BEFORE"){
+				$('.ProblemList').html('<div style="height:100%;display: flex;align-items: center;justify-content: center;vertical-align:center">Blank</div>');
+				blankTip = true;
+				if(!flushTimeRunned)
+					flushTimeRunned=true,setTimeout(flushTimeIndex(cD), 0);
+				clearTimeout(sTo);
+				setTimeout(function(){getApiInfo(cD);}, Math.min(30000, Number(StartTime) - Number(currT)));
 			}
 			else{
-				if(!VirtualRank){
-					$('.CurrentRating').html('#'+json.rank);
-					$('.SmallRank').html('#'+json.rank);
-					var p = Number(new Date())-currT.getTimezoneOffset()*60*1000;
-					RankData.push([p,json.rank]);
-					ScoreData.push([p,json.points]);
-					for(var i=0;i<FriendSuccessList.length;i++){
-						if(FriendRankData[FriendSuccessList[i]]==undefined)
-							FriendRankData[FriendSuccessList[i]]=[];
-						FriendRankData[FriendSuccessList[i]].push([p,FriendJson[FriendSuccessList[i]].rank]);
-					}
-					getChart();
-				}
-			}
-			for(var i=0;i<probList.length;i++){
-				var ProblemType = json.problemResults[i].bestSubmissionTimeSeconds!=undefined?"ProblemAccepted":"ProblemWrong";
-				if(ProblemType == "ProblemAccepted" && json.problemResults[i].participantType=="PRELIMINARY" && CurrentStatus=="SYSTEM_TEST")
-					ProblemType = "ProblemUnknown";
-				if(ProblemType == "ProblemWrong" && CurrentStatus == "CODING")
-					ProblemType = "ProblemCoding";
-				var fr = "";
-				if(ProblemType == "ProblemUnknown")	fr="?";
-				else if(ProblemType == "ProblemAccepted")	fr='+'+(json.problemResults[i].rejectedAttemptCount==0?'':json.problemResults[i].rejectedAttemptCount);
-				else if(json.problemResults[i].rejectedAttemptCount==0)	fr='';
-				else fr='-'+json.problemResults[i].rejectedAttemptCount;
-				var se = json.problemResults[i].bestSubmissionTimeSeconds;
-				if(se==undefined || json.party.participantType=="PRACTICE")	se='--:--';
-				else se=getTimeLength(se*1000);
-				reslList.push([fr,se,json.problemResults[i].points,ProblemType]);
-			}
-			getProblemList(probList, reslList);
-			ProblemListAppend(json.penalty, json.points, json.successfulHackCount, json.unsuccessfulHackCount);
-			if(CurrentStatus == "CODING"){
-				if(!flushTimeRunned)
-					flushTimeRunned=true, setTimeout(flushTimeIndex(cD), 0);
-			}
-			else if(CurrentStatus == "PENDING_SYSTEM_TEST")
-				$('.ContestStatus').html('Pending System Test...');
-			else if(CurrentStatus == "SYSTEM_TEST")
-				$('.ContestStatus').html('System Testing...');
-			else if(json.party.participantType=="PRACTICE")
-				$('.ContestStatus').html('Finished');
-			else if(CurrentStatus == "FINISHED")
-				$('.ContestStatus').html('Finished'),
-				clearTimeout(sTo);
-			if(json.party.participantType == "CONTESTANT"){
-				$('.ContestRatingChanges').html("<i class='fa fa-spin fa-spinner'></i>");
-				$('.SmallRatingChanges').html("<i class='fa fa-spin fa-spinner'></i>");
-				ApiLoadingStatus3 = true;
-				if(CurrentStatus == "FINISHED"){
-					getRatingChanges = $.ajax({
-						url: "https://codeforces.com/api/contest.ratingChanges",
-						type: "GET",
-						data: {contestId: ContestID},
-						success: function(json3){
-							ApiLoadingStatus3 = false;
-							if(json3.status != "OK"){
-								$('.ContestRatingChanges').html("<i class='fa fa-unlink'></i>");
-								$('.SmallRatingChanges').html("<i class='fa fa-unlink'></i>");
-								return;
-							}
-							loadRatingChanges(json3, Username);
-						},
-						error: function(){
-							ApiLoadingStatus3 = false;
-							$('.ContestRatingChanges').html("<i class='fa fa-unlink'></i>");
-							$('.SmallRatingChanges').html("<i class='fa fa-unlink'></i>");
-						},
-						xhr: function() {
-				            var xhr = new XMLHttpRequest();
-				            xhr.addEventListener('progress', function (e) {
-				                $('.ContestRatingChanges').html("<i class='fa fa-download'></i> </br>"+toMemoryInfo(e.loaded));
-				            	$('.SmallRatingChanges').html("<i class='fa fa-download'></i> "+toMemoryInfo(e.loaded));
-				            });
-				            return xhr;
-				        }
-					});
-				}
-				else{
-					getRatingChanges = $.ajax({
-						url: "https://cf-predictor-frontend.herokuapp.com/GetNextRatingServlet",
-						type: "GET",
-						data: {contestId: ContestID},
-						success: function(json3){
-							ApiLoadingStatus3 = false;
-							if(json3.status != "OK"){
-								$('.ContestRatingChanges').html("<i class='fa fa-unlink'></i>");
-								$('.SmallRatingChanges').html("<i class='fa fa-unlink'></i>");
-								return;
-							}
-							loadRatingChanges(json3, Username);
-						},
-						error: function(){
-							ApiLoadingStatus3 = false;
-							$('.ContestRatingChanges').html("<i class='fa fa-unlink'></i>");
-							$('.SmallRatingChanges').html("<i class='fa fa-unlink'></i>");
-						},
-						xhr: function() {
-				            var xhr = new XMLHttpRequest();
-				            xhr.addEventListener('progress', function (e) {
-				                $('.ContestRatingChanges').html("<i class='fa fa-download'></i> </br>"+toMemoryInfo(e.loaded));
-				            	$('.SmallRatingChanges').html("<i class='fa fa-download'></i> "+toMemoryInfo(e.loaded));
-				            });
-				            return xhr;
-				        }
-					});
-				}
-			}
-		}
-	}).fail(function(jqXHR, status, error){
-		ApiLoadingStatus = false;
-		if(jqXHR.responseJSON == undefined){
-			$('.ConnectionStatus').html('<i class="fa fa-times style_error"></i> Cannot Get Standings!');
-			$('.SendButton').html('<i class="fa fa-send"></i>');
-			return;
-		}
-		var ec = jqXHR.responseJSON.comment, ref = false;
-		if(ec.substr(0,10)==='contestId:'){
-			ApiLoadingStatus2 = true;
-			getContestList = $.getJSON("https://codeforces.com/api/contest.list",function(json2){
-				ApiLoadingStatus2 = false;
-				if(json2.status != "OK"){
-					$('.ConnectionStatus').html('<i class="fa fa-times style_error"></i> Contest Not Found!');
-					$('.SendButton').html('<i class="fa fa-send"></i>');
+				var probList = [];
+				for(var i=0;i<json.problems.length;i++)
+					probList.push(json.problems[i].index);
+				var reslList = [];
+				if(realLength==0){
+					$('.ConnectionStatus').html('<i class="fa fa-times style_error"></i> Not In The Contest!');
+					for(var i=0;i<probList.length;i++)
+						reslList.push(['?','--:--','0','ProblemUnknown']);
+					getProblemList(probList, reslList);
+					$('.CurrentRating').html("#?");
+					$('.SmallRank').html('#?');
+					$('#highchatrsContainer').html('<div style="height:100%;display: flex;align-items: center;justify-content: center;vertical-align:center">Blank</div>');
 					return;
 				}
-				json2=json2.result;
-				for(var i=0;i<json2.length;i++){
-					if(json2[i].phase == "FINISHED")	break;
-					if(json2[i].id == ContestID){
-						$(".ContestIdNumber").text("#"+ContestID);
-						$(".SmallContestName").text("#"+ContestID);
-						$('.SmallUsername').text('@'+Username);
-						$('.ContestTypeChosen').html('');
-						SelectContestTime = false;
-						RealContestStartTime = StartTime = json2[i].startTimeSeconds;
-						EndTime = StartTime + json2[i].durationSeconds;
-						RealContestEndTime = RealContestStartTime + json2[i].durationSeconds;
-						StartTime = new Date(StartTime * 1000);
-						EndTime = new Date(EndTime * 1000);
-						RealContestStartTime = new Date(RealContestStartTime * 1000);
-						RealContestEndTime = new Date(RealContestEndTime * 1000);
-						var currT = new Date();
-						$('.ConnectionStatus').html('<i class="fa fa-check style_accept"></i> Updated! ['+currT.pattern("hh:mm:ss")+']');
-						$('.SendButton').html('<i class="fa fa-send"></i>');
-						$('.ContestName').html(json2[i].name);
-						CurrentStatus = json2[i].phase;
-						if(currT<StartTime)	CurrentStatus="BEFORE";
-						else if(currT<EndTime)	CurrentStatus="CODING";
-						$('.VirtualRankButton').css('display','none');
-						$('.ProblemList').html('<div style="height:100%;display: flex;align-items: center;justify-content: center;vertical-align:center">Blank</div>');
-						blankTip = true;
-						$('.UserType').html('UNKNOWN');
-						$('.CurrentRating').html("#?");
-						$('.SmallRank').html('#?');
-						$('#highchatrsContainer').html('<div style="height:100%;display: flex;align-items: center;justify-content: center;vertical-align:center">Blank</div>');
-						if(!flushTimeRunned)
-							flushTimeRunned=true,setTimeout(flushTimeIndex(cD), 0);
-						clearTimeout(sTo);
-						setTimeout(function(){getApiInfo(cD);}, Math.min(30000, Number(StartTime) - Number(currT)));
+				json = realList[SelectContestIndex];
+				win.title = `${Username} At #${ContestID} As ${json.party.participantType}`;
+				$('.UserType').html(json.party.participantType);
+				if((CurrentStatus == "FINISHED" && (
+					json.party.participantType=="CONTESTANT"
+				||  json.party.participantType=="VIRTUAL"))
+				|| (json.party.participantType=="VIRTUAL" && CurrentStatus == "CODING")){
+					$('.VirtualRankButton').css('display','inline-block');
+					if(VirtualRank){
+						globalJson = json;
+						if(!LoadingStatus)
+							refreshStandings(json);
 					}
 				}
-			}).fail(function(jqXHR, status, error){
-				$('.ConnectionStatus').html('<i class="fa fa-times style_error"></i> Contest Not Found!');
+				else
+					$('.VirtualRankButton').css('display','none');
+				if(json.party.participantType=="PRACTICE"){
+					$('.CurrentRating').html("#?");
+					$('.SmallRank').html('#?');
+					$('#highchatrsContainer').html('<div style="height:100%;display: flex;align-items: center;justify-content: center;vertical-align:center">Blank</div>');
+				}
+				else{
+					if(!VirtualRank){
+						$('.CurrentRating').html('#'+json.rank);
+						$('.SmallRank').html('#'+json.rank);
+						var p = Number(new Date())-currT.getTimezoneOffset()*60*1000;
+						RankData.push([p,json.rank]);
+						ScoreData.push([p,json.points]);
+						for(var i=0;i<FriendSuccessList.length;i++){
+							if(FriendRankData[FriendSuccessList[i]]==undefined)
+								FriendRankData[FriendSuccessList[i]]=[];
+							FriendRankData[FriendSuccessList[i]].push([p,FriendJson[FriendSuccessList[i]].rank]);
+						}
+						getChart();
+					}
+				}
+				for(var i=0;i<probList.length;i++){
+					var ProblemType = json.problemResults[i].bestSubmissionTimeSeconds!=undefined?"ProblemAccepted":"ProblemWrong";
+					if(ProblemType == "ProblemAccepted" && json.problemResults[i].participantType=="PRELIMINARY" && CurrentStatus=="SYSTEM_TEST")
+						ProblemType = "ProblemUnknown";
+					if(ProblemType == "ProblemWrong" && CurrentStatus == "CODING")
+						ProblemType = "ProblemCoding";
+					var fr = "";
+					if(ProblemType == "ProblemUnknown")	fr="?";
+					else if(ProblemType == "ProblemAccepted")	fr='+'+(json.problemResults[i].rejectedAttemptCount==0?'':json.problemResults[i].rejectedAttemptCount);
+					else if(json.problemResults[i].rejectedAttemptCount==0)	fr='';
+					else fr='-'+json.problemResults[i].rejectedAttemptCount;
+					var se = json.problemResults[i].bestSubmissionTimeSeconds;
+					if(se==undefined || json.party.participantType=="PRACTICE")	se='--:--';
+					else se=getTimeLength(se*1000);
+					reslList.push([fr,se,json.problemResults[i].points,ProblemType]);
+				}
+				getProblemList(probList, reslList);
+				ProblemListAppend(json.penalty, json.points, json.successfulHackCount, json.unsuccessfulHackCount);
+				if(CurrentStatus == "CODING"){
+					if(!flushTimeRunned)
+						flushTimeRunned=true, setTimeout(flushTimeIndex(cD), 0);
+				}
+				else if(CurrentStatus == "PENDING_SYSTEM_TEST")
+					$('.ContestStatus').html('Pending System Test...');
+				else if(CurrentStatus == "SYSTEM_TEST")
+					$('.ContestStatus').html('System Testing...');
+				else if(json.party.participantType=="PRACTICE")
+					$('.ContestStatus').html('Finished');
+				else if(CurrentStatus == "FINISHED")
+					$('.ContestStatus').html('Finished'),
+					clearTimeout(sTo);
+				if(json.party.participantType == "CONTESTANT"){
+					$('.ContestRatingChanges').html("<i class='fa fa-spin fa-spinner'></i>");
+					$('.SmallRatingChanges').html("<i class='fa fa-spin fa-spinner'></i>");
+					ApiLoadingStatus3 = true;
+					if(CurrentStatus == "FINISHED"){
+						getRatingChanges = $.ajax({
+							url: "https://codeforces.com/api/contest.ratingChanges",
+							type: "GET",
+							data: {contestId: ContestID},
+							success: function(json3){
+								ApiLoadingStatus3 = false;
+								if(json3.status != "OK"){
+									$('.ContestRatingChanges').html("<i class='fa fa-unlink'></i>");
+									$('.SmallRatingChanges').html("<i class='fa fa-unlink'></i>");
+									return;
+								}
+								loadRatingChanges(json3, Username);
+							},
+							error: function(){
+								ApiLoadingStatus3 = false;
+								$('.ContestRatingChanges').html("<i class='fa fa-unlink'></i>");
+								$('.SmallRatingChanges').html("<i class='fa fa-unlink'></i>");
+							},
+							xhr: function() {
+					            var xhr = new XMLHttpRequest();
+					            xhr.addEventListener('progress', function (e) {
+					                $('.ContestRatingChanges').html("<i class='fa fa-download'></i> </br>"+toMemoryInfo(e.loaded));
+					            	$('.SmallRatingChanges').html("<i class='fa fa-download'></i> "+toMemoryInfo(e.loaded));
+					            });
+					            return xhr;
+					        }
+						});
+					}
+					else{
+						getRatingChanges = $.ajax({
+							url: "https://cf-predictor-frontend.herokuapp.com/GetNextRatingServlet",
+							type: "GET",
+							data: {contestId: ContestID},
+							success: function(json3){
+								ApiLoadingStatus3 = false;
+								if(json3.status != "OK"){
+									$('.ContestRatingChanges').html("<i class='fa fa-unlink'></i>");
+									$('.SmallRatingChanges').html("<i class='fa fa-unlink'></i>");
+									return;
+								}
+								loadRatingChanges(json3, Username);
+							},
+							error: function(){
+								ApiLoadingStatus3 = false;
+								$('.ContestRatingChanges').html("<i class='fa fa-unlink'></i>");
+								$('.SmallRatingChanges').html("<i class='fa fa-unlink'></i>");
+							},
+							xhr: function() {
+					            var xhr = new XMLHttpRequest();
+					            xhr.addEventListener('progress', function (e) {
+					                $('.ContestRatingChanges').html("<i class='fa fa-download'></i> </br>"+toMemoryInfo(e.loaded));
+					            	$('.SmallRatingChanges').html("<i class='fa fa-download'></i> "+toMemoryInfo(e.loaded));
+					            });
+					            return xhr;
+					        }
+						});
+					}
+				}
+			}
+		},
+		erorr: function(jqXHR, status, error){
+			ApiLoadingStatus = false;
+			if(jqXHR.responseJSON == undefined){
+				$('.ConnectionStatus').html('<i class="fa fa-times style_error"></i> Cannot Get Standings!');
 				$('.SendButton').html('<i class="fa fa-send"></i>');
-			});
-		}
-		else{
-			$('.ConnectionStatus').html('<i class="fa fa-times style_error"></i> '+(ec.substr(0,8)==='handles:'?'Username Not Found!':(ec.substr(0,10)==='contestId:'?'Contest Not Found!':(ref=true,"Cannot Get Standings!"))));
-			$('.SendButton').html('<i class="fa fa-send"></i>');
-			if(!ref)
-				clearTimeout(sTo);
-		}
+				return;
+			}
+			var ec = jqXHR.responseJSON.comment, ref = false;
+			if(ec.substr(0,10)==='contestId:'){
+				ApiLoadingStatus2 = true;
+				getContestList = $.getJSON("https://codeforces.com/api/contest.list",function(json2){
+					ApiLoadingStatus2 = false;
+					if(json2.status != "OK"){
+						$('.ConnectionStatus').html('<i class="fa fa-times style_error"></i> Contest Not Found!');
+						$('.SendButton').html('<i class="fa fa-send"></i>');
+						return;
+					}
+					json2=json2.result;
+					for(var i=0;i<json2.length;i++){
+						if(json2[i].phase == "FINISHED")	break;
+						if(json2[i].id == ContestID){
+							$(".ContestIdNumber").text("#"+ContestID);
+							$(".SmallContestName").text("#"+ContestID);
+							$('.SmallUsername').text('@'+Username);
+							$('.ContestTypeChosen').html('');
+							SelectContestTime = false;
+							RealContestStartTime = StartTime = json2[i].startTimeSeconds;
+							EndTime = StartTime + json2[i].durationSeconds;
+							RealContestEndTime = RealContestStartTime + json2[i].durationSeconds;
+							StartTime = new Date(StartTime * 1000);
+							EndTime = new Date(EndTime * 1000);
+							RealContestStartTime = new Date(RealContestStartTime * 1000);
+							RealContestEndTime = new Date(RealContestEndTime * 1000);
+							var currT = new Date();
+							$('.ConnectionStatus').html('<i class="fa fa-check style_accept"></i> Updated! ['+currT.pattern("hh:mm:ss")+']');
+							$('.SendButton').html('<i class="fa fa-send"></i>');
+							$('.ContestName').html(json2[i].name);
+							CurrentStatus = json2[i].phase;
+							if(currT<StartTime)	CurrentStatus="BEFORE";
+							else if(currT<EndTime)	CurrentStatus="CODING";
+							$('.VirtualRankButton').css('display','none');
+							$('.ProblemList').html('<div style="height:100%;display: flex;align-items: center;justify-content: center;vertical-align:center">Blank</div>');
+							blankTip = true;
+							$('.UserType').html('UNKNOWN');
+							$('.CurrentRating').html("#?");
+							$('.SmallRank').html('#?');
+							$('#highchatrsContainer').html('<div style="height:100%;display: flex;align-items: center;justify-content: center;vertical-align:center">Blank</div>');
+							if(!flushTimeRunned)
+								flushTimeRunned=true,setTimeout(flushTimeIndex(cD), 0);
+							clearTimeout(sTo);
+							setTimeout(function(){getApiInfo(cD);}, Math.min(30000, Number(StartTime) - Number(currT)));
+						}
+					}
+				}).fail(function(jqXHR, status, error){
+					$('.ConnectionStatus').html('<i class="fa fa-times style_error"></i> Contest Not Found!');
+					$('.SendButton').html('<i class="fa fa-send"></i>');
+				});
+			}
+			else{
+				$('.ConnectionStatus').html('<i class="fa fa-times style_error"></i> '+(ec.substr(0,8)==='handles:'?'Username Not Found!':(ec.substr(0,10)==='contestId:'?'Contest Not Found!':(ref=true,"Cannot Get Standings!"))));
+				$('.SendButton').html('<i class="fa fa-send"></i>');
+				if(!ref)
+					clearTimeout(sTo);
+			}
+		},
+		xhr: function() {
+            var xhr = new XMLHttpRequest();
+            xhr.addEventListener('progress', function (e) {
+                $('.ConnectionStatus').html('<i class="fa fa-download"></i> Downloading Standings... '+toMemoryInfo(e.loaded));
+            });
+            return xhr;
+        }
 	});
 }
 function checkName(un){
