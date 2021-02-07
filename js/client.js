@@ -16,7 +16,6 @@ var StandingsID = 0;
 var CurrentStatus;
 var ContestType;
 var OpenRankMonitor=false;
-var DarkMode = false;
 var VirtualRank = false;
 var globalJson;
 var getStandingsJSONStatus;
@@ -32,6 +31,7 @@ var ApiLoadingStatus2 = false;
 var WinHeight = 595;
 var lastSet = 595;
 var chart = undefined;
+var openAdvancedOption = false;
 var DefaultStyle = JSON.parse(JSON.stringify(Highcharts.getOptions()));
 DefaultStyle.legend.backgroundColor = '#fff';
 DefaultStyle.yAxis = {gridLineColor: "#E6E6E6"}
@@ -744,6 +744,7 @@ function getApiInfo(cD){
 		$('.SmallUsername').text('@'+Username);
 		$('.ContestRatingChanges').html("");
 		$('.SmallRatingChanges').html("");
+		win.title = `${Username} At #${ContestID}`;
 		json = json.result;
 		$('.ContestTypeChosen').html('');
 		for(var i=0;i<json.rows.length;i++)
@@ -802,6 +803,7 @@ function getApiInfo(cD){
 				return;
 			}
 			json = json.rows[SelectContestIndex];
+			win.title = `${Username} At #${ContestID} As ${json.party.participantType}`;
 			$('.UserType').html(json.party.participantType);
 			if((CurrentStatus == "FINISHED" && (
 				json.party.participantType=="CONTESTANT"
@@ -1051,6 +1053,39 @@ function getNewestRepo(){
 		$('.ConnectionStatus').html('<i class="fa fa-times style_error"></i> Connection Error!');
 	});
 }
+function openSelf(){
+	nw.Window.open("index.html",{
+	    "title": "Codeforces Contest Helper", 
+	    "icon": "icon.png",
+	    "frame": true,
+	    "width": 400,
+	    "height": 600, 
+	    "position": "center",
+	    "min_width": 400,
+	    "min_height": 0,
+	    "max_width": 9999,
+	    "max_height": 9999,
+	    "resizable": false,
+	    "fullscreen":false,
+	    "show_in_taskbar":true,
+	    "show":true, 
+	    "kiosk":false,
+	    "frame":false
+	});
+}
+function showAdvancedOptionIf(){
+	if(!openAdvancedOption){
+		$(".UserType").css("max-width","8px");
+		$(".AdvancedToolList").css("width","125px");
+		$('.OpenAdvancedButton').addClass("fa-rotate-180").attr("title","Less Options");
+	}
+	else{
+		$(".UserType").css("max-width","200px");
+		$(".AdvancedToolList").css("width","0px");
+		$('.OpenAdvancedButton').removeClass("fa-rotate-180").attr("title","More Options");
+	}
+	openAdvancedOption = !openAdvancedOption;
+}
 $('.LockButton').attr('onclick','lockIfClick()');
 $('.SendButton').attr('onclick','changeUserInfo()');
 $('.UnofficialButton').attr('onclick','showUnofficialIfClick()');
@@ -1059,3 +1094,5 @@ $('.VirtualRankButton').attr('onclick','getVirtualRankIf()');
 $('.FoldButton').attr('onclick','setSmall()');
 $('.UnfoldButton').attr('onclick','setBig()');
 $('.UpdateButton').attr('onclick','getNewestRepo()');
+$('.OpenWindowButton').attr('onclick','openSelf()');
+$('.OpenAdvancedButton').attr('onclick','showAdvancedOptionIf()');

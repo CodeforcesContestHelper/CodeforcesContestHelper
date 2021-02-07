@@ -6,6 +6,13 @@
 		<link rel="stylesheet" href="./css/client.css">
 		<link class="ThemeTypeIf" rel="stylesheet" href="./css/default.css">
 		<link rel="stylesheet" href="./css/all.min.css">
+		<script>
+			var DarkMode = false;
+			if (window.matchMedia('(prefers-color-scheme)').media !== 'not all') {
+				if(window.matchMedia('(prefers-color-scheme: dark)').matches)
+					DarkMode = true, $('.ThemeTypeIf').attr('href','./css/dark.css');
+			}
+		</script>
 	</head>
 	<body>
 		<div class="BigInterface">
@@ -56,12 +63,16 @@
 						<div class="ConnectionStatus"><i class="fa fa-globe"></i> Fill & Send to update!</div>
 						<span class="UserType">?</span>
 						<div class="ToolList">
-							<button type="button" class="FoldButton" title="Fold Window"><i class="fa fa-angle-down"></i></button>
-							<button type="button" class="VirtualRankButton" title="Enable Rank Predictor" style="display:none"><i class="fa fa-database"></i></button>
-							<button type="button" class="UpdateButton" title="Get Update Time"><i class="fa fa-upload"></i></button>
+							<button type="button" class="OpenAdvancedButton" title="More Options"><i class="fa fa-angle-double-left"></i></button>
+							<div class="AdvancedToolList" style="width:0px;height:24px;">
+								<button type="button" class="OpenWindowButton" title="Open New Window"><i class="fa fa-clone"></i></button>
+								<button type="button" class="FoldButton" title="Fold Window"><i class="fa fa-angle-down"></i></button>
+								<button type="button" class="VirtualRankButton" title="Enable Rank Predictor" style="display:none"><i class="fa fa-database"></i></button>
+								<button type="button" class="UnofficialButton" title="Show Unofficial"><i class="fa fa-user"></i></button>
+								<button type="button" class="UpdateButton" title="Get Update Time"><i class="fa fa-upload"></i></button>
+							</div>
 							<button type="button" class="ThemeButton" title="Change Theme"><i class="fa fa-sun-o"></i></button>
 							<button type="button" class="LockButton" title="Lock"><i class="fa fa-unlock"></i></button>
-							<button type="button" class="UnofficialButton" title="Show Unofficial"><i class="fa fa-user"></i></button>
 							<button type="button" class="SendButton" title="Send"><i class="fa fa-send"></i></button>
 							<button type="button" class="CloseButton" title="Close"><i class="fa fa-times style_error"></i></button>
 						</div>
@@ -86,10 +97,16 @@
 			<hr>
 			<span class="UserType">?</span>
 			<div class="ToolList">
-				<button type="button" class="UnfoldButton" title="Unfold Window"><i class="fa fa-angle-up"></i></button>
-				<button type="button" class="VirtualRankButton" title="Enable Rank Predictor" style="display:none"><i class="fa fa-database"></i></button>
+				<button type="button" class="OpenAdvancedButton" title="More Options"><i class="fa fa-angle-double-left"></i></button>
+				<div class="AdvancedToolList" style="width:0px;height:24px;">
+					<button type="button" class="OpenWindowButton" title="Open New Window"><i class="fa fa-clone"></i></button>
+					<button type="button" class="UnfoldButton" title="Unfold Window"><i class="fa fa-angle-up"></i></button>
+					<button type="button" class="VirtualRankButton" title="Enable Rank Predictor" style="display:none"><i class="fa fa-database"></i></button>
+					<button type="button" class="UnofficialButton" title="Show Unofficial"><i class="fa fa-user"></i></button>
+					<button type="button" class="UpdateButton" title="Get Update Time"><i class="fa fa-upload"></i></button>
+				</div>
 				<button type="button" class="ThemeButton" title="Change Theme"><i class="fa fa-sun-o"></i></button>
-				<button type="button" class="UnofficialButton" title="Show Unofficial"><i class="fa fa-user"></i></button>
+				<button type="button" class="LockButton" title="Lock"><i class="fa fa-unlock"></i></button>
 				<button type="button" class="SendButton" title="Send"><i class="fa fa-send"></i></button>
 				<button type="button" class="CloseButton" title="Close"><i class="fa fa-times style_error"></i></button>
 			</div>
@@ -122,6 +139,8 @@
 					});
 				});
 			}
+			if(DarkMode)
+				$('.ThemeButton').html('<i class="fa fa-moon-o"></i>');
 			function ChangeTheme(){
 				if(!DarkMode)
 					$('.ThemeTypeIf').attr('href','./css/dark.css'),
@@ -133,6 +152,20 @@
 				getChart(RankData);
 			}
 			$('.ThemeButton').attr('onclick','ChangeTheme()');
+			if (window.matchMedia('(prefers-color-scheme)').media !== 'not all') {
+				var listeners={
+				    dark: function(mediaQueryList ){
+				        if(mediaQueryList.matches && !DarkMode)
+				        	ChangeTheme();
+				    },
+				    light: function(mediaQueryList){
+				        if(mediaQueryList.matches && DarkMode)
+				        	ChangeTheme();
+				    }
+				}
+				window.matchMedia('(prefers-color-scheme: dark)').addListener(listeners.dark)
+				window.matchMedia('(prefers-color-scheme: light)').addListener(listeners.light)
+			}
 			$('.SmallInterface').css('display','none');
 		</script>
 	</footer>

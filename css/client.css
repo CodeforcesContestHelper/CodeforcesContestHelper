@@ -154,10 +154,12 @@ hr{
 	margin-left: 2px;
 }
 .UserType{
+	transition: width 0.3s, max-width 0.3s;
 	float: left;
 	margin: 1px;
 	padding: 2px;
 	border-radius: 3px;
+	max-width: 200px;
 }
 .ContestType{
 	text-align: center;
@@ -171,6 +173,16 @@ hr{
 .ToolList{
 	float: right;
 	margin-right: 2px;
+	height: 24px;
+}
+.AdvancedToolList{
+	margin: 0px;
+	padding: 0px;
+	border: 0px;
+	transition: width 0.3s;
+	vertical-align:top;
+	display: inline-block;
+	overflow: scroll;
 }
 button{
 	-webkit-app-region: no-drag;
@@ -208,6 +220,12 @@ select{
     width: 100%;
     height: 22px;
 }
+a{
+	color: inherit;
+}
+.OpenAdvancedButton{
+	transition: 0.3s;
+}
 .SmallContestName, .SmallTime{
 	float: left;
 }
@@ -234,17 +252,8 @@ select{
 .ProblemList::-webkit-scrollbar-corner{
     display: none;
 }
-.ProblemList::-webkit-scrollbar{
-	transition: background-color 0.3s;
-    width: 5px;
-    height: 5px;
-}
-.ProblemList::-webkit-scrollbar-thumb{
-    border-radius: 1px;
-}
-.ProblemList::-webkit-scrollbar-corner{
+.AdvancedToolList::-webkit-scrollbar,
+.AdvancedToolList::-webkit-scrollbar-thumb,
+.AdvancedToolList::-webkit-scrollbar-corner{
     display: none;
-}
-a{
-	color: inherit;
 }

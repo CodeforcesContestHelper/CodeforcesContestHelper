@@ -354,3 +354,12 @@
 .fa-upload:before {
   content: "\f093";
 }
+.fa-angle-double-left:before {
+  content: "\f100";
+}
+.fa-angle-double-right:before {
+  content: "\f101";
+}
+.fa-clone:before {
+  content: "\f24d";
+}
