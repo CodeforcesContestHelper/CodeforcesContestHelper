@@ -11,6 +11,9 @@ var changeDate = new Date();
 var StartTime, EndTime;
 var RealContestStartTime, RealContestEndTime;
 var RankData = [], ScoreData = [];
+var FriendRankData = {};
+var FriendJson = {};
+var FriendSuccessList = [];
 var StandingsList = [], hackList = {};
 var StandingsID = 0;
 var CurrentStatus;
@@ -20,6 +23,8 @@ var VirtualRank = false;
 var globalJson;
 var getStandingsJSONStatus;
 var getHacksJSONStatus;
+var CurrDiffCalc = "";
+var CurrDiffDetail = [];
 var LoadingStatus = false;
 var LoadingStatus2 = false;
 var ApiLoadingStatus3 = false;
@@ -28,8 +33,8 @@ var refreshApiInfo = undefined;
 var ApiLoadingStatus = false;
 var getContestList = undefined
 var ApiLoadingStatus2 = false;
-var WinHeight = 595;
-var lastSet = 595;
+var WinHeight = 615;
+var lastSet = 615;
 var chart = undefined;
 var openAdvancedOption = false;
 var DefaultStyle = JSON.parse(JSON.stringify(Highcharts.getOptions()));
@@ -177,6 +182,46 @@ function getOverallPredictedRank(json){
 	}
 	return returnValue;
 }
+function getRealScore(json,time){
+	var currS = 0, currP = 0;
+	for(var j=0;j<json.problemResults.length;j++){
+		if(json.problemResults[j].bestSubmissionTimeSeconds!=undefined
+		&& json.problemResults[j].bestSubmissionTimeSeconds<=time){
+			currS += json.problemResults[j].points;
+			var _dalta = json.problemResults[j].penalty;
+			if(ContestType == "ICPC")
+				_dalta = Math.floor(json.problemResults[j].bestSubmissionTimeSeconds/60)+json.problemResults[j].rejectedAttemptCount*10;
+			currP += (_dalta == undefined ? 0 : _dalta);
+		}
+	}
+	if(ContestType == "CF" && hackList[json.party.members[0].handle]!=undefined){
+		for(var j=0;j<hackList[json.party.members[0].handle].length;j++){
+			if(hackList[json.party.members[0].handle][j][0]>time)	break;
+			currS += hackList[json.party.members[0].handle][j][1];
+		}
+	}
+	return currS;
+}
+function getRealPenalty(json,time){
+	var currS = 0, currP = 0;
+	for(var j=0;j<json.problemResults.length;j++){
+		if(json.problemResults[j].bestSubmissionTimeSeconds!=undefined
+		&& json.problemResults[j].bestSubmissionTimeSeconds<=time){
+			currS += json.problemResults[j].points;
+			var _dalta = json.problemResults[j].penalty;
+			if(ContestType == "ICPC")
+				_dalta = Math.floor(json.problemResults[j].bestSubmissionTimeSeconds/60)+json.problemResults[j].rejectedAttemptCount*10;
+			currP += (_dalta == undefined ? 0 : _dalta);
+		}
+	}
+	if(ContestType == "CF" && hackList[json.party.members[0].handle]!=undefined){
+		for(var j=0;j<hackList[json.party.members[0].handle].length;j++){
+			if(hackList[json.party.members[0].handle][j][0]>time)	break;
+			currS += hackList[json.party.members[0].handle][j][1];
+		}
+	}
+	return currP;
+}
 function getOverallScore(json){
 	var currT = StartTime;
 	var Step = 60 * 1000;
@@ -210,6 +255,24 @@ function getOverallScore(json){
 }
 function getChart(){
 	if(RankData.length!=0){
+		var SeriesInfo = [];
+		if(FriendSuccessList.length == 0){
+			SeriesInfo = [{
+				type: 'area',
+				name: 'Rank',
+				data: RankData
+			},{
+				yAxis: 1,
+				name: 'Score',
+				data: ScoreData
+			}];
+		}
+		else{
+			SeriesInfo.push({name: "Rank", data: RankData});
+			for(var j=0;j<FriendSuccessList.length;j++)
+				SeriesInfo.push({name: FriendSuccessList[j], data: FriendRankData[FriendSuccessList[j]]});
+		}
+		console.log(SeriesInfo);
 		Highcharts.setOptions(DarkMode?DarkUnica:DefaultStyle);
 		if(chart!=undefined)
 			chart.destroy();
@@ -286,15 +349,7 @@ function getChart(){
 					threshold: null
 				}
 			},
-			series: [{
-				type: 'area',
-				name: 'Rank',
-				data: RankData
-			},{
-				yAxis: 1,
-				name: 'Score',
-				data: ScoreData
-			}],
+			series: SeriesInfo,
 			responsive: {
 				rules: [{
 					condition: {
@@ -341,7 +396,7 @@ $('.GraphFolder').click(function(){
 		$('.GraphFolder').html('<i class="fa fa-angle-down"></i> Unfold'),
 		setSize(375);
 	else
-		setSize(600),
+		setSize(615),
 		$('#highchatrsContainer').css('display','block'),
 		$('.GraphFolder').html('<i class="fa fa-angle-up"></i> Fold');
 	isFold = !isFold;
@@ -551,8 +606,11 @@ function refreshStandings(){
 							json2 = [];
 							var p = getOverallPredictedRank(globalJson);
 							var q = getOverallScore(globalJson);
+							var r = {};
+							for(var j=0;j<FriendSuccessList.length;j++)
+								r[FriendSuccessList[j]] = getOverallPredictedRank(FriendJson[FriendSuccessList[j]]);
 							if(currP > changeDate)
-								RankData=p,ScoreData=q,getChart();
+								RankData=p,ScoreData=q,FriendRankData=r,getChart();
 						},
 						error: function(jqXHR, status, error){
 							LoadingStatus = false;
@@ -572,8 +630,11 @@ function refreshStandings(){
 				else{
 					var p = getOverallPredictedRank(globalJson);
 					var q = getOverallScore(globalJson);
+					var r = {};
+					for(var j=0;j<FriendSuccessList.length;j++)
+						r[FriendSuccessList[j]] = getOverallPredictedRank(FriendJson[FriendSuccessList[j]]);
 					if(currP > changeDate)
-						RankData=p,ScoreData=q,getChart();
+						RankData=p,ScoreData=q,FriendRankData=r,getChart();
 				}
 			},
 			error: function(jqXHR, status, error){
@@ -650,10 +711,16 @@ function refreshStandings(){
 								}
 							json2 = [];
 							var p = getPredictedRank(globalJson.points,globalJson.penalty,(Number(currT)-Number(StartTime))/1000);
+							var q = [];
+							for(var j=0;j<FriendSuccessList.length;j++)
+								q.push(getPredictedRank(getRealScore(FriendJson[FriendSuccessList[j]],(Number(currT)-Number(StartTime))/1000),getRealPenalty(FriendJson[FriendSuccessList[j]],(Number(currT)-Number(StartTime))/1000),(Number(currT)-Number(StartTime))/1000));
 							if(currP > changeDate){
 								var fir = Number(new Date())-currT.getTimezoneOffset()*60*1000;
 								$('.CurrentRating').html('#'+p),$('.SmallRank').html('#'+p),
-								RankData.push([fir,p]),ScoreData.push([fir,globalJson.points]),getChart();
+								RankData.push([fir,p]),ScoreData.push([fir,globalJson.points]);
+								for(var j=0;j<FriendSuccessList.length;j++)
+									FriendRankData[FriendSuccessList[j]].push(fir,q[j]);
+								getChart();
 							}
 						},
 						error: function(jqXHR, status, error){
@@ -673,10 +740,16 @@ function refreshStandings(){
 				}
 				else{
 					var p = getPredictedRank(globalJson.points,globalJson.penalty,(Number(currT)-Number(StartTime))/1000);
+					var q = [];
+					for(var j=0;j<FriendSuccessList.length;j++)
+						q.push(getPredictedRank(getRealScore(FriendJson[FriendSuccessList[j]],(Number(currT)-Number(StartTime))/1000),getRealPenalty(FriendJson[FriendSuccessList[j]],(Number(currT)-Number(StartTime))/1000),(Number(currT)-Number(StartTime))/1000));
 					if(currP > changeDate){
 						var fir = Number(new Date())-currT.getTimezoneOffset()*60*1000;
 						$('.CurrentRating').html('#'+p),$('.SmallRank').html('#'+p),
-						RankData.push([fir,p]),ScoreData.push([fir,globalJson.points]),getChart();
+						RankData.push([fir,p]),ScoreData.push([fir,globalJson.points]);
+						for(var j=0;j<FriendSuccessList.length;j++)
+							FriendRankData[FriendSuccessList[j]].push(fir,q[j]);
+						getChart();
 					}
 				}
 			},
@@ -724,12 +797,15 @@ function loadRatingChanges(json,un){
 function getApiInfo(cD){
 	if(cD<changeDate)	return;
 	var sTo=setTimeout(function(){getApiInfo(cD);}, 30000);
+	var handleList = Username;
+	for(var p=0;p<CurrDiffDetail.length;p++)
+		handleList += (';' + CurrDiffDetail[p].handle);
 	$('.ConnectionStatus').html('<i class="fa fa-spin fa-spinner"></i> Getting Standings...');
 	$('.SendButton').html('<i class="fa fa-spin fa-spinner"></i>');
 	ApiLoadingStatus = true;
 	refreshApiInfo = $.getJSON("https://codeforces.com/api/contest.standings",{
 		contestId: ContestID,
-		handles: Username,
+		handles: handleList,
 		showUnofficial: showUnofficialIf
 	},function(json){
 		ApiLoadingStatus = false;
@@ -746,24 +822,28 @@ function getApiInfo(cD){
 		$('.SmallRatingChanges').html("");
 		win.title = `${Username} At #${ContestID}`;
 		json = json.result;
+		var realLength = 0;
+		var realList = [];
 		$('.ContestTypeChosen').html('');
 		for(var i=0;i<json.rows.length;i++)
-			$('.ContestTypeChosen').append(`<option value="${i}">${(new Date(json.rows[i].party.startTimeSeconds*1000)).pattern("YY-MM-dd hh:mm")} ${json.rows[i].party.participantType}</option>`);
-		if(SelectContestIndex<0 || SelectContestIndex>=json.rows.length)
+			if(json.rows[i].party.members[0].handle==Username)
+				++realLength, realList.push(json.rows[i]), 
+				$('.ContestTypeChosen').append(`<option value="${realLength-1}">${(new Date(json.rows[i].party.startTimeSeconds*1000)).pattern("YY-MM-dd hh:mm")} ${json.rows[i].party.participantType}</option>`);
+		if(SelectContestIndex<0 || SelectContestIndex>=realLength)
 			SelectContestTime=false;
 		if(!SelectContestTime)
-			SelectContestIndex=json.rows.length-1,
+			SelectContestIndex=realLength-1,
 			SelectContestTime=true;
 		$('.ContestTypeChosen:first').val(SelectContestIndex);
-		if(json.rows.length!=0)
+		if(realLength!=0)
 			$('.SmallTime').text($('.ContestTypeChosen option:selected').text().substr(0,14));
 		else
 			$('.SmallTime').text('-');
 		ContestType = json.contest.type;
 		$('.ContestType').html(json.contest.type);
 		RealContestStartTime = StartTime = json.contest.startTimeSeconds;
-		if(json.rows.length!=0)
-			StartTime = json.rows[SelectContestIndex].party.startTimeSeconds;
+		if(realLength!=0)
+			StartTime = realList[SelectContestIndex].party.startTimeSeconds;
 		EndTime = StartTime + json.contest.durationSeconds;
 		RealContestEndTime = RealContestStartTime + json.contest.durationSeconds;
 		StartTime = new Date(StartTime * 1000);
@@ -777,8 +857,50 @@ function getApiInfo(cD){
 		CurrentStatus = json.contest.phase;
 		if(currT<StartTime)	CurrentStatus="BEFORE";
 		else if(currT<EndTime)	CurrentStatus="CODING";
-		if(json.rows.length==0)
+		if(realLength==0)
 			$('.VirtualRankButton').css('display','none');
+		
+
+		var FriendResultInfo = {};
+		for(var i=0;i<json.rows.length;i++){
+			var nam = json.rows[i].party.members[0].handle;
+			if(FriendResultInfo[nam] == undefined)
+				FriendResultInfo[nam] = {};
+			if(FriendResultInfo[nam][json.rows[i].party.participantType] == undefined)
+				FriendResultInfo[nam][json.rows[i].party.participantType] = [];
+			FriendResultInfo[nam][json.rows[i].party.participantType].push(json.rows[i]);
+		}
+		console.log(FriendResultInfo);
+		FriendJson = {};
+		FriendSuccessList = [];
+		for(var i=0;i<CurrDiffDetail.length;i++){
+			var nam = CurrDiffDetail[i].handle;
+			for(var j=0;j<CurrDiffDetail[i].contestInfo.length;j++){
+				var Q = nam + '-' + CurrDiffDetail[i].contestInfo[j];
+				if(CurrDiffDetail[i].contestInfo[j]=="C"){
+					if(FriendResultInfo[nam]["CONTESTANT"]!=undefined)
+						FriendJson[Q] = FriendResultInfo[nam]["CONTESTANT"][0],
+						FriendSuccessList.push(Q);
+				}
+				else if(CurrDiffDetail[i].contestInfo[j]=="O"){
+					if(FriendResultInfo[nam]["OUT_OF_COMPETITION"]!=undefined)
+						FriendJson[Q] = FriendResultInfo[nam]["OUT_OF_COMPETITION"][0],
+						FriendSuccessList.push(Q);
+				}
+				else{
+					if(FriendResultInfo[nam]["VIRTUAL"]==undefined)
+						continue;
+					var p=CurrDiffDetail[i].contestInfo[j];
+					p=Number(p.substr(1,p.length-1));
+					if(p>=0)	p=p-1;
+					else if(p<0)	p=FriendResultInfo[nam]["VIRTUAL"].length+p;
+					if(p<0 || p>=FriendResultInfo[nam]["VIRTUAL"].length)	continue;
+					FriendJson[Q] = FriendResultInfo[nam]["VIRTUAL"][p],
+					FriendSuccessList.push(Q);
+				}
+			}
+		}
+
 		if(CurrentStatus=="BEFORE"){
 			$('.ProblemList').html('<div style="height:100%;display: flex;align-items: center;justify-content: center;vertical-align:center">Blank</div>');
 			blankTip = true;
@@ -792,7 +914,7 @@ function getApiInfo(cD){
 			for(var i=0;i<json.problems.length;i++)
 				probList.push(json.problems[i].index);
 			var reslList = [];
-			if(json.rows.length==0){
+			if(realLength==0){
 				$('.ConnectionStatus').html('<i class="fa fa-times style_error"></i> Not In The Contest!');
 				for(var i=0;i<probList.length;i++)
 					reslList.push(['?','--:--','0','ProblemUnknown']);
@@ -802,7 +924,7 @@ function getApiInfo(cD){
 				$('#highchatrsContainer').html('<div style="height:100%;display: flex;align-items: center;justify-content: center;vertical-align:center">Blank</div>');
 				return;
 			}
-			json = json.rows[SelectContestIndex];
+			json = realList[SelectContestIndex];
 			win.title = `${Username} At #${ContestID} As ${json.party.participantType}`;
 			$('.UserType').html(json.party.participantType);
 			if((CurrentStatus == "FINISHED" && (
@@ -824,11 +946,19 @@ function getApiInfo(cD){
 				$('#highchatrsContainer').html('<div style="height:100%;display: flex;align-items: center;justify-content: center;vertical-align:center">Blank</div>');
 			}
 			else{
-				if(!VirtualRank)
-					$('.CurrentRating').html('#'+json.rank),
-					$('.SmallRank').html('#'+json.rank),
-					RankData.push([Number(new Date())-currT.getTimezoneOffset()*60*1000,json.rank]),
-					ScoreData.push([Number(new Date())-currT.getTimezoneOffset()*60*1000,json.points]),getChart();
+				if(!VirtualRank){
+					$('.CurrentRating').html('#'+json.rank);
+					$('.SmallRank').html('#'+json.rank);
+					var p = Number(new Date())-currT.getTimezoneOffset()*60*1000;
+					RankData.push([p,json.rank]);
+					ScoreData.push([p,json.points]);
+					for(var i=0;i<FriendSuccessList.length;i++){
+						if(FriendRankData[FriendSuccessList[i]]==undefined)
+							FriendRankData[FriendSuccessList[i]]=[];
+						FriendRankData[FriendSuccessList[i]].push([p,FriendJson[FriendSuccessList[i]].rank]);
+					}
+					getChart();
+				}
 			}
 			for(var i=0;i<probList.length;i++){
 				var ProblemType = json.problemResults[i].bestSubmissionTimeSeconds!=undefined?"ProblemAccepted":"ProblemWrong";
@@ -991,9 +1121,56 @@ function getApiInfo(cD){
 		}
 	});
 }
+function checkName(un){
+	if(un.length<3 || un.length>24)
+		return false;
+	for(var i=0;i<un.length;i++)
+		if(!((un[i]>='a' && un[i]<='z') || (un[i]>='A' && un[i]<='Z') || (un[i]>='0' && un[i]<='9') || un[i]=='_' || un[i]=='.' || un[i]=='-'))
+			return false;
+	return true;
+}
+function checkContestType(x){
+	if(x === "")	return false;
+	if(x=== "C" || x === "O")	return true;
+	if(x[0]!='V')	return false;
+	var p=1;
+	if(x[1]=='-')	++p;
+	if(p==x.length)	return false;
+	while(p!=x.length && x[p]>='0' && x[p]<='9')	++p;
+	return p==x.length?true:false;
+}
+function AnalysisString(x){
+	if(x === "")	return {status: "OK",result: []};
+	x = x.split(';');
+	var ret = [];
+	for(var l=0;l<x.length;l++){
+		if(x[l]=="")	continue;
+		var nam = "";
+		var p = 0;
+		while(p != x[l].length && x[l][p]!='[')	nam += x[l][p],++p;
+		if(!checkName(nam) || x[l][x[l].length-1]!=']')	return {status: "ER",result: []};
+		var alList = [];
+		var currStr = "";
+		++p;
+		while(p != x[l].length-1){
+			if(x[l][p]==','){
+				if(!checkContestType(currStr))
+					return {status: "ER",result: []};
+				alList.push(currStr);
+				currStr = "";
+			}
+			else currStr += x[l][p];
+			++p;
+		}
+		alList.push(currStr);
+		ret.push({handle: nam, contestInfo: alList});
+	}
+	return {status: "OK",result: ret};
+}
 function changeUserInfo(){
 	var un = $('.UsernameInput:first').val();
 	var ci = $('.ContestIDInput:first').val();
+	var di = $('.ContestDiffCalc:first').val();
 	$('.ConnectionStatus').html('<i class="fa fa-spin fa-spinner"></i> Checking Information...');
 	if(un.length<3 || un.length>24){
 		$('.ConnectionStatus').html('<i class="fa fa-times style_error"></i> Username Incorrect!');
@@ -1013,7 +1190,16 @@ function changeUserInfo(){
 			$('.ConnectionStatus').html('<i class="fa fa-times style_error"></i> Contest ID Incorrect!');
 			return;
 		}
-	if(Username == un && ContestID == Number(ci)){
+	if(di != CurrDiffCalc){
+		var getResult = AnalysisString(di);
+		console.log(getResult);
+		if(getResult.status != "OK"){
+			$('.ConnectionStatus').html('<i class="fa fa-times style_error"></i> Analysis Failed!');
+			return;
+		}
+		CurrDiffDetail = getResult.result;
+	}
+	if(Username == un && ContestID == Number(ci) && di == CurrDiffCalc){
 		changeDate = new Date();
 		if($('.ContestTypeChosen').html()!=''){
 			SelectContestTime=true;
@@ -1021,6 +1207,7 @@ function changeUserInfo(){
 		}
 		RankData = [];
 		ScoreData = [];
+		FriendRankData = [];
 		killGetStandings();
 		killApiLoad();
 		getApiInfo(new Date());
@@ -1029,8 +1216,10 @@ function changeUserInfo(){
 	changeDate = new Date();
 	Username = un;
 	ContestID = ci;
+	CurrDiffCalc = di;
 	RankData = [];
 	ScoreData = [];
+	FriendRankData = [];
 	SelectContestTime = false;
 	killGetStandings();
 	killApiLoad();
