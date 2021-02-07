@@ -1,14 +1,14 @@
 @font-face {
 	font-family: 'Consolas';
-	src: url('../fonts/consolas.ttf');
+	src: url('../fonts/consolas.ttf') format('truetype');
 }
 @font-face {
 	font-family: 'Verdana';
-	src: url('../fonts/Verdana.ttf');
+	src: url('../fonts/Verdana.ttf') format('truetype');
 }
 @font-face {
 	font-family: 'VerdanaBold';
-	src: url('../fonts/VerdanaBold.ttf');
+	src: url('../fonts/VerdanaBold.ttf') format('truetype');
 }
 body{
 	overflow-y: hidden;

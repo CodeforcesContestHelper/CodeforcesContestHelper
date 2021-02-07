@@ -982,7 +982,7 @@ function getApiInfo(cD){
 					var ProblemType = json.problemResults[i].bestSubmissionTimeSeconds!=undefined?"ProblemAccepted":"ProblemWrong";
 					if(ProblemType == "ProblemAccepted" && json.problemResults[i].participantType=="PRELIMINARY" && CurrentStatus=="SYSTEM_TEST")
 						ProblemType = "ProblemUnknown";
-					if(ProblemType == "ProblemWrong" && CurrentStatus == "CODING")
+					if(ProblemType == "ProblemWrong")
 						ProblemType = "ProblemCoding";
 					var fr = "";
 					if(ProblemType == "ProblemUnknown")	fr="?";
@@ -1049,6 +1049,7 @@ function getApiInfo(cD){
 							data: {contestId: ContestID},
 							success: function(json3){
 								ApiLoadingStatus3 = false;
+								json3 = JSON.parse(json3);
 								if(json3.status != "OK"){
 									$('.ContestRatingChanges').html("<i class='fa fa-unlink'></i>");
 									$('.SmallRatingChanges').html("<i class='fa fa-unlink'></i>");
