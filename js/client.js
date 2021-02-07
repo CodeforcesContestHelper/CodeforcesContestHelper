@@ -498,8 +498,8 @@ function refreshStandings(){
 	$('.CurrentRating').html('...');
 	$('.SmallRank').html('...');
 	if(CurrentStatus == "FINISHED"){
-		$('.CurrentRating').html('#'+globalJson.rank);
-		$('.SmallRank').html('#'+globalJson.rank);
+		$('.CurrentRating').text('#'+globalJson.rank);
+		$('.SmallRank').text('#'+globalJson.rank);
 		LoadingStatus = true;
 		$('#highchatrsContainer').html('<div style="height:100%;display: flex;align-items: center;justify-content: center;vertical-align:center"><span>Pending for Standings...</span></div>');
 		getStandingsJSONStatus = $.ajax({
@@ -739,9 +739,9 @@ function getApiInfo(cD){
 			return;
 		}
 		if(cD<changeDate)	return;
-		$(".ContestIdNumber").html("#"+ContestID);
-		$(".SmallContestName").html("#"+ContestID);
-		$('.SmallUsername').html('@'+Username);
+		$(".ContestIdNumber").text("#"+ContestID);
+		$(".SmallContestName").text("#"+ContestID);
+		$('.SmallUsername').text('@'+Username);
 		$('.ContestRatingChanges').html("");
 		$('.SmallRatingChanges').html("");
 		json = json.result;
@@ -755,9 +755,9 @@ function getApiInfo(cD){
 			SelectContestTime=true;
 		$('.ContestTypeChosen:first').val(SelectContestIndex);
 		if(json.rows.length!=0)
-			$('.SmallTime').html($('.ContestTypeChosen option:selected').text().substr(0,14));
+			$('.SmallTime').text($('.ContestTypeChosen option:selected').text().substr(0,14));
 		else
-			$('.SmallTime').html('-');
+			$('.SmallTime').text('-');
 		ContestType = json.contest.type;
 		$('.ContestType').html(json.contest.type);
 		RealContestStartTime = StartTime = json.contest.startTimeSeconds;
@@ -772,7 +772,7 @@ function getApiInfo(cD){
 		var currT = new Date();
 		$('.ConnectionStatus').html('<i class="fa fa-check style_accept"></i> Updated! ['+currT.pattern("hh:mm:ss")+']');
 		$('.SendButton').html('<i class="fa fa-send"></i>');
-		$('.ContestName').html(json.contest.name);
+		$('.ContestName').text(json.contest.name);
 		CurrentStatus = json.contest.phase;
 		if(currT<StartTime)	CurrentStatus="BEFORE";
 		else if(currT<EndTime)	CurrentStatus="CODING";
@@ -944,9 +944,9 @@ function getApiInfo(cD){
 				for(var i=0;i<json2.length;i++){
 					if(json2[i].phase == "FINISHED")	break;
 					if(json2[i].id == ContestID){
-						$(".ContestIdNumber").html("#"+ContestID);
-						$(".SmallContestName").html("#"+ContestID);
-						$('.SmallUsername').html('@'+Username);
+						$(".ContestIdNumber").text("#"+ContestID);
+						$(".SmallContestName").text("#"+ContestID);
+						$('.SmallUsername').text('@'+Username);
 						$('.ContestTypeChosen').html('');
 						SelectContestTime = false;
 						RealContestStartTime = StartTime = json2[i].startTimeSeconds;
