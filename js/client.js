@@ -272,7 +272,6 @@ function getChart(){
 			for(var j=0;j<FriendSuccessList.length;j++)
 				SeriesInfo.push({name: FriendSuccessList[j], data: FriendRankData[FriendSuccessList[j]]});
 		}
-		console.log(SeriesInfo);
 		Highcharts.setOptions(DarkMode?DarkUnica:DefaultStyle);
 		if(chart!=undefined)
 			chart.destroy();
@@ -837,7 +836,6 @@ function getApiInfo(cD){
 				return;
 			}
 			json.result.rows.sort(sortRows);
-			console.log(json.result.rows);
 			if(cD<changeDate)	return;
 			$(".ContestIdNumber").text("#"+ContestID);
 			$(".SmallContestName").text("#"+ContestID);
@@ -892,7 +890,6 @@ function getApiInfo(cD){
 					FriendResultInfo[nam][json.rows[i].party.participantType] = [];
 				FriendResultInfo[nam][json.rows[i].party.participantType].push(json.rows[i]);
 			}
-			console.log(FriendResultInfo);
 			FriendJson = {};
 			FriendSuccessList = [];
 			for(var i=0;i<CurrDiffDetail.length;i++){
@@ -1222,7 +1219,6 @@ function changeUserInfo(){
 		}
 	if(di != CurrDiffCalc){
 		var getResult = AnalysisString(di);
-		console.log(getResult);
 		if(getResult.status != "OK"){
 			$('.ConnectionStatus').html('<i class="fa fa-times style_error"></i> Analysis Failed!');
 			return;
