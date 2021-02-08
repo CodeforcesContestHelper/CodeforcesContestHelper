@@ -1,4 +1,5 @@
 var win = nw.Window.get();
+setTimeout(function(){win.show();},300);
 win.setAlwaysOnTop(true);
 var isFold = false;
 var lockStatus = false;

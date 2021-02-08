@@ -22,7 +22,7 @@
     "always-on-top":true,
     "fullscreen":false,
     "show_in_taskbar":true,
-    "show":true, 
+    "show":false, 
     "kiosk":false,
     "frame":false,
     "transparent":true
