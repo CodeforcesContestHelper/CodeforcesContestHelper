@@ -11,10 +11,11 @@
 	src: url('../fonts/VerdanaBold.ttf') format('truetype');
 }
 body{
+	overflow: hidden;
 	margin: 0px;
 }
 .HtmlContainer{
-	overflow-y: hidden;
+	overflow: hidden;
 	margin: 0px;
 	user-select:none;
 	font-size: 14px;
