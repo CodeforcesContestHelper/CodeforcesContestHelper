@@ -32,6 +32,12 @@ hr{
 	background: #777;
 	color: #000;
 }
+.AlertWindow{
+	background: #666;
+}
+.SubmlissionsList > tr > td{
+	border: 1px solid white;
+}
 button{
 	background: #444;
 	color: #fff;
@@ -79,9 +85,11 @@ input[readonly='readonly']{
 	color: #fff;
 }
 
-.ProblemList::-webkit-scrollbar-thumb{
+.ProblemList::-webkit-scrollbar-thumb,
+.AlertWindow::-webkit-scrollbar-thumb{
 	background-color: #777;
 }
-.ProblemList::-webkit-scrollbar:hover{
+.ProblemList::-webkit-scrollbar:hover,
+.AlertWindow::-webkit-scrollbar:hover{
     background-color: #444;
 }

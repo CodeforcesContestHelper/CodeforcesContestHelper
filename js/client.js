@@ -37,11 +37,15 @@ var refreshApiInfo = undefined;
 var ApiLoadingStatus = false;
 var getContestList = undefined
 var ApiLoadingStatus2 = false;
+var SubmissionsStorage = [];
 var WinHeight = 615;
 var lastSet = 615;
 var chart = undefined;
+var ProblemInfoStorage = [];
+var PartyStorage = {};
 var openAdvancedOption = false;
 var DefaultStyle = JSON.parse(JSON.stringify(Highcharts.getOptions()));
+function openURL(x){nw.Shell.openExternal(x);}
 DefaultStyle.legend.backgroundColor = '#fff';
 DefaultStyle.yAxis = {gridLineColor: "#E6E6E6"}
 Highcharts.setOptions(DefaultStyle);
@@ -512,29 +516,6 @@ function flushTimeIndex(cD){
 	else	return;
 	setTimeout(function(){flushTimeIndex(cD);},1000);
 }
-function getProblemList(a,b){
-	$('.ProblemList').html('');
-	if(a.length==0){
-		$('.ProblemList').html('<div style="height:100%;display: flex;align-items: center;justify-content: center;vertical-align:center">Blank</div>');
-		blankTip = true;return;
-	}
-	blankTip = false;
-	for(var i=0;i<a.length;i++)
-		$('.ProblemList').append(`<div class="SingleProblem"><div class="BackgroundPic">${a[i]}</div><span class="ProblemResult ${b[i][3]}">${b[i][0]}</span></br><span class="TimeUsed">${b[i][1]}</span></br><hr><span class="ProblemScore">${b[i][2]}</span></div>`);
-}
-function ProblemListAppend(a,b,c,d){
-	if(blankTip == true){
-		blankTip = false;
-		$('.ProblemList').html('');
-	}
-	$('.ProblemList').append(`<div class="SingleProblem"><div class="BackgroundPic">#</div><span class="ProblemResult ProblemCoding">${a}</span></br><span class="TimeUsed"><span class="style_accept">+${c}</span>:<span class="style_error">-${d}</span></span></br><hr><span class="ProblemScore">${b}</span></div>`);
-}
-function killGetStandings(){
-	if(LoadingStatus)
-		LoadingStatus = false, getStandingsJSONStatus.abort();
-	if(LoadingStatus2)
-		LoadingStatus2 = false, getHacksJSONStatus.abort();
-}
 function CodeforcesRatingColor(x){
 	if(x >= 2400)	return "rgb(255, 26, 26)";
 	if(x >= 2100)	return "rgb(236, 134, 9)";
@@ -560,6 +541,71 @@ function toMemoryInfo(limit){
     if(dec == "00") 
         return sizestr.substring(0,len) + sizestr.substr(len + 3,2);
     return sizestr;  
+}
+function closeMessageBox(){
+	if(WinHeight == 190)	return;
+	$('.AllWindow').css('display','none');
+}
+function toSmallInfo(x){
+	if(x==undefined)	return ""
+	if(x == "FAILED")	return "FAIL";
+	if(x == "PARTIAL")	return "PRT";
+	if(x == "COMPILATION_ERROR")	return "CE";
+	if(x == "RUNTIME_ERROR")	return "RE";
+	if(x == "WRONG_ANSWER")	return "WA";
+	if(x == "PRESENTATION_ERROR")	return "PE";
+	if(x == "TIME_LIMIT_EXCEEDED")	return "TLE";
+	if(x == "MEMORY_LIMIT_EXCEEDED")	return "MLE";
+	if(x == "IDLENESS_LIMIT_EXCEEDED")	return "ILE";
+	if(x == "SECURITY_VIOLATED")	return "WA";
+	if(x == "CRASHED")	return "CRS";
+	if(x == "INPUT_PREPARATION_CRASHED")	return "IPC";
+	if(x == "CHALLENGED")	return "CHL";
+	if(x == "SKIPPED")	return "SKP";
+	if(x == "TESTING")	return "TST";
+	if(x == "REJECTED")	return "REJ";
+	return "";
+}
+function openProblemInfo(x){
+	if(WinHeight == 190)	return;
+	$('.AllWindow').css('display','block');
+	$('.ProblemLink').html(`<i class='fa fa-link'></i> CF${ContestID}${probList[x]}`);
+	$('.ProblemLink').attr("onclick",`openURL('https://codeforces.com/contest/${ContestID}/problem/${probList[x]}')`);
+	$('.ProblemName').html(ProblemInfoStorage[x].name);
+	$('.ProblemType').html(`<i class="fa ${ProblemInfoStorage[x].type=="PROGRAMMING"?"fa-terminal":"fa-question-circle"}" title="${ProblemInfoStorage[x].type}"></i>`);
+	$(".ProblemPoints").html(ProblemInfoStorage[x].points==undefined?'/':ProblemInfoStorage[x].points);
+	$(".ProblemRating").html(ProblemInfoStorage[x].rating==undefined?'/':ProblemInfoStorage[x].rating);
+	var p = $(".DefaultLine:first");
+	$(".SubmlissionsList").css("display","block");
+	$(".SubmlissionsList").html(p);
+	for(var i=0;i<SubmissionsStorage.length;i++){
+		if(SubmissionsStorage[i].problem.index != probList[x])
+			continue;
+		$(".SubmlissionsList").append(`<tr><td>${new Date(1000*SubmissionsStorage[i].creationTimeSeconds).pattern("YY-MM-dd hh:mm:ss")}</td><td>${SubmissionsStorage[i].programmingLanguage}</td><td><span style="cursor:pointer;" onclick='openURL("https://codeforces.com/problemset/submission/${ContestID}/${SubmissionsStorage[i].id}")'>${SubmissionsStorage[i].verdict=="OK"?(SubmissionsStorage[i].testset+" passed"):(toSmallInfo(SubmissionsStorage[i].verdict)+" on "+SubmissionsStorage[i].testset+" "+(SubmissionsStorage[i].passedTestCount+1))}${SubmissionsStorage[i].points!=undefined?('('+SubmissionsStorage[i].points+')'):""}</span></td><td>${SubmissionsStorage[i].timeConsumedMillis}ms/${toMemoryInfo(SubmissionsStorage[i].memoryConsumedBytes)}</td></tr>`);
+	}
+}
+function getProblemList(a,b){
+	$('.ProblemList').html('');
+	if(a.length==0){
+		$('.ProblemList').html('<div style="height:100%;display: flex;align-items: center;justify-content: center;vertical-align:center">Blank</div>');
+		blankTip = true;return;
+	}
+	blankTip = false;
+	for(var i=0;i<a.length;i++)
+		$('.ProblemList').append(`<div class="SingleProblem"><div class="BackgroundPic">${a[i]}</div><span class="ProblemResult ${b[i][3]}" onclick="openProblemInfo(${i});" style="cursor:pointer;">${b[i][0]}</span></br><span class="TimeUsed">${b[i][1]}</span></br><hr><span class="ProblemScore">${b[i][2]}</span></div>`);
+}
+function ProblemListAppend(a,b,c,d){
+	if(blankTip == true){
+		blankTip = false;
+		$('.ProblemList').html('');
+	}
+	$('.ProblemList').append(`<div class="SingleProblem"><div class="BackgroundPic">#</div><span class="ProblemResult ProblemCoding">${a}</span></br><span class="TimeUsed"><span class="style_accept">+${c}</span>:<span class="style_error">-${d}</span></span></br><hr><span class="ProblemScore">${b}</span></div>`);
+}
+function killGetStandings(){
+	if(LoadingStatus)
+		LoadingStatus = false, getStandingsJSONStatus.abort();
+	if(LoadingStatus2)
+		LoadingStatus2 = false, getHacksJSONStatus.abort();
 }
 function refreshStandings(){
 	var currP = new Date();
@@ -859,8 +905,10 @@ function getApiInfo(cD){
 			$('.SmallUsername').text('@'+Username);
 			$('.ContestRatingChanges').html("");
 			$('.SmallRatingChanges').html("");
-			// win.title = `${Username} At #${ContestID}`;
+			win.title = `${Username} At #${ContestID}`;
 			json = json.result;
+			ProblemInfoStorage = json.problems;
+			PartyStorage = json.party;
 			var realLength = 0;
 			var realList = [];
 			$('.ContestTypeChosen').html('');
@@ -960,7 +1008,7 @@ function getApiInfo(cD){
 					return;
 				}
 				json = realList[SelectContestIndex];
-				// win.title = `${Username} At #${ContestID} As ${json.party.participantType}`;
+				win.title = `${Username} At #${ContestID} As ${json.party.participantType}`;
 				$('.UserType').html(json.party.participantType);
 				if((CurrentStatus == "FINISHED" && (
 					json.party.participantType=="CONTESTANT"
@@ -1028,11 +1076,13 @@ function getApiInfo(cD){
 								return;
 							}
 							json4=json4.result;
+							SubmissionsStorage = [];
 							var p = {};
 							for(var i=json4.length-1;i>=0;i--){
 								if(json4[i].author.participantType != json.party.participantType
 								|| json4[i].author.startTimeSeconds != json.party.startTimeSeconds)
 									continue;
+								SubmissionsStorage.push(json4[i]);
 								if(json4[i].vecdict=="COMPILATION_ERROR"
 								|| (json4[i].testset=="PRETESTS" && json4[i].passedTestCount=="0"))
 									continue;
@@ -1368,7 +1418,6 @@ function changeUserInfo(){
 }
 var BranchLink;
 var RepoLink = "https://github.com/tiger2005/CodeforcesContestHelper"
-function openURL(x){nw.Shell.openExternal(x);}
 function getNewestRepo(){
 	$('.ConnectionStatus').html('<i class="fa fa-spin fa-spinner"></i> Loading Repo Info...');
 	$.getJSON("https://api.github.com/repos/tiger2005/CodeforcesContestHelper/commits",function(json){
@@ -1378,7 +1427,7 @@ function getNewestRepo(){
 		UpdateTime=new Date(UpdateTime.replace(/-/g,'/'));
 		UpdateTime=new Date(Number(UpdateTime)-UpdateTime.getTimezoneOffset()*60*1000);
 		BranchLink=json.html_url;
-		$('.ConnectionStatus').html(`<i class="fa fa-check style_accept"></i> Last Update at ${UpdateTime.pattern("YY-MM-dd hh:mm:ss")} <span onclick="openURL(BranchLink)" class="fa fa-history" style="cursor:pointer;"></span> <span onclick="openURL(RepoLink)" class="fa fa-github" style="cursor:pointer;"></span>`);
+		$('.ConnectionStatus').html(`<i class="fa fa-check style_accept"></i> Last Update at ${UpdateTime.pattern("YY-MM-dd hh:mm:ss")} <span onclick="openURL(BranchLink)" class="fa fa-code-fork" style="cursor:pointer;"></span> <span onclick="openURL(RepoLink)" class="fa fa-github" style="cursor:pointer;"></span>`);
 	}).fail(function(){
 		$('.ConnectionStatus').html('<i class="fa fa-times style_error"></i> Connection Error!');
 	});
@@ -1427,3 +1476,4 @@ $('.UnfoldButton').attr('onclick','setBig()');
 $('.UpdateButton').attr('onclick','getNewestRepo()');
 $('.OpenWindowButton').attr('onclick','openSelf()');
 $('.OpenAdvancedButton').attr('onclick','showAdvancedOptionIf()');
+$('.BlackBackground').attr('onclick','closeMessageBox()');
