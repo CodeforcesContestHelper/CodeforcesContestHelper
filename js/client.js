@@ -396,7 +396,7 @@ $('.GraphFolder').click(function(){
 	if(!isFold)
 		$('#highchatrsContainer').css('display','none'),
 		$('.GraphFolder').html('<i class="fa fa-angle-down"></i> Unfold'),
-		setSize(375);
+		setSize(390);
 	else
 		setSize(615),
 		$('#highchatrsContainer').css('display','block'),
