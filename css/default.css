@@ -1,4 +1,6 @@
 body{
+	background: #fff;
+	color: #000;
 	border: 1px solid #444;
 }
 .ContestId{
@@ -63,7 +65,7 @@ input[readonly='readonly']{
     color: grey;
 }
 .SmallRankInfo{
-	background: #ccc;
+	background: rgba(68,68,68,0.5);
 	color: #000;
 }
 

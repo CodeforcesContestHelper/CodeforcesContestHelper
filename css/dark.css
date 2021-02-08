@@ -75,7 +75,7 @@ input[readonly='readonly']{
     color: grey;
 }
 .SmallRankInfo{
-	background: #444;
+	background: rgba(204,204,204,0.5);
 	color: #fff;
 }
 

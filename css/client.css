@@ -11,6 +11,9 @@
 	src: url('../fonts/VerdanaBold.ttf') format('truetype');
 }
 body{
+	margin: 0px;
+}
+.HtmlContainer{
 	overflow-y: hidden;
 	margin: 0px;
 	user-select:none;

@@ -374,6 +374,7 @@ function getChart(){
 		});
 	}
 }
+var opacityIf = false;
 function setSize(y){
 	win.setResizable(true);
 	win.resizeTo(win.width,y);
@@ -386,11 +387,21 @@ function setSmall(){
 	$('.BigInterface').css('display','none');
 	setSize(190);
 	$('.SmallInterface').css('display','block');
+	if(DarkMode)
+		$('body').css('background-color','rgba(0,0,0,0.5)');
+	else
+		$('body').css('background-color','rgba(255,255,255,0.5)');
+	opacityIf = true;
 }
 function setBig(){
 	$('.SmallInterface').css('display','none');
 	setSize(lastSet);
 	$('.BigInterface').css('display','block');
+	if(DarkMode)
+		$('body').css('background-color','#222');
+	else
+		$('body').css('background-color','#fff');
+	opacityIf = false;
 }
 $('.GraphFolder').click(function(){
 	if(!isFold)
@@ -1388,7 +1399,8 @@ function openSelf(){
 	    "show_in_taskbar":true,
 	    "show":true, 
 	    "kiosk":false,
-	    "frame":false
+	    "frame":false,
+	    "transparent":true
 	});
 }
 function showAdvancedOptionIf(){

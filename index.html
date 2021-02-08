@@ -15,6 +15,7 @@
 		</script>
 	</head>
 	<body>
+		<div class="HtmlContainer">
 		<div class="BigInterface">
 			<table style="table-layout:fixed;width:100%;">
 				<tr>
@@ -116,6 +117,7 @@
 			</div>
 			</td></tr></table>
 		</div>
+		</div>
 	</body>
 	<footer>
 		<script src="./js/client.js"></script>
@@ -146,12 +148,18 @@
 			if(DarkMode)
 				$('.ThemeButton').html('<i class="fa fa-moon-o"></i>');
 			function ChangeTheme(){
-				if(!DarkMode)
+				if(!DarkMode){
 					$('.ThemeTypeIf').attr('href','./css/dark.css'),
 					$('.ThemeButton').html('<i class="fa fa-moon-o"></i>');
-				else
+					if(opacityIf)
+						$('body').css('background-color','rgba(0,0,0,0.5)');
+				}
+				else{
 					$('.ThemeTypeIf').attr('href','./css/default.css'),
 					$('.ThemeButton').html('<i class="fa fa-sun-o"></i>');
+					if(opacityIf)
+						$('body').css('background-color','rgba(255,255,255,0.5)');
+				}
 				DarkMode = !DarkMode;
 				getChart(RankData);
 			}
