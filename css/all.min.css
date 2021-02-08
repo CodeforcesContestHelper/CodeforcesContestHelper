@@ -363,3 +363,28 @@
 .fa-clone:before {
   content: "\f24d";
 }
+.fa-code-fork:before {
+  content: "\f126";
+}
+.fa-code:before {
+  content: "\f121";
+}
+.fa-terminal:before {
+  content: "\f120";
+}
+.fa-question-circle:before {
+  content: "\f059";
+}
+.fa-server:before {
+  content: "\f233";
+}
+.fa-info-circle:before {
+  content: "\f05a";
+}
+.fa-chain:before,
+.fa-link:before {
+  content: "\f0c1";
+}
+.fa-hourglass:before {
+  content: "\f254";
+}

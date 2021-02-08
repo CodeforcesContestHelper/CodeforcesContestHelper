@@ -85,6 +85,28 @@
 				</tr>
 			</table>
 		</div>
+		<div class="AllWindow">
+			<div class="BlackBackground"></div>
+			<div class="AlertWindow" onclick=";">
+				<div class="MessageBoxProblem">
+					<span style="float:right;cursor:pointer;" onclick="closeMessageBox()"><i class="fa fa-times style_error"></i></span>
+					<div style="text-align:center"><span class="ProblemLink" style="cursor:pointer;"></span></div>
+					<hr>
+					<div style="text-align:center"><div class="ProblemName"></div></div>
+					<div style="text-align:center"><span class="ProblemType"></span> | POINTS: <span class="ProblemPoints"></span> | RATING: <span class="ProblemRating"></span></div>
+					<hr>
+					<div class="ProblemStatusType" style="text-align:center"><i class="fa fa-hourglass"></i> Submissions</div>
+					<table class="SubmlissionsList" style="width:100%;text-align:center;word-wrap:break-word;" cellspacing="0">
+						<tr class="DefaultLine">
+							<td><i class="fa fa-user"></i> When</td>
+							<td><i class="fa fa-code"></i> Lang</td>
+							<td><i class="fa fa-server"></i> Verdict</td>
+							<td><i class="fa fa-info-circle"></i> Info</td>
+						</tr>
+					</table>
+				</div>
+			</div>
+		</div>
 		<div class="SmallInterface">
 			<div class="ContestStatus">Idle</div>
 			<table style="table-layout:fixed;width:100%;"><tr><td>

@@ -113,6 +113,36 @@ body{
 .TimeUsed{
 	font-size: 12px;
 }
+.BlackBackground{
+	background: rgba(0,0,0,0.5);
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	z-index: 2;
+}
+.AllWindow{
+	display:none;
+}
+.AlertWindow{
+	-webkit-app-region: no-drag;
+	position:absolute;
+	top:50%;
+	left:50%;
+	transform:translate(-50%, -50%);
+	z-index:3;
+	width: calc(100% - 50px);
+	max-height: calc(100% - 100px);
+	padding: 5px;
+	font-size: 16px;
+	pointer-events: auto;
+	overflow-y: scroll;
+}
+.SubmlissionsList{
+	font-family: Consolas;
+	font-size: 13px;
+}
 hr{
 	display: block;
 	margin: 2px;
@@ -246,14 +276,17 @@ a{
 	margin: 3px;
 	padding: 3px;
 }
-.ProblemList::-webkit-scrollbar{
+.ProblemList::-webkit-scrollbar,
+.AlertWindow::-webkit-scrollbar{
     width: 5px;
     height: 5px;
 }
-.ProblemList::-webkit-scrollbar-thumb{
+.ProblemList::-webkit-scrollbar-thumb,
+.AlertWindow::-webkit-scrollbar-thumb{
     border-radius: 1px;
 }
-.ProblemList::-webkit-scrollbar-corner{
+.ProblemList::-webkit-scrollbar-corner,
+.AlertWindow::-webkit-scrollbar-corner{
     display: none;
 }
 .AdvancedToolList::-webkit-scrollbar,
