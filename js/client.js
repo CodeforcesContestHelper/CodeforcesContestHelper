@@ -1377,7 +1377,7 @@ function openSelf(){
 	    "icon": "icon.png",
 	    "frame": true,
 	    "width": 400,
-	    "height": 600, 
+	    "height": 615, 
 	    "position": "center",
 	    "min_width": 400,
 	    "min_height": 0,
