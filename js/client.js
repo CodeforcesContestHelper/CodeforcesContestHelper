@@ -25,9 +25,12 @@ var getStandingsJSONStatus;
 var getHacksJSONStatus;
 var CurrDiffCalc = "";
 var CurrDiffDetail = [];
+var probList, reslList;
 var LoadingStatus = false;
 var LoadingStatus2 = false;
 var ApiLoadingStatus3 = false;
+var ApiLoadingStatus4 = false;
+var getSubmissions = false;
 var getRatingChanges = undefined;
 var refreshApiInfo = undefined;
 var ApiLoadingStatus = false;
@@ -789,6 +792,8 @@ function killApiLoad(){
 		ApiLoadingStatus2 = false, getContestList.abort();
 	if(ApiLoadingStatus3)
 		ApiLoadingStatus3 = false, getRatingChanges.abort();
+	if(ApiLoadingStatus4)
+		ApiLoadingStatus4 = false, getSubmissions.abort();
 }
 function calcDelta(y){
 	if(y>0)	return '<span class="ProblemAccepted" style="font-size:12px">+'+y+'</span>';
@@ -842,7 +847,7 @@ function getApiInfo(cD){
 			$('.SmallUsername').text('@'+Username);
 			$('.ContestRatingChanges').html("");
 			$('.SmallRatingChanges').html("");
-			win.title = `${Username} At #${ContestID}`;
+			// win.title = `${Username} At #${ContestID}`;
 			json = json.result;
 			var realLength = 0;
 			var realList = [];
@@ -928,10 +933,10 @@ function getApiInfo(cD){
 				setTimeout(function(){getApiInfo(cD);}, Math.min(30000, Number(StartTime) - Number(currT)));
 			}
 			else{
-				var probList = [];
+				probList = [];
+				reslList = [];
 				for(var i=0;i<json.problems.length;i++)
 					probList.push(json.problems[i].index);
-				var reslList = [];
 				if(realLength==0){
 					$('.ConnectionStatus').html('<i class="fa fa-times style_error"></i> Not In The Contest!');
 					for(var i=0;i<probList.length;i++)
@@ -943,7 +948,7 @@ function getApiInfo(cD){
 					return;
 				}
 				json = realList[SelectContestIndex];
-				win.title = `${Username} At #${ContestID} As ${json.party.participantType}`;
+				// win.title = `${Username} At #${ContestID} As ${json.party.participantType}`;
 				$('.UserType').html(json.party.participantType);
 				if((CurrentStatus == "FINISHED" && (
 					json.party.participantType=="CONTESTANT"
@@ -978,24 +983,121 @@ function getApiInfo(cD){
 						getChart();
 					}
 				}
-				for(var i=0;i<probList.length;i++){
-					var ProblemType = json.problemResults[i].bestSubmissionTimeSeconds!=undefined?"ProblemAccepted":"ProblemWrong";
-					if(ProblemType == "ProblemAccepted" && json.problemResults[i].participantType=="PRELIMINARY" && CurrentStatus=="SYSTEM_TEST")
-						ProblemType = "ProblemUnknown";
-					if(ProblemType == "ProblemWrong")
-						ProblemType = "ProblemCoding";
-					var fr = "";
-					if(ProblemType == "ProblemUnknown")	fr="?";
-					else if(ProblemType == "ProblemAccepted")	fr='+'+(json.problemResults[i].rejectedAttemptCount==0?'':json.problemResults[i].rejectedAttemptCount);
-					else if(json.problemResults[i].rejectedAttemptCount==0)	fr='';
-					else fr='-'+json.problemResults[i].rejectedAttemptCount;
-					var se = json.problemResults[i].bestSubmissionTimeSeconds;
-					if(se==undefined || json.party.participantType=="PRACTICE")	se='--:--';
-					else se=getTimeLength(se*1000);
-					reslList.push([fr,se,json.problemResults[i].points,ProblemType]);
+				if(json.party.participantType != "PRACTICE"
+				&& (CurrentStatus == "PENDING_SYSTEM_TEST" || CurrentStatus == "FINISHED")){
+					ApiLoadingStatus4 = true;
+					$('.ProblemList').html(`<div style="height:100%;display: flex;align-items: center;justify-content: center;vertical-align:center">Pending for Status...</div>`);
+					getSubmissions = $.ajax({
+						url: "https://codeforces.com/api/contest.status",
+						type: "GET",
+						data:{contestId: ContestID, handle: Username},
+						success: function(json4){
+							ApiLoadingStatus4=false;
+							if(json4.status!="OK"){
+								$('.ProblemList').html(`<div style="height:100%;display: flex;align-items: center;justify-content: center;vertical-align:center">Failed to load Status!</div>`);
+								for(var i=0;i<probList.length;i++){
+									var ProblemType = json.problemResults[i].bestSubmissionTimeSeconds!=undefined?"ProblemAccepted":"ProblemWrong";
+									if(ProblemType == "ProblemAccepted" && json.problemResults[i].participantType=="PRELIMINARY" && CurrentStatus=="SYSTEM_TEST")
+										ProblemType = "ProblemUnknown";
+									if(ProblemType == "ProblemWrong")
+										ProblemType = "ProblemCoding";
+									var fr = "";
+									if(ProblemType == "ProblemUnknown")	fr="?";
+									else if(ProblemType == "ProblemAccepted")	fr='+'+(json.problemResults[i].rejectedAttemptCount==0?'':json.problemResults[i].rejectedAttemptCount);
+									else if(json.problemResults[i].rejectedAttemptCount==0)	fr='';
+									else fr='-'+json.problemResults[i].rejectedAttemptCount;
+									var se = json.problemResults[i].bestSubmissionTimeSeconds;
+									if(se==undefined || json.party.participantType=="PRACTICE")	se='--:--';
+									else se=getTimeLength(se*1000);
+									reslList.push([fr,se,json.problemResults[i].points,ProblemType]);
+								}
+								getProblemList(probList, reslList);
+								ProblemListAppend(json.penalty, json.points, json.successfulHackCount, json.unsuccessfulHackCount);
+								return;
+							}
+							json4=json4.result;
+							var p = {};
+							for(var i=json4.length-1;i>=0;i--){
+								if(json4[i].author.participantType != json.party.participantType
+								|| json4[i].author.startTimeSeconds != json.party.startTimeSeconds)
+									continue;
+								if(json4[i].vecdict=="COMPILATION_ERROR"
+								|| (json4[i].testset=="PRETESTS" && json4[i].passedTestCount=="0"))
+									continue;
+								if(json4[i].verdict!="OK" && json4[i].testset=="TESTS")
+									p[json4[i].problem.index]=true;
+								else	p[json4[i].problem.index]=false;
+							}
+							for(var i=0;i<probList.length;i++){
+								var ProblemType = json.problemResults[i].bestSubmissionTimeSeconds!=undefined?"ProblemAccepted":"ProblemWrong";
+								if(ProblemType == "ProblemAccepted" && json.problemResults[i].participantType=="PRELIMINARY" && CurrentStatus=="SYSTEM_TEST")
+									ProblemType = "ProblemUnknown";
+								if(ProblemType == "ProblemWrong" && p[probList[i]]!=true)
+									ProblemType = "ProblemCoding";
+								var fr = "";
+								if(ProblemType == "ProblemUnknown")	fr="?";
+								else if(ProblemType == "ProblemAccepted")	fr='+'+(json.problemResults[i].rejectedAttemptCount==0?'':json.problemResults[i].rejectedAttemptCount);
+								else if(json.problemResults[i].rejectedAttemptCount==0)	fr='';
+								else fr='-'+json.problemResults[i].rejectedAttemptCount;
+								var se = json.problemResults[i].bestSubmissionTimeSeconds;
+								if(se==undefined || json.party.participantType=="PRACTICE")	se='--:--';
+								else se=getTimeLength(se*1000);
+								reslList.push([fr,se,json.problemResults[i].points,ProblemType]);
+							}
+							getProblemList(probList, reslList);
+							ProblemListAppend(json.penalty, json.points, json.successfulHackCount, json.unsuccessfulHackCount);
+						},
+						error: function(){
+							ApiLoadingStatus4=false;
+							$('.ProblemList').html(`<div style="height:100%;display: flex;align-items: center;justify-content: center;vertical-align:center">Failed to load Status!</div>`);
+							for(var i=0;i<probList.length;i++){
+								var ProblemType = json.problemResults[i].bestSubmissionTimeSeconds!=undefined?"ProblemAccepted":"ProblemWrong";
+								if(ProblemType == "ProblemAccepted" && json.problemResults[i].participantType=="PRELIMINARY" && CurrentStatus=="SYSTEM_TEST")
+									ProblemType = "ProblemUnknown";
+								if(ProblemType == "ProblemWrong")
+									ProblemType = "ProblemCoding";
+								var fr = "";
+								if(ProblemType == "ProblemUnknown")	fr="?";
+								else if(ProblemType == "ProblemAccepted")	fr='+'+(json.problemResults[i].rejectedAttemptCount==0?'':json.problemResults[i].rejectedAttemptCount);
+								else if(json.problemResults[i].rejectedAttemptCount==0)	fr='';
+								else fr='-'+json.problemResults[i].rejectedAttemptCount;
+								var se = json.problemResults[i].bestSubmissionTimeSeconds;
+								if(se==undefined || json.party.participantType=="PRACTICE")	se='--:--';
+								else se=getTimeLength(se*1000);
+								reslList.push([fr,se,json.problemResults[i].points,ProblemType]);
+							}
+							getProblemList(probList, reslList);
+							ProblemListAppend(json.penalty, json.points, json.successfulHackCount, json.unsuccessfulHackCount);
+						},
+						xhr: function() {
+				            var xhr = new XMLHttpRequest();
+				            xhr.addEventListener('progress', function (e) {
+				                $('.ProblemList').html(`<div style="height:100%;display: flex;align-items: center;justify-content: center;vertical-align:center"><i class="fa fa-download"></i> Downloading Status... ${toMemoryInfo(e.loaded)}</div>`);
+				            });
+				            return xhr;
+				        }
+					});
 				}
-				getProblemList(probList, reslList);
-				ProblemListAppend(json.penalty, json.points, json.successfulHackCount, json.unsuccessfulHackCount);
+				else{
+					for(var i=0;i<probList.length;i++){
+						var ProblemType = json.problemResults[i].bestSubmissionTimeSeconds!=undefined?"ProblemAccepted":"ProblemWrong";
+						if(ProblemType == "ProblemAccepted" && json.problemResults[i].participantType=="PRELIMINARY" && CurrentStatus=="SYSTEM_TEST")
+							ProblemType = "ProblemUnknown";
+						if(ProblemType == "ProblemWrong")
+							ProblemType = "ProblemCoding";
+						var fr = "";
+						if(ProblemType == "ProblemUnknown")	fr="?";
+						else if(ProblemType == "ProblemAccepted")	fr='+'+(json.problemResults[i].rejectedAttemptCount==0?'':json.problemResults[i].rejectedAttemptCount);
+						else if(json.problemResults[i].rejectedAttemptCount==0)	fr='';
+						else fr='-'+json.problemResults[i].rejectedAttemptCount;
+						var se = json.problemResults[i].bestSubmissionTimeSeconds;
+						if(se==undefined || json.party.participantType=="PRACTICE")	se='--:--';
+						else se=getTimeLength(se*1000);
+						reslList.push([fr,se,json.problemResults[i].points,ProblemType]);
+					}
+					getProblemList(probList, reslList);
+					ProblemListAppend(json.penalty, json.points, json.successfulHackCount, json.unsuccessfulHackCount);
+				}
 				if(CurrentStatus == "CODING"){
 					if(!flushTimeRunned)
 						flushTimeRunned=true, setTimeout(flushTimeIndex(cD), 0);
