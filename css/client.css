@@ -66,6 +66,7 @@ body{
 	text-align:center;
 }
 .SingleProblem{
+	-webkit-app-region: no-drag;
 	box-shadow: 0px 0px 3px #666;
 	font-family: Verdana;
 	text-align: center;
@@ -139,13 +140,15 @@ body{
 	overflow-y: scroll;
 }
 .SubmlissionsList{
-	margin:0 auto;
-	width: 360px;
+	width: 350px;
+	min-width: 350px;
+	max-width: 350px;
+	margin: 0 auto;
 	font-family: Consolas;
 	font-size: 13px;
 }
 .SubmlissionsList > tr > td{
-	padding: 2px;
+	padding: 5px;
 }
 hr{
 	display: block;

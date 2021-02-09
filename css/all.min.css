@@ -388,3 +388,9 @@
 .fa-hourglass:before {
   content: "\f254";
 }
+.fa-clock-o:before {
+  content: "\f017";
+}
+.fa-microchip:before {
+  content: "\f2db";
+}

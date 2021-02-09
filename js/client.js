@@ -1,7 +1,6 @@
 var win = nw.Window.get();
 setTimeout(function(){win.show();},300);
 win.setAlwaysOnTop(true);
-var isFold = false;
 var lockStatus = false;
 var blankTip = true;
 var showUnofficialIf = false;
@@ -581,7 +580,7 @@ function openProblemInfo(x){
 	for(var i=0;i<SubmissionsStorage.length;i++){
 		if(SubmissionsStorage[i].problem.index != probList[x])
 			continue;
-		$(".SubmlissionsList").append(`<tr><td>${new Date(1000*SubmissionsStorage[i].creationTimeSeconds).pattern("YY-MM-dd hh:mm:ss")}</td><td>${SubmissionsStorage[i].programmingLanguage}</td><td><span style="cursor:pointer;" onclick='openURL("https://codeforces.com/problemset/submission/${ContestID}/${SubmissionsStorage[i].id}")'>${SubmissionsStorage[i].verdict=="OK"?("<span class='ProblemAccepted'>"+(SubmissionsStorage[i].testset=="TESTS"?"Accepted":SubmissionsStorage[i].testset+" passed")+"</span>"):(toSmallInfo(SubmissionsStorage[i].verdict)+" on "+SubmissionsStorage[i].testset+" "+(SubmissionsStorage[i].passedTestCount+1))}${SubmissionsStorage[i].points!=undefined?('('+SubmissionsStorage[i].points+')'):""}</span></td><td>${SubmissionsStorage[i].timeConsumedMillis}ms/${toMemoryInfo(SubmissionsStorage[i].memoryConsumedBytes)}</td></tr>`);
+		$(".SubmlissionsList").append(`<tr><td>${new Date(1000*SubmissionsStorage[i].creationTimeSeconds).pattern("YY-MM-dd hh:mm:ss")}</td><td>${SubmissionsStorage[i].programmingLanguage}</td><td><span style="cursor:pointer;" onclick='openURL("https://codeforces.com/problemset/submission/${ContestID}/${SubmissionsStorage[i].id}")'>${SubmissionsStorage[i].verdict=="OK"?("<span class='ProblemAccepted'>"+(SubmissionsStorage[i].testset=="TESTS"?"Accepted":SubmissionsStorage[i].testset+" passed")+"</span>"):(toSmallInfo(SubmissionsStorage[i].verdict)+" on "+SubmissionsStorage[i].testset+" "+(SubmissionsStorage[i].passedTestCount+1))}${SubmissionsStorage[i].points!=undefined?('('+SubmissionsStorage[i].points+')'):""}</span></td><td>${SubmissionsStorage[i].timeConsumedMillis}ms</td><td>${toMemoryInfo(SubmissionsStorage[i].memoryConsumedBytes)}</td></tr>`);
 	}
 }
 function getProblemList(a,b){
