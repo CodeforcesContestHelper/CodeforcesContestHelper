@@ -12,6 +12,15 @@ body{
 .BackgroundPic{
     color: #ccc;
 }
+.ProblemAccepted{
+	color: #0a0;
+}
+.ProblemWrong{
+	color: red;
+}
+.ProblemCoding{
+	color: grey;
+}
 hr{
 	background-color: #000;
 }

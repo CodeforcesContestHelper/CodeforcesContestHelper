@@ -18,6 +18,15 @@ body{
 hr{
 	background-color: #fff;
 }
+.ProblemAccepted{
+	color: #1cff1c;
+}
+.ProblemWrong{
+	color: #ff4343;
+}
+.ProblemCoding{
+	color: #a4a4a4;
+}
 #highchatrsContainer{
 	background: #383839;
 	color: #fff;

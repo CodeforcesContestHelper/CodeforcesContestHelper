@@ -1,7 +1,6 @@
 var win = nw.Window.get();
 setTimeout(function(){win.show();},300);
 win.setAlwaysOnTop(true);
-var isFold = false;
 var lockStatus = false;
 var blankTip = true;
 var showUnofficialIf = false;
@@ -581,7 +580,7 @@ function openProblemInfo(x){
 	for(var i=0;i<SubmissionsStorage.length;i++){
 		if(SubmissionsStorage[i].problem.index != probList[x])
 			continue;
-		$(".SubmlissionsList").append(`<tr><td>${new Date(1000*SubmissionsStorage[i].creationTimeSeconds).pattern("YY-MM-dd hh:mm:ss")}</td><td>${SubmissionsStorage[i].programmingLanguage}</td><td><span style="cursor:pointer;" onclick='openURL("https://codeforces.com/problemset/submission/${ContestID}/${SubmissionsStorage[i].id}")'>${SubmissionsStorage[i].verdict=="OK"?(SubmissionsStorage[i].testset+" passed"):(toSmallInfo(SubmissionsStorage[i].verdict)+" on "+SubmissionsStorage[i].testset+" "+(SubmissionsStorage[i].passedTestCount+1))}${SubmissionsStorage[i].points!=undefined?('('+SubmissionsStorage[i].points+')'):""}</span></td><td>${SubmissionsStorage[i].timeConsumedMillis}ms/${toMemoryInfo(SubmissionsStorage[i].memoryConsumedBytes)}</td></tr>`);
+		$(".SubmlissionsList").append(`<tr><td>${new Date(1000*SubmissionsStorage[i].creationTimeSeconds).pattern("YY-MM-dd hh:mm:ss")}</td><td>${SubmissionsStorage[i].programmingLanguage}</td><td><span style="cursor:pointer;" onclick='openURL("https://codeforces.com/problemset/submission/${ContestID}/${SubmissionsStorage[i].id}")'>${SubmissionsStorage[i].verdict=="OK"?("<span class='ProblemAccepted'>"+(SubmissionsStorage[i].testset=="TESTS"?"Accepted":SubmissionsStorage[i].testset+" passed")+"</span>"):(toSmallInfo(SubmissionsStorage[i].verdict)+" on "+SubmissionsStorage[i].testset+" "+(SubmissionsStorage[i].passedTestCount+1))}${SubmissionsStorage[i].points!=undefined?('('+SubmissionsStorage[i].points+')'):""}</span></td><td>${SubmissionsStorage[i].timeConsumedMillis}ms</td><td>${toMemoryInfo(SubmissionsStorage[i].memoryConsumedBytes)}</td></tr>`);
 	}
 }
 function getProblemList(a,b){
@@ -592,7 +591,7 @@ function getProblemList(a,b){
 	}
 	blankTip = false;
 	for(var i=0;i<a.length;i++)
-		$('.ProblemList').append(`<div class="SingleProblem"><div class="BackgroundPic">${a[i]}</div><span class="ProblemResult ${b[i][3]}" onclick="openProblemInfo(${i});" style="cursor:pointer;">${b[i][0]}</span></br><span class="TimeUsed">${b[i][1]}</span></br><hr><span class="ProblemScore">${b[i][2]}</span></div>`);
+		$('.ProblemList').append(`<div class="SingleProblem"><div class="BackgroundPic">${a[i]}</div><span class="ProblemResult ${b[i][3]}" onclick="openProblemInfo(${i});" style="cursor:pointer;">${b[i][0]}</span></br><span class="TimeUsed">${b[i][1]}</span></br><hr><span class="ProblemScore ${b[i][3]}">${b[i][2]}</span></div>`);
 }
 function ProblemListAppend(a,b,c,d){
 	if(blankTip == true){
@@ -1043,8 +1042,7 @@ function getApiInfo(cD){
 						getChart();
 					}
 				}
-				if(json.party.participantType != "PRACTICE"
-				&& (CurrentStatus == "PENDING_SYSTEM_TEST" || CurrentStatus == "FINISHED")){
+				if(json.party.participantType != "PRACTICE"){
 					ApiLoadingStatus4 = true;
 					$('.ProblemList').html(`<div style="height:100%;display: flex;align-items: center;justify-content: center;vertical-align:center">Pending for Status...</div>`);
 					getSubmissions = $.ajax({
@@ -1068,8 +1066,18 @@ function getApiInfo(cD){
 									else fr='-'+json.problemResults[i].rejectedAttemptCount;
 									var se = json.problemResults[i].bestSubmissionTimeSeconds;
 									if(se==undefined || json.party.participantType=="PRACTICE")	se='--:--';
-									else se=getTimeLength(se*1000);
-									reslList.push([fr,se,json.problemResults[i].points,ProblemType]);
+									else se=getTimeLength(se*1000);var th = json.problemResults[i].points;
+									if(ContestType == "CF" && CurrentStatus == "CODING" && ProblemType != "ProblemAccepted"){
+										var kpm = 0;
+										kpm = (i+1) * 2;
+										if(probList[i].length != 1)
+											kpm = Math.ceil(kpm/4)*2;
+										var predictScore = ProblemInfoStorage[i].points;
+										predictScore -= Math.floor((Number(currT) - Number(StartTime))/1000/60)*kpm;
+										predictScore = Maxh.max(predictScore, 0.3 * ProblemInfoStorage[i].points);
+										th = predictScore;
+									}
+									reslList.push([fr,se,th,ProblemType]);
 								}
 								getProblemList(probList, reslList);
 								ProblemListAppend(json.penalty, json.points, json.successfulHackCount, json.unsuccessfulHackCount);
@@ -1086,7 +1094,7 @@ function getApiInfo(cD){
 								if(json4[i].vecdict=="COMPILATION_ERROR"
 								|| (json4[i].testset=="PRETESTS" && json4[i].passedTestCount=="0"))
 									continue;
-								if(json4[i].verdict!="OK" && json4[i].testset=="TESTS")
+								if(json4[i].verdict!="OK" && json4[i].testset!="PRETESTS")
 									p[json4[i].problem.index]=true;
 								else	p[json4[i].problem.index]=false;
 							}
@@ -1104,7 +1112,18 @@ function getApiInfo(cD){
 								var se = json.problemResults[i].bestSubmissionTimeSeconds;
 								if(se==undefined || json.party.participantType=="PRACTICE")	se='--:--';
 								else se=getTimeLength(se*1000);
-								reslList.push([fr,se,json.problemResults[i].points,ProblemType]);
+								var th = json.problemResults[i].points;
+								if(ContestType == "CF" && CurrentStatus == "CODING" && ProblemType != "ProblemAccepted"){
+									var kpm = 0;
+									kpm = (i+1) * 2;
+									if(probList[i].length != 1)
+										kpm = Math.ceil(kpm/4)*2;
+									var predictScore = ProblemInfoStorage[i].points;
+									predictScore -= Math.floor((Number(currT) - Number(StartTime))/1000/60)*kpm;
+									predictScore = Math.max(predictScore, 0.3 * ProblemInfoStorage[i].points);
+									th = predictScore;
+								}
+								reslList.push([fr,se,th,ProblemType]);
 							}
 							getProblemList(probList, reslList);
 							ProblemListAppend(json.penalty, json.points, json.successfulHackCount, json.unsuccessfulHackCount);
@@ -1126,7 +1145,18 @@ function getApiInfo(cD){
 								var se = json.problemResults[i].bestSubmissionTimeSeconds;
 								if(se==undefined || json.party.participantType=="PRACTICE")	se='--:--';
 								else se=getTimeLength(se*1000);
-								reslList.push([fr,se,json.problemResults[i].points,ProblemType]);
+								var th = json.problemResults[i].points;
+								if(ContestType == "CF" && CurrentStatus == "CODING" && ProblemType != "ProblemAccepted"){
+									var kpm = 0;
+									kpm = (i+1) * 2;
+									if(probList[i].length != 1)
+										kpm = Math.ceil(kpm/4)*2;
+									var predictScore = ProblemInfoStorage[i].points;
+									predictScore -= Math.floor((Number(currT) - Number(StartTime))/1000/60)*kpm;
+									predictScore = Math.max(predictScore, 0.3 * ProblemInfoStorage[i].points);
+									th = predictScore;
+								}
+								reslList.push([fr,se,th,ProblemType]);
 							}
 							getProblemList(probList, reslList);
 							ProblemListAppend(json.penalty, json.points, json.successfulHackCount, json.unsuccessfulHackCount);
@@ -1155,7 +1185,18 @@ function getApiInfo(cD){
 						var se = json.problemResults[i].bestSubmissionTimeSeconds;
 						if(se==undefined || json.party.participantType=="PRACTICE")	se='--:--';
 						else se=getTimeLength(se*1000);
-						reslList.push([fr,se,json.problemResults[i].points,ProblemType]);
+						var th = json.problemResults[i].points;
+						if(ContestType == "CF" && CurrentStatus == "CODING" && ProblemType != "ProblemAccepted"){
+							var kpm = 0;
+							kpm = (i+1) * 2;
+							if(probList[i].length != 1)
+								kpm = Math.ceil(kpm/4)*2;
+							var predictScore = ProblemInfoStorage[i].points;
+							predictScore -= Math.floor((Number(currT) - Number(StartTime))/1000/60)*kpm;
+							predictScore = Math.max(predictScore, 0.3 * ProblemInfoStorage[i].points);
+							th = predictScore;
+						}
+						reslList.push([fr,se,th,ProblemType]);
 					}
 					getProblemList(probList, reslList);
 					ProblemListAppend(json.penalty, json.points, json.successfulHackCount, json.unsuccessfulHackCount);

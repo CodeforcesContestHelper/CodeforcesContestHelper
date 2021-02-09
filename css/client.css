@@ -66,6 +66,7 @@ body{
 	text-align:center;
 }
 .SingleProblem{
+	-webkit-app-region: no-drag;
 	box-shadow: 0px 0px 3px #666;
 	font-family: Verdana;
 	text-align: center;
@@ -95,7 +96,6 @@ body{
 }
 .ProblemAccepted{
 	font-family: VerdanaBold;
-	color: #0a0;
 }
 .ProblemWrong{
 	font-family: VerdanaBold;
@@ -140,8 +140,15 @@ body{
 	overflow-y: scroll;
 }
 .SubmlissionsList{
+	width: 350px;
+	min-width: 350px;
+	max-width: 350px;
+	margin: 0 auto;
 	font-family: Consolas;
 	font-size: 13px;
+}
+.SubmlissionsList > tr > td{
+	padding: 5px;
 }
 hr{
 	display: block;
@@ -194,6 +201,7 @@ hr{
 	padding: 2px;
 	border-radius: 3px;
 	max-width: 200px;
+	overflow: hidden;
 }
 .ContestType{
 	text-align: center;
