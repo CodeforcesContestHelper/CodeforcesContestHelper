@@ -95,7 +95,6 @@ body{
 }
 .ProblemAccepted{
 	font-family: VerdanaBold;
-	color: #0a0;
 }
 .ProblemWrong{
 	font-family: VerdanaBold;
@@ -140,8 +139,13 @@ body{
 	overflow-y: scroll;
 }
 .SubmlissionsList{
+	margin:0 auto;
+	width: 360px;
 	font-family: Consolas;
 	font-size: 13px;
+}
+.SubmlissionsList > tr > td{
+	padding: 2px;
 }
 hr{
 	display: block;
@@ -194,6 +198,7 @@ hr{
 	padding: 2px;
 	border-radius: 3px;
 	max-width: 200px;
+	overflow: hidden;
 }
 .ContestType{
 	text-align: center;
