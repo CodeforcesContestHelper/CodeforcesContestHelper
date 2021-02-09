@@ -1,6 +1,7 @@
 var win = nw.Window.get();
 setTimeout(function(){win.show();},300);
 win.setAlwaysOnTop(true);
+var onTopStatus = true;
 var lockStatus = false;
 var blankTip = true;
 var showUnofficialIf = false;
@@ -448,6 +449,13 @@ function getVirtualRankIf(){
 	else
 		$('.VirtualRankButton').html('<i class="fa fa-database"></i>').attr('title','Enable Rank Predictor');
 	VirtualRank = !VirtualRank;
+}
+function setOnTopIf(){
+	if(onTopStatus)
+		win.setAlwaysOnTop(false),$('.SetOnTopButton').html("<i class='fa fa-window-restore'></i>").attr('title','Set As Top');
+	else
+		win.setAlwaysOnTop(true),$('.SetOnTopButton').html("<i class='fa fa-window-maximize'></i>").attr('title','Set As Window');
+	onTopStatus = !onTopStatus;
 }
 function getTimeLength(x){
 	x = Math.floor(x / 1000 / 60);
@@ -1518,3 +1526,4 @@ $('.UpdateButton').attr('onclick','getNewestRepo()');
 $('.OpenWindowButton').attr('onclick','openSelf()');
 $('.OpenAdvancedButton').attr('onclick','showAdvancedOptionIf()');
 $('.BlackBackground').attr('onclick','closeMessageBox()');
+$('.SetOnTopButton').attr('onclick','setOnTopIf()');
