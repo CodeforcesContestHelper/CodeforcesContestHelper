@@ -400,9 +400,9 @@ function setSmall(){
 	setSize(190);
 	$('.SmallInterface').css('display','block');
 	if(DarkMode)
-		$('body').css('background-color','rgba(0,0,0,0.5)');
+		$('.HtmlContainer').css('background-color','rgba(0,0,0,0.5)');
 	else
-		$('body').css('background-color','rgba(255,255,255,0.5)');
+		$('.HtmlContainer').css('background-color','rgba(255,255,255,0.5)');
 	opacityIf = true;
 }
 function setBig(){
@@ -410,9 +410,9 @@ function setBig(){
 	setSize(lastSet);
 	$('.BigInterface').css('display','block');
 	if(DarkMode)
-		$('body').css('background-color','#222');
+		$('.HtmlContainer').css('background-color','#222');
 	else
-		$('body').css('background-color','#fff');
+		$('.HtmlContainer').css('background-color','#fff');
 	opacityIf = false;
 }
 $('.GraphFolder').click(function(){
