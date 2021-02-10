@@ -10,17 +10,8 @@ body{
 .ContestName{
 	border-left: 2px solid #444;
 }
-.SingleProblem{
-	border: 1px solid #fff;
-}
 .BackgroundPic{
     color: #777;
-}
-.RatingGraphDescriptionTd, .GraphFolder{
-	background: #383839;
-}
-hr{
-	background-color: #fff;
 }
 .ProblemAccepted{
 	color: #1cff1c;
@@ -30,6 +21,15 @@ hr{
 }
 .ProblemCoding{
 	color: #a4a4a4;
+}
+hr{
+	background-color: #fff;
+}
+.SingleProblem{
+	border: 1px solid #fff;
+}
+.RatingGraphDescriptionTd, .GraphFolder{
+	background: #383839;
 }
 #highchatrsContainer{
 	background: #383839;

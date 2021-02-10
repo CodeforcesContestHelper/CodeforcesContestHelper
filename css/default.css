@@ -54,12 +54,19 @@ hr{
 }
 button{
 	background: #ccc;
+	color: #000;
 }
 button:hover{
 	background: #aaa;
 }
 input{
+	background: #fff;
+	color: #000;
     -webkit-tap-highlight-color: rgba(0,0,0,0);
+}
+select{
+	background: #fff;
+	color: #000;
 }
 select:hover{
 	background: #eee;
