@@ -15,6 +15,9 @@ body{
 .BackgroundPic{
     color: #777;
 }
+.RatingGraphDescriptionTd, .GraphFolder{
+	background: #383839;
+}
 hr{
 	background-color: #fff;
 }
@@ -58,7 +61,6 @@ input{
 	background: #222;
 	color: #fff;
     -webkit-tap-highlight-color: rgba(0,0,0,0);
-    border: 2px solid grey;
 }
 select{
 	background: #222;

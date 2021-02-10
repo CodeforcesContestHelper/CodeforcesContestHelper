@@ -400,3 +400,6 @@
 .fa-window-maximize:before {
   content: "\f2d0";
 }
+.fa-list-alt:before {
+  content: "\f022";
+}

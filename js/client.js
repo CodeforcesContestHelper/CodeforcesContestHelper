@@ -1,6 +1,7 @@
 var win = nw.Window.get();
 setTimeout(function(){win.show();},300);
 win.setAlwaysOnTop(true);
+var isFold = false;
 var onTopStatus = true;
 var lockStatus = false;
 var blankTip = true;
@@ -551,7 +552,9 @@ function toMemoryInfo(limit){
 }
 function closeMessageBox(){
 	if(WinHeight == 190)	return;
-	$('.AllWindow').css('display','none');
+	$('.AlertWindow').css('display','none');
+	$(".BlackBackground").css('background','rgba(0,0,0,0)');
+	setTimeout(function(){$('.AllWindow').css('display','none')},300);
 }
 function toSmallInfo(x){
 	if(x==undefined)	return ""
@@ -576,6 +579,8 @@ function toSmallInfo(x){
 function openProblemInfo(x){
 	if(WinHeight == 190)	return;
 	$('.AllWindow').css('display','block');
+	$('.AlertWindow').css('display','block');
+	$(".BlackBackground").css('background','rgba(0,0,0,0.5)');
 	$('.ProblemLink').html(`<i class='fa fa-link'></i> CF${ContestID}${probList[x]}`);
 	$('.ProblemLink').attr("onclick",`openURL('https://codeforces.com/contest/${ContestID}/problem/${probList[x]}')`);
 	$('.ProblemName').html(ProblemInfoStorage[x].name);
@@ -918,7 +923,7 @@ function getApiInfo(cD){
 			PartyStorage = json.party;
 			var realLength = 0;
 			var realList = [];
-			$('.ContestTypeChosen').html('');
+			$('.ContestTypeChosen').html("");
 			for(var i=0;i<json.rows.length;i++)
 				if(json.rows[i].party.members[0].handle==Username)
 					++realLength, realList.push(json.rows[i]), 
@@ -1505,7 +1510,7 @@ function openSelf(){
 function showAdvancedOptionIf(){
 	if(!openAdvancedOption){
 		$(".UserType").css("max-width","8px");
-		$(".AdvancedToolList").css("width","125px");
+		$(".AdvancedToolList").css("width","156px");
 		$('.OpenAdvancedButton').addClass("fa-rotate-180").attr("title","Less Options");
 	}
 	else{

@@ -114,7 +114,8 @@ body{
 	font-size: 12px;
 }
 .BlackBackground{
-	background: rgba(0,0,0,0.5);
+	background: rgba(0,0,0,0);
+	transition: background 0.3s;
 	position: fixed;
 	top: 0;
 	left: 0;
@@ -126,6 +127,7 @@ body{
 	display:none;
 }
 .AlertWindow{
+	border-radius: 3px;
 	-webkit-app-region: no-drag;
 	position:absolute;
 	top:50%;
@@ -241,12 +243,32 @@ button{
 input{
 	-webkit-app-region: no-drag;
 	transition: background 0.3s;
-    border-radius: 4px;
     padding: 3px;
     font-size: 14px;
     font-family: 'Consolas','Fira Code','Source Code Pro','Lucida Console','Cascadia Code','Ubuntu Mono','Monospace';;
     height: 22px;
     width: 100%;
+    outline: none;
+    border: 0px;
+}
+label{
+	position:relative;
+	width:365px;
+	display:inline-block;
+}
+label:after {
+	content:"";
+	display:inline-block;
+	width:0;
+	height:1.5px;
+	background:skyblue;
+	transition:width 0.5s;
+	position:absolute;
+	bottom:1px;
+	left:1px;
+}
+.active:after {
+	width:calc(100% - 2px)
 }
 .ContestIDInput{
 	width: calc(100% - 66px);
