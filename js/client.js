@@ -587,10 +587,20 @@ function openProblemInfo(x){
 	$(".MessageBoxProblem").css('display','block');
 	$(".BlackBackground").width($(".HtmlContainer").width());
 	$(".BlackBackground").height($(".HtmlContainer").height());
+	if(!RunInNwjs){
+		$(".BlackBackground").css('top',20);
+		$(".BlackBackground").css('left',($('body').width()-$('.HtmlContainer').width())/2);
+	}
 	$('.AllWindow').css('display','block');
 	$('.AlertWindow').css('display','block');
-	$('.AlertWindow').css('top',$(".HtmlContainer").height()/2);
-	$('.AlertWindow').css('left',$(".HtmlContainer").width()/2);
+	if(RunInNwjs){
+		$('.AlertWindow').css('top',$(".HtmlContainer").height()/2);
+		$('.AlertWindow').css('left',$(".HtmlContainer").width()/2);
+	}
+	else{
+		$('.AlertWindow').css('top',$(".HtmlContainer").height()/2+20);
+		$('.AlertWindow').css('left',$('body').width()/2);
+	}
 	$('.AlertWindow').css('max-height',$(".HtmlContainer").height() - 100);
 	$(".BlackBackground").css('background','rgba(0,0,0,0.5)');
 	$('.ProblemLink').html(`<i class='fa fa-link'></i> CF${ContestID}${probList[x]}`);
@@ -617,10 +627,20 @@ function openForkInfo(){
 	$(".MessageBoxFork").css('display','block');
 	$(".BlackBackground").width($(".HtmlContainer").width());
 	$(".BlackBackground").height($(".HtmlContainer").height());
+	if(!RunInNwjs){
+		$(".BlackBackground").css('top',20);
+		$(".BlackBackground").css('left',($('body').width()-$('.HtmlContainer').width())/2);
+	}
 	$('.AllWindow').css('display','block');
 	$('.AlertWindow').css('display','block');
-	$('.AlertWindow').css('top',$(".HtmlContainer").height()/2);
-	$('.AlertWindow').css('left',$(".HtmlContainer").width()/2);
+	if(RunInNwjs){
+		$('.AlertWindow').css('top',$(".HtmlContainer").height()/2);
+		$('.AlertWindow').css('left',$(".HtmlContainer").width()/2);
+	}
+	else{
+		$('.AlertWindow').css('top',$(".HtmlContainer").height()/2+20);
+		$('.AlertWindow').css('left',$('body').width()/2);
+	}
 	$('.AlertWindow').css('max-height',$(".HtmlContainer").height() - 100);
 	$(".BlackBackground").css('background','rgba(0,0,0,0.5)');
 	var p = $(".DefaultLine2:first");
