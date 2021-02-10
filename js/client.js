@@ -45,7 +45,12 @@ var PartyStorage = {};
 var openAdvancedOption = false;
 var DefaultStyle = JSON.parse(JSON.stringify(Highcharts.getOptions()));
 var commitInfo = [];
-function openURL(x){nw.Shell.openExternal(x);}
+function openURL(x){
+	if(RunInNwjs)
+		nw.Shell.openExternal(x);
+	else
+		window.open(x);
+}
 DefaultStyle.legend.backgroundColor = '#fff';
 DefaultStyle.yAxis = {gridLineColor: "#E6E6E6"}
 Highcharts.setOptions(DefaultStyle);
@@ -1561,6 +1566,7 @@ function getNewestRepo(){
 	});
 }
 function openSelf(){
+	if(!RunInNwjs)	return;
 	nw.Window.open("index.html",{
 	    "title": "Codeforces Contest Helper", 
 	    "icon": "icon.png",
