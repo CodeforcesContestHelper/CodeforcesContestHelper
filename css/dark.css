@@ -1,7 +1,8 @@
 body{
-	background: #222;
 	color: #fff;
-	border: 1px solid #777;
+}
+.HtmlContainer{
+	background: #222;
 }
 .ContestId{
 	background-color: #444;
@@ -47,7 +48,8 @@ hr{
 .AlertWindow{
 	background: #666;
 }
-.SubmlissionsList > tr > td{
+.SubmlissionsList > tr > td,
+.EventList > tr > td{
 	border: 1px solid white;
 }
 button{

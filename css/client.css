@@ -22,6 +22,7 @@ body{
 	font-family: 'Consolas','Fira Code','Source Code Pro','Lucida Console','Cascadia Code','Ubuntu Mono','Monospace';
 	-webkit-app-region: drag;
 	transition: background-color 0.3s, color 0.3s;
+	border-radius: 5px;
 }
 .ContestStatus{
 	font-family: Verdana;
@@ -55,6 +56,7 @@ body{
 .ProblemList{
 	-webkit-app-region: no-drag;
 	height: 67px;
+	margin: 0 2px;
 	overflow-x: scroll;
 	overflow-y: none;
 	white-space: nowrap;
@@ -119,23 +121,22 @@ body{
 	position: fixed;
 	top: 0;
 	left: 0;
-	width: 100%;
-	height: 100%;
+	border-radius: 5px;
 	z-index: 2;
 }
 .AllWindow{
+	position: absolute;
+	width: 100%;
+	height: 100%;
 	display:none;
 }
 .AlertWindow{
 	border-radius: 3px;
 	-webkit-app-region: no-drag;
-	position:absolute;
-	top:50%;
-	left:50%;
+	position:fixed;
 	transform:translate(-50%, -50%);
 	z-index:3;
-	width: calc(100% - 50px);
-	max-height: calc(100% - 100px);
+	width: 350px;
 	padding: 5px;
 	font-size: 16px;
 	pointer-events: auto;
@@ -150,6 +151,17 @@ body{
 	font-size: 13px;
 }
 .SubmlissionsList > tr > td{
+	padding: 5px;
+}
+.EventList{
+	width: 350px;
+	min-width: 350px;
+	max-width: 350px;
+	margin: 0 auto;
+	font-family: Consolas;
+	font-size: 13px;
+}
+.EventList > tr > td{
 	padding: 5px;
 }
 hr{
@@ -262,7 +274,7 @@ label:after {
 	width:0;
 	height:1.5px;
 	background:skyblue;
-	transition:width 0.5s;
+	transition:width 0.3s;
 	position:absolute;
 	bottom:1px;
 	left:1px;
