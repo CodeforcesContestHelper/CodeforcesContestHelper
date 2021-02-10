@@ -26,7 +26,7 @@
 								<td class="ContestRatingTd" style="padding:0px;width:calc(100% - 130px)" rowspan='2'><div class="CurrentRating">#?</div><div class="ContestRatingChanges"></div></td>
 							</tr>
 							<tr>
-								<td><div class="RatingGraphDescription" style="width:130px;"><i class="fa fa-line-chart"></i> Rank Graph&nbsp;</div></td>
+								<td class="RatingGraphDescriptionTd"><div class="RatingGraphDescription" style="width:130px;"><i class="fa fa-line-chart"></i> Rank Graph&nbsp;</div></td>
 							</tr>
 						</table>
 						<div id="highchatrsContainer"><div style="height:100%;display: flex;align-items: center;justify-content: center;vertical-align:center">Blank</div></div>
@@ -38,7 +38,7 @@
 						<div class="ContestStatus">Idle</div>
 						<table>
 							<tr>
-								<td><div class="ContestId"><i class="fa fa-calendar"></i> Contest Id:</br><span class="ContestIdNumber">?</span></div></td>
+								<td><div class="ContestId"><i class="fa fa-calendar"></i> Contest Id:<br/><span class="ContestIdNumber">?</span></div></td>
 								<td><div class="ContestName">?</div></td>
 							</tr>
 						</table>
@@ -47,29 +47,30 @@
 							<div style="height:100%;display: flex;align-items: center;justify-content: center;vertical-align:center">Blank</div>
 						</div>
 						<hr>
-						<table style="width:100%;table-layout:fixed;">
+						<table style="width:100%;text-align:right;">
 							<tr>
-								<td style="width: 60px;">Name: </td>
-								<td><input type="text" class="UsernameInput" /></td>
+								<td style="width: 12px;font-size: 16px;padding: 4px;" class="fa fa-user"></td>
+								<td class="inputWrapper"><label><input type="text" class="UsernameInput" placeholder="Handle"/></label></td>
 							</tr>
 							<tr>
-								<td style="width: 60px;">ID: </td>
-								<td><input type="text" class="ContestIDInput" /><div class="ContestType">/</div></td>
+								<td style="width: 12px;font-size: 16px;padding: 4px;" class="fa fa-calendar"></td>
+								<td><label style="width:299px"><input type="text" class="ContestIDInput"  placeholder="Contest ID" style="width:299px"/></label><div class="ContestType">/</div></td>
 							</tr>
 							<tr>
-								<td style="width: 60px;">Time: </td>
+								<td style="width: 12px;font-size: 16px;padding: 4px;" class="fa fa-clock-o"></td>
 								<td><select class="ContestTypeChosen"></select></td>
 							</tr>
 							<tr>
-								<td style="width: 60px;">Cmp: </td>
-								<td><input type="text" class="ContestDiffCalc" /></td>
+								<td style="width: 12px;font-size: 16px;padding: 4px;" class="fa fa-list-alt"></td>
+								<td><label><input type="text" class="ContestDiffCalc"  placeholder="Compatitor Expression"/></label></td>
 							</tr>
 						</table>
 						<div class="ConnectionStatus"><i class="fa fa-globe"></i> Fill & Send to update!</div>
 						<span class="UserType">?</span>
 						<div class="ToolList">
-							<button type="button" class="OpenAdvancedButton" title="More Options"><i class="fa fa-angle-double-left"></i></button>
-							<div class="AdvancedToolList" style="width:0px;height:24px;">
+							<div class="AdvancedToolList" style="width:24px;height:24px;">
+								<button type="button" class="OpenAdvancedButton" title="More Options"><i class="fa fa-angle-double-left"></i></button>
+								<button type="button" class="SetOnTopButton" title="Set as window"><i class="fa fa-window-maximize"></i></button>
 								<button type="button" class="OpenWindowButton" title="Open New Window"><i class="fa fa-clone"></i></button>
 								<button type="button" class="FoldButton" title="Fold Window"><i class="fa fa-angle-down"></i></button>
 								<button type="button" class="VirtualRankButton" title="Enable Rank Predictor" style="display:none"><i class="fa fa-database"></i></button>
@@ -95,14 +96,24 @@
 					<div style="text-align:center"><div class="ProblemName"></div></div>
 					<div style="text-align:center"><span class="ProblemType"></span> | POINTS: <span class="ProblemPoints"></span> | RATING: <span class="ProblemRating"></span></div>
 					<hr>
-					<div class="ProblemStatusType" style="text-align:center"><i class="fa fa-hourglass"></i> Submissions</div>
+					<div class="ProblemStatusType" style="text-align:center;margin:2px;"><i class="fa fa-hourglass"></i> Submissions</div>
 					<table class="SubmlissionsList" style="text-align:center;word-wrap:break-word;" cellspacing="0">
 						<tr class="DefaultLine">
-							<td title="When"><i class="fa fa-user"></i></td>
-							<td title="Language"><i class="fa fa-code"></i></td>
-							<td title="Verdict"><i class="fa fa-server"></i></td>
-							<td title="Time"><i class="fa fa-clock-o"></i></td>
-							<td title="Memory"><i class="fa fa-microchip"></i></td>
+							<td style="font-size:16px;width:56px;" title="When"><i class="fa fa-user"></i></td>
+							<td style="font-size:16px;width:90px;" title="Language"><i class="fa fa-code"></i></td>
+							<td style="font-size:16px;width:120px;" title="Verdict"><i class="fa fa-server"></i></td>
+							<td style="font-size:16px;width:42px;" title="Time"><i class="fa fa-clock-o"></i></td>
+							<td style="font-size:16px;width:42px;" title="Memory"><i class="fa fa-microchip"></i></td>
+						</tr>
+					</table>
+				</div>
+				<div class="MessageBoxFork">
+					<span style="float:right;cursor:pointer;" onclick="closeMessageBox()"><i class="fa fa-times style_error"></i></span>
+					<div style="text-align:center;margin:2px;"><i class="fa fa-book"></i> Recent Commits</div>
+					<table class="EventList" style="text-align:center;word-wrap:break-word;" cellspacing="0">
+						<tr class="DefaultLine2">
+							<td style="font-size:16px;width:56px;" title="When"><i class="fa fa-user"></i></td>
+							<td style="font-size:16px;width:274px;" title="Message"><i class="fa fa-code-fork"></i></td>
 						</tr>
 					</table>
 				</div>
@@ -114,9 +125,9 @@
 			<div class="SmallRankInfo">
 				<span class="SmallContestName">#?</span>
 				<span class="SmallUsername">@?</span>
-				</br><span class="SmallTime">-</span>
+				<br/><span class="SmallTime">-</span>
 				<span class="SmallRank">#?</span>
-				</br><span class="SmallRatingChanges"></span>
+				<br/><span class="SmallRatingChanges"></span>
 			</div>
 			<hr>
 			<div class="ProblemList" id="ProblemList">
@@ -125,8 +136,9 @@
 			<hr>
 			<span class="UserType">?</span>
 			<div class="ToolList">
-				<button type="button" class="OpenAdvancedButton" title="More Options"><i class="fa fa-angle-double-left"></i></button>
-				<div class="AdvancedToolList" style="width:0px;height:24px;">
+				<div class="AdvancedToolList" style="width:24px;height:24px;">
+					<button type="button" class="OpenAdvancedButton" title="More Options"><i class="fa fa-angle-double-left"></i></button>
+					<button type="button" class="SetOnTopButton" title="Set As Window"><i class="fa fa-window-maximize"></i></button>
 					<button type="button" class="OpenWindowButton" title="Open New Window"><i class="fa fa-clone"></i></button>
 					<button type="button" class="UnfoldButton" title="Unfold Window"><i class="fa fa-angle-up"></i></button>
 					<button type="button" class="VirtualRankButton" title="Enable Rank Predictor" style="display:none"><i class="fa fa-database"></i></button>
@@ -163,7 +175,7 @@
 				else	step = moveBackStep;
 				scrollAnimation = true;
 				$(".ProblemList").each(function(){
-					$(this).animate({'scrollLeft': $(this).scrollLeft() + step}, 125, "swing", function(){
+					$(this).animate({'scrollLeft': $(this).scrollLeft() + step}, 100, "swing", function(){
 						scrollAnimation = false;
 					});
 				});
@@ -202,6 +214,12 @@
 				window.matchMedia('(prefers-color-scheme: light)').addListener(listeners.light)
 			}
 			$('.SmallInterface').css('display','none');
+			$("input").focus(function() {
+		        $(this).parent("label").addClass("active");
+		    });
+		    $("input").blur(function() {
+		        $(this).parent("label").removeClass("active");
+		    })
 		</script>
 	</footer>
 </html>

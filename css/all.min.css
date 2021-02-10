@@ -394,3 +394,15 @@
 .fa-microchip:before {
   content: "\f2db";
 }
+.fa-window-restore:before {
+  content: "\f2d2";
+}
+.fa-window-maximize:before {
+  content: "\f2d0";
+}
+.fa-list-alt:before {
+  content: "\f022";
+}
+.fa-book:before {
+  content: "\f02d";
+}

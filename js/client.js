@@ -1,6 +1,8 @@
 var win = nw.Window.get();
 setTimeout(function(){win.show();},300);
 win.setAlwaysOnTop(true);
+var isFold = false;
+var onTopStatus = true;
 var lockStatus = false;
 var blankTip = true;
 var showUnofficialIf = false;
@@ -36,6 +38,7 @@ var refreshApiInfo = undefined;
 var ApiLoadingStatus = false;
 var getContestList = undefined
 var ApiLoadingStatus2 = false;
+var ToolListLength = 188;
 var SubmissionsStorage = [];
 var WinHeight = 615;
 var lastSet = 615;
@@ -44,6 +47,7 @@ var ProblemInfoStorage = [];
 var PartyStorage = {};
 var openAdvancedOption = false;
 var DefaultStyle = JSON.parse(JSON.stringify(Highcharts.getOptions()));
+var commitInfo = [];
 function openURL(x){nw.Shell.openExternal(x);}
 DefaultStyle.legend.backgroundColor = '#fff';
 DefaultStyle.yAxis = {gridLineColor: "#E6E6E6"}
@@ -378,6 +382,10 @@ function getChart(){
 		});
 	}
 }
+function flushToolList(){
+	if(openAdvancedOption)
+		$(".AdvancedToolList").css("width",ToolListLength);
+}
 var opacityIf = false;
 function setSize(y){
 	win.setResizable(true);
@@ -448,6 +456,13 @@ function getVirtualRankIf(){
 	else
 		$('.VirtualRankButton').html('<i class="fa fa-database"></i>').attr('title','Enable Rank Predictor');
 	VirtualRank = !VirtualRank;
+}
+function setOnTopIf(){
+	if(onTopStatus)
+		win.setAlwaysOnTop(false),$('.SetOnTopButton').html("<i class='fa fa-window-restore'></i>").attr('title','Set As Top');
+	else
+		win.setAlwaysOnTop(true),$('.SetOnTopButton').html("<i class='fa fa-window-maximize'></i>").attr('title','Set As Window');
+	onTopStatus = !onTopStatus;
 }
 function getTimeLength(x){
 	x = Math.floor(x / 1000 / 60);
@@ -543,7 +558,9 @@ function toMemoryInfo(limit){
 }
 function closeMessageBox(){
 	if(WinHeight == 190)	return;
-	$('.AllWindow').css('display','none');
+	$('.AlertWindow').css('display','none');
+	$(".BlackBackground").css('background','rgba(0,0,0,0)');
+	setTimeout(function(){$('.AllWindow').css('display','none')},300);
 }
 function toSmallInfo(x){
 	if(x==undefined)	return ""
@@ -567,7 +584,16 @@ function toSmallInfo(x){
 }
 function openProblemInfo(x){
 	if(WinHeight == 190)	return;
+	$(".MessageBoxFork").css('display','none');
+	$(".MessageBoxProblem").css('display','block');
+	$(".BlackBackground").width($(".HtmlContainer").width());
+	$(".BlackBackground").height($(".HtmlContainer").height());
 	$('.AllWindow').css('display','block');
+	$('.AlertWindow').css('display','block');
+	$('.AlertWindow').css('top',$(".HtmlContainer").height()/2);
+	$('.AlertWindow').css('left',$(".HtmlContainer").width()/2);
+	$('.AlertWindow').css('max-height',$(".HtmlContainer").height() - 100);
+	$(".BlackBackground").css('background','rgba(0,0,0,0.5)');
 	$('.ProblemLink').html(`<i class='fa fa-link'></i> CF${ContestID}${probList[x]}`);
 	$('.ProblemLink').attr("onclick",`openURL('https://codeforces.com/contest/${ContestID}/problem/${probList[x]}')`);
 	$('.ProblemName').html(ProblemInfoStorage[x].name);
@@ -577,11 +603,40 @@ function openProblemInfo(x){
 	var p = $(".DefaultLine:first");
 	$(".SubmlissionsList").css("display","block");
 	$(".SubmlissionsList").html(p);
+	var hav = false;
 	for(var i=0;i<SubmissionsStorage.length;i++){
 		if(SubmissionsStorage[i].problem.index != probList[x])
 			continue;
 		$(".SubmlissionsList").append(`<tr><td>${new Date(1000*SubmissionsStorage[i].creationTimeSeconds).pattern("YY-MM-dd hh:mm:ss")}</td><td>${SubmissionsStorage[i].programmingLanguage}</td><td><span style="cursor:pointer;" onclick='openURL("https://codeforces.com/problemset/submission/${ContestID}/${SubmissionsStorage[i].id}")'>${SubmissionsStorage[i].verdict=="OK"?("<span class='ProblemAccepted'>"+(SubmissionsStorage[i].testset=="TESTS"?"Accepted":SubmissionsStorage[i].testset+" passed")+"</span>"):(toSmallInfo(SubmissionsStorage[i].verdict)+" on "+SubmissionsStorage[i].testset+" "+(SubmissionsStorage[i].passedTestCount+1))}${SubmissionsStorage[i].points!=undefined?('('+SubmissionsStorage[i].points+')'):""}</span></td><td>${SubmissionsStorage[i].timeConsumedMillis}ms</td><td>${toMemoryInfo(SubmissionsStorage[i].memoryConsumedBytes)}</td></tr>`);
+		hav = true;
 	}
+	if(!hav)	$(".SubmlissionsList").append("<tr><td colspan='5'>Blank</td></tr>");
+}
+function openForkInfo(){
+	if(WinHeight == 190)	return;
+	$(".MessageBoxProblem").css('display','none');
+	$(".MessageBoxFork").css('display','block');
+	$(".BlackBackground").width($(".HtmlContainer").width());
+	$(".BlackBackground").height($(".HtmlContainer").height());
+	$('.AllWindow').css('display','block');
+	$('.AlertWindow').css('display','block');
+	$('.AlertWindow').css('top',$(".HtmlContainer").height()/2);
+	$('.AlertWindow').css('left',$(".HtmlContainer").width()/2);
+	$('.AlertWindow').css('max-height',$(".HtmlContainer").height() - 100);
+	$(".BlackBackground").css('background','rgba(0,0,0,0.5)');
+	var p = $(".DefaultLine2:first");
+	$(".EventList").css("display","block");
+	$(".EventList").html(p);
+	var hav = false;
+	for(var i=0;i<commitInfo.length;i++){
+		var UpdateTime = commitInfo[i].commit.committer.date.replace('T',' ');
+		UpdateTime=UpdateTime.substr(0,UpdateTime.length-1);
+		UpdateTime=new Date(UpdateTime.replace(/-/g,'/'));
+		UpdateTime=new Date(Number(UpdateTime)-UpdateTime.getTimezoneOffset()*60*1000);
+		$(".EventList").append(`<tr><td>${UpdateTime.pattern("YY-MM-dd hh:mm:ss")}</td><td><div style='cursor:pointer;word-wrap:break-word;width:265px;overflow-x:none' onclick="openURL('${commitInfo[i].html_url}')">${allHtmlSpecialChars(commitInfo[i].commit.message)}</div></td></tr>`);
+		hav = true;
+	}
+	if(!hav)	$(".EventList").append("<tr><td colspan='2'>Blank</td></tr>");
 }
 function getProblemList(a,b){
 	$('.ProblemList').html('');
@@ -590,8 +645,10 @@ function getProblemList(a,b){
 		blankTip = true;return;
 	}
 	blankTip = false;
-	for(var i=0;i<a.length;i++)
+	for(var i=0;i<a.length;i++){
+		if(b[i][0]=='')	b[i][0]='*';
 		$('.ProblemList').append(`<div class="SingleProblem"><div class="BackgroundPic">${a[i]}</div><span class="ProblemResult ${b[i][3]}" onclick="openProblemInfo(${i});" style="cursor:pointer;">${b[i][0]}</span></br><span class="TimeUsed">${b[i][1]}</span></br><hr><span class="ProblemScore ${b[i][3]}">${b[i][2]}</span></div>`);
+	}
 }
 function ProblemListAppend(a,b,c,d){
 	if(blankTip == true){
@@ -910,7 +967,7 @@ function getApiInfo(cD){
 			PartyStorage = json.party;
 			var realLength = 0;
 			var realList = [];
-			$('.ContestTypeChosen').html('');
+			$('.ContestTypeChosen').html("");
 			for(var i=0;i<json.rows.length;i++)
 				if(json.rows[i].party.members[0].handle==Username)
 					++realLength, realList.push(json.rows[i]), 
@@ -944,7 +1001,8 @@ function getApiInfo(cD){
 			if(currT<StartTime)	CurrentStatus="BEFORE";
 			else if(currT<EndTime)	CurrentStatus="CODING";
 			if(realLength==0)
-				$('.VirtualRankButton').css('display','none');
+				$('.VirtualRankButton').css('display','none'),
+				ToolListLength=188,flushToolList();
 			var FriendResultInfo = {};
 			for(var i=0;i<json.rows.length;i++){
 				var nam = json.rows[i].party.members[0].handle;
@@ -1014,6 +1072,8 @@ function getApiInfo(cD){
 				||  json.party.participantType=="VIRTUAL"))
 				|| (json.party.participantType=="VIRTUAL" && CurrentStatus == "CODING")){
 					$('.VirtualRankButton').css('display','inline-block');
+					ToolListLength=221;
+					flushToolList();
 					if(VirtualRank){
 						globalJson = json;
 						if(!LoadingStatus)
@@ -1021,7 +1081,8 @@ function getApiInfo(cD){
 					}
 				}
 				else
-					$('.VirtualRankButton').css('display','none');
+					$('.VirtualRankButton').css('display','none'),
+					ToolListLength=188,flushToolList();
 				if(json.party.participantType=="PRACTICE"){
 					$('.CurrentRating').html("#?");
 					$('.SmallRank').html('#?');
@@ -1462,13 +1523,14 @@ var RepoLink = "https://github.com/tiger2005/CodeforcesContestHelper"
 function getNewestRepo(){
 	$('.ConnectionStatus').html('<i class="fa fa-spin fa-spinner"></i> Loading Repo Info...');
 	$.getJSON("https://api.github.com/repos/tiger2005/CodeforcesContestHelper/commits",function(json){
+		commitInfo = json;
 		json=json[0];
 		var UpdateTime = json.commit.committer.date.replace('T',' ');
 		UpdateTime=UpdateTime.substr(0,UpdateTime.length-1);
 		UpdateTime=new Date(UpdateTime.replace(/-/g,'/'));
 		UpdateTime=new Date(Number(UpdateTime)-UpdateTime.getTimezoneOffset()*60*1000);
 		BranchLink=json.html_url;
-		$('.ConnectionStatus').html(`<i class="fa fa-check style_accept"></i> Last Update at ${UpdateTime.pattern("YY-MM-dd hh:mm:ss")} <span onclick="openURL(BranchLink)" class="fa fa-code-fork" style="cursor:pointer;"></span> <span onclick="openURL(RepoLink)" class="fa fa-github" style="cursor:pointer;"></span>`);
+		$('.ConnectionStatus').html(`<i class="fa fa-check style_accept"></i> Last Update at ${UpdateTime.pattern("YY-MM-dd hh:mm:ss")} <span onclick="openForkInfo()" class="fa fa-code-fork" style="cursor:pointer;"></span> <span onclick="openURL(RepoLink)" class="fa fa-github" style="cursor:pointer;"></span>`);
 	}).fail(function(){
 		$('.ConnectionStatus').html('<i class="fa fa-times style_error"></i> Connection Error!');
 	});
@@ -1497,12 +1559,12 @@ function openSelf(){
 function showAdvancedOptionIf(){
 	if(!openAdvancedOption){
 		$(".UserType").css("max-width","8px");
-		$(".AdvancedToolList").css("width","125px");
+		$(".AdvancedToolList").css("width",ToolListLength);
 		$('.OpenAdvancedButton').addClass("fa-rotate-180").attr("title","Less Options");
 	}
 	else{
 		$(".UserType").css("max-width","200px");
-		$(".AdvancedToolList").css("width","0px");
+		$(".AdvancedToolList").css("width","24px");
 		$('.OpenAdvancedButton').removeClass("fa-rotate-180").attr("title","More Options");
 	}
 	openAdvancedOption = !openAdvancedOption;
@@ -1518,3 +1580,14 @@ $('.UpdateButton').attr('onclick','getNewestRepo()');
 $('.OpenWindowButton').attr('onclick','openSelf()');
 $('.OpenAdvancedButton').attr('onclick','showAdvancedOptionIf()');
 $('.BlackBackground').attr('onclick','closeMessageBox()');
+$('.SetOnTopButton').attr('onclick','setOnTopIf()');
+function allHtmlSpecialChars(text){
+    var map = {
+      '&': '&amp;',
+      '<': '&lt;',
+      '>': '&gt;',
+      '"': '&quot;',
+      '\'': '&#039;'
+    };
+    return text.replace(/[&<>"']/g, function(m) { return map[m]; });
+}

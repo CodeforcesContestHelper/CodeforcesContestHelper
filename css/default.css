@@ -1,7 +1,8 @@
 body{
-	background: #fff;
 	color: #000;
-	border: 1px solid #444;
+}
+.HtmlContainer{
+	background: #fff;
 }
 .ContestId{
 	background-color: #ccc;
@@ -24,6 +25,12 @@ body{
 hr{
 	background-color: #000;
 }
+.SingleProblem{
+	border: 1px solid rgba(0,0,0,0);
+}
+.RatingGraphDescriptionTd, .GraphFolder{
+	background: #fff;
+}
 #highchatrsContainer{
 	background: #fff;
 	color: #000;
@@ -41,7 +48,8 @@ hr{
 .AlertWindow{
 	background: #fff;
 }
-.SubmlissionsList > tr > td{
+.SubmlissionsList > tr > td,
+.EventList > tr > td{
 	border: 1px solid black;
 }
 button{
@@ -52,7 +60,6 @@ button:hover{
 }
 input{
     -webkit-tap-highlight-color: rgba(0,0,0,0);
-    border: 2px solid grey;
 }
 select:hover{
 	background: #eee;

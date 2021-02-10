@@ -1,7 +1,8 @@
 body{
-	background: #222;
 	color: #fff;
-	border: 1px solid #777;
+}
+.HtmlContainer{
+	background: #222;
 }
 .ContestId{
 	background-color: #444;
@@ -14,6 +15,9 @@ body{
 }
 .BackgroundPic{
     color: #777;
+}
+.RatingGraphDescriptionTd, .GraphFolder{
+	background: #383839;
 }
 hr{
 	background-color: #fff;
@@ -44,7 +48,8 @@ hr{
 .AlertWindow{
 	background: #666;
 }
-.SubmlissionsList > tr > td{
+.SubmlissionsList > tr > td,
+.EventList > tr > td{
 	border: 1px solid white;
 }
 button{
@@ -58,7 +63,6 @@ input{
 	background: #222;
 	color: #fff;
     -webkit-tap-highlight-color: rgba(0,0,0,0);
-    border: 2px solid grey;
 }
 select{
 	background: #222;
