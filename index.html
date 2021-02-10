@@ -7,10 +7,23 @@
 		<link class="ThemeTypeIf" rel="stylesheet" href="./css/default.css">
 		<link rel="stylesheet" href="./css/all.min.css">
 		<script>
+			var RunInNwjs = true;
+			try{
+				var win = nw.Window.get();
+				setTimeout(function(){win.show();},300);
+				win.setAlwaysOnTop(true);
+			}
+			catch(error){
+				document.title = 'Codeforces Contest Helper (Website Mode)';
+				console.log('Switched to Website Mode');
+				RunInNwjs = false;
+			}
 			var DarkMode = false;
 			if (window.matchMedia('(prefers-color-scheme)').media !== 'not all') {
-				if(window.matchMedia('(prefers-color-scheme: dark)').matches)
+				if(window.matchMedia('(prefers-color-scheme: dark)').matches){
 					DarkMode = true, $('.ThemeTypeIf').attr('href','./css/dark.css');
+					
+				}
 			}
 		</script>
 	</head>
@@ -157,6 +170,14 @@
 	<footer>
 		<script src="./js/client.js"></script>
 		<script>
+			if(!RunInNwjs){
+				if(!DarkMode)
+					$('body').css('background','#b7b7b7');
+				else
+					$('body').css('background','#484848');
+				$(".HtmlContainer").css('margin','0 auto');
+				$(".HtmlContainer").css('margin-top','20px');
+			}
 		    var element =  document.documentElement;
 		    if(navigator.userAgent.indexOf("Chrome")>0){
 		    	element = document.body;
@@ -187,16 +208,24 @@
 					$('.ThemeTypeIf').attr('href','./css/dark.css'),
 					$('.ThemeButton').html('<i class="fa fa-moon-o"></i>');
 					if(opacityIf)
-						$('body').css('background-color','rgba(0,0,0,0.5)');
+						$('.HtmlContainer').css('background-color','rgba(0,0,0,0.5)');
+					else
+						$('.HtmlContainer').css('background-color','#222');
+					if(!RunInNwjs)
+						$('body').css('background','#484848');
 				}
 				else{
 					$('.ThemeTypeIf').attr('href','./css/default.css'),
 					$('.ThemeButton').html('<i class="fa fa-sun-o"></i>');
 					if(opacityIf)
-						$('body').css('background-color','rgba(255,255,255,0.5)');
+						$('.HtmlContainer').css('background-color','rgba(255,255,255,0.5)');
+					else
+						$('.HtmlContainer').css('background-color','#fff');
+					if(!RunInNwjs)
+						$('body').css('background','#b7b7b7');
 				}
 				DarkMode = !DarkMode;
-				getChart(RankData);
+				getChart();
 			}
 			$('.ThemeButton').attr('onclick','ChangeTheme()');
 			if (window.matchMedia('(prefers-color-scheme)').media !== 'not all') {

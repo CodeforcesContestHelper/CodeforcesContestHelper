@@ -1,6 +1,3 @@
-var win = nw.Window.get();
-setTimeout(function(){win.show();},300);
-win.setAlwaysOnTop(true);
 var isFold = false;
 var onTopStatus = true;
 var lockStatus = false;
@@ -388,6 +385,7 @@ function flushToolList(){
 }
 var opacityIf = false;
 function setSize(y){
+	if(!RunInNwjs)	return;
 	win.setResizable(true);
 	win.resizeTo(win.width,y);
 	win.moveBy(0,WinHeight-y);
@@ -427,7 +425,7 @@ $('.GraphFolder').click(function(){
 	isFold = !isFold;
 });
 function closeIf(){
-	if(lockStatus)	return;
+	if(lockStatus || !RunInNwjs)	return;
 	win.close(true);
 }
 function lockIfClick(){
@@ -458,6 +456,7 @@ function getVirtualRankIf(){
 	VirtualRank = !VirtualRank;
 }
 function setOnTopIf(){
+	if(!RunInNwjs)	return;
 	if(onTopStatus)
 		win.setAlwaysOnTop(false),$('.SetOnTopButton').html("<i class='fa fa-window-restore'></i>").attr('title','Set As Top');
 	else
@@ -961,7 +960,10 @@ function getApiInfo(cD){
 			$('.SmallUsername').text('@'+Username);
 			$('.ContestRatingChanges').html("");
 			$('.SmallRatingChanges').html("");
-			win.title = `${Username} At #${ContestID}`;
+			if(RunInNwjs)
+				win.title = `${Username} At #${ContestID}`;
+			else
+				document.title = `${Username} At #${ContestID}`;
 			json = json.result;
 			ProblemInfoStorage = json.problems;
 			PartyStorage = json.party;
@@ -1065,7 +1067,10 @@ function getApiInfo(cD){
 					return;
 				}
 				json = realList[SelectContestIndex];
-				win.title = `${Username} At #${ContestID} As ${json.party.participantType}`;
+				if(RunInNwjs)
+					win.title = `${Username} At #${ContestID} As ${json.party.participantType}`;
+				else
+					document.title = `${Username} At #${ContestID} As ${json.party.participantType}`;
 				$('.UserType').html(json.party.participantType);
 				if((CurrentStatus == "FINISHED" && (
 					json.party.participantType=="CONTESTANT"
