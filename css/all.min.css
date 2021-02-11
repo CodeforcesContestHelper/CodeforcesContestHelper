@@ -422,3 +422,41 @@
 .fa-flag:before {
   content: "\f024";
 }
+.fa-times-circle:before {
+  content: "\f057";
+}
+.fa-percent:before {
+  content: "\f295";
+}
+.fa-bomb:before {
+  content: "\f1e2";
+}
+.fa-print:before {
+  content: "\f02f";
+}
+.fa-align-left:before {
+  content: "\f036";
+}
+.fa-sign-in:before {
+  content: "\f090";
+}
+.fa-user-secret:before {
+  content: "\f21b";
+}
+.fa-forward:before {
+  content: "\f04e";
+}
+.fa-hourglass-2:before,
+.fa-hourglass-half:before {
+  content: "\f252";
+}
+.fa-warning:before,
+.fa-exclamation-triangle:before {
+  content: "\f071";
+}
+.fa-square-o:before {
+  content: "\f096";
+}
+.fa-check-square:before {
+  content: "\f14a";
+}

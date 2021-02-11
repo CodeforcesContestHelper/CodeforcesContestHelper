@@ -102,14 +102,14 @@
 		<div class="AllWindow">
 			<div class="BlackBackground"></div>
 			<div class="AlertWindow" onclick=";">
-				<div class="MessageBoxProblem">
+				<div class="MessageBoxProblem" style="display:none">
 					<span style="float:right;cursor:pointer;" onclick="closeMessageBox()"><i class="fa fa-times style_error"></i></span>
 					<div style="text-align:center"><span class="ProblemLink" style="cursor:pointer;"></span></div>
 					<hr>
 					<div style="text-align:center"><div class="ProblemName"></div></div>
 					<div style="text-align:center"><span class="ProblemType"></span> | POINTS: <span class="ProblemPoints"></span> | RATING: <span class="ProblemRating"></span></div>
 					<hr>
-					<div class="ProblemStatusType" style="text-align:center;margin:2px;"><i class="fa fa-hourglass"></i> Submissions</div>
+					<div class="ProblemStatusType" style="margin:2px;"><span class="float:left;"><i class="fa fa-hourglass"></i> Submissions</span><span style="float:right;">Show as Icon <span class="LessInfoSelect" style="cursor:pointer;" onclick="SetLessInfoIf()"><i class="fa fa-square-o"></i></span></div>
 					<table class="SubmlissionsList" style="text-align:center;word-wrap:break-word;" cellspacing="0">
 						<tr class="DefaultLine">
 							<td style="font-size:16px;width:56px;" title="When"><i class="fa fa-user"></i></td>
@@ -120,7 +120,7 @@
 						</tr>
 					</table>
 				</div>
-				<div class="MessageBoxFork">
+				<div class="MessageBoxFork" style="display:none">
 					<span style="float:right;cursor:pointer;" onclick="closeMessageBox()"><i class="fa fa-times style_error"></i></span>
 					<div style="text-align:center;margin:2px;"><i class="fa fa-book"></i> Recent Commits</div>
 					<table class="EventList" style="text-align:center;word-wrap:break-word;" cellspacing="0">
@@ -130,7 +130,7 @@
 						</tr>
 					</table>
 				</div>
-				<div class="MessageBoxContest">
+				<div class="MessageBoxContest" style="display:none">
 					<span style="float:right;cursor:pointer;" onclick="closeMessageBox()"><i class="fa fa-times style_error"></i></span>
 					<div style="text-align:center;margin:2px;"><i class="fa fa-calendar"></i> Contest Info</div>
 					<div style="text-align:center"><div class="ContestNameDiv"></div></div>

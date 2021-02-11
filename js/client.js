@@ -44,6 +44,8 @@ var ProblemInfoStorage = [];
 var PartyStorage = {};
 var ContestStorage = [];
 var openAdvancedOption = false;
+var showLessSubmissionInfo = false;
+var ParticipantTypeStorage = "";
 var DefaultStyle = JSON.parse(JSON.stringify(Highcharts.getOptions()));
 var commitInfo = [];
 function openURL(x){
@@ -587,14 +589,54 @@ function toSmallInfo(x){
 	if(x == "REJECTED")	return "REJ";
 	return "";
 }
+function getSubmissionIcon(x,y,ttl){
+	if(x == "OK")	return `<i class="fa fa-check style_accept" title='${ttl}'></i>`;
+	var las = "";
+	if(y=="TESTS" &&  ParticipantTypeStorage != "PRACTICE")
+		las = ` <i class="fa fa-times-circle style_error" title='Failed at System Test'></i>`;
+	if(x == "FAILED")	return `<i class="fa fa-server" style="color:rgb(175, 168, 158)" title='${ttl}'></i>`+las;
+	if(x == "PARTIAL")	return `<i class="fa fa-percent" style="color:rgb(74, 254, 246)" title='${ttl}'></i>`+las;
+	if(x == "COMPILATION_ERROR")	return `<i class="fa fa-code" style="color:rgb(74, 254, 246)" title='${ttl}'></i>`+las;
+	if(x == "RUNTIME_ERROR")	return `<i class="fa fa-bomb" style="color:rgb(191, 63, 255);" title='${ttl}'></i>`+las;
+	if(x == "WRONG_ANSWER")	return `<i class="fa fa-times style_error" title='${ttl}'></i>`+las;
+	if(x == "PRESENTATION_ERROR")	return `<i class="fa fa-print" style="color:rgb(255, 155, 70);" title='${ttl}'></i>`+las;
+	if(x == "TIME_LIMIT_EXCEEDED")	return `<i class="fa fa-clock-o" style="color:rgb(255, 155, 70);" title='${ttl}'></i>`+las;
+	if(x == "MEMORY_LIMIT_EXCEEDED")	return `<i class="fa fa-microchip" style="color:rgb(255, 155, 70);" title='${ttl}'></i>`+las;
+	if(x == "IDLENESS_LIMIT_EXCEEDED")	return `<i class="fa fa-align-left" style="color:rgb(255, 155, 70);" title='${ttl}'></i>`+las;
+	if(x == "SECURITY_VIOLATED")	return `<i class="fa fa-ban style_error" title='${ttl}'></i>`+las;
+	if(x == "CRASHED")	return `<i class="fa fa-chain-broken" style="color:rgb(255, 155, 70);" title='${ttl}'></i>`+las;
+	if(x == "INPUT_PREPARATION_CRASHED")	return `<i class="fa fa-sign-in" style="color:rgb(255, 155, 70);" title='${ttl}'></i>`+las;
+	if(x == "CHALLENGED")	return `<i class="fa fa-user-secret" style="color:rgb(175, 168, 158)" title='${ttl}'></i>`+las;
+	if(x == "SKIPPED")	return `<i class="fa fa-forward" style="color:rgb(110, 149, 210);" title='${ttl}'></i>`+las;
+	if(x == "TESTING")	return `<i class="fa fa-hourglass-2" style="color:rgb(110, 149, 210)" title='${ttl}'></i>`+las;
+	if(x == "REJECTED")	return `<i class="fa fa-exclamation-triangle" style="color:#decb29" title='${ttl}'></i>`+las;
+}
 function toSmallCase(x){
 	if(x=="TESTS")	return "test";
 	if(x=="PRETESTS")	return "pretest";
 	if(x=="SAMPLES")	return "sample";
 	return 'test'+x.substr(4,x.length-4);
 }
+var VariableX;
+function flushSubmissionInfo(x){
+	var p = $(".DefaultLine:first");
+	$(".SubmlissionsList").css("display","block");
+	$(".SubmlissionsList").html(p);
+	var hav = false;
+	for(var i=0;i<SubmissionsStorage.length;i++){
+		if(SubmissionsStorage[i].problem.index != probList[x])
+			continue;
+		if(!showLessSubmissionInfo)
+			$(".SubmlissionsList").append(`<tr><td>${new Date(1000*SubmissionsStorage[i].creationTimeSeconds).pattern("YY-MM-dd hh:mm:ss")}</td><td>${SubmissionsStorage[i].programmingLanguage}</td><td><span style="cursor:pointer;" onclick='openURL("https://codeforces.com/problemset/submission/${ContestID}/${SubmissionsStorage[i].id}")'>${SubmissionsStorage[i].verdict=="OK"?("<span class='ProblemAccepted'>"+(SubmissionsStorage[i].testset=="TESTS"?"Accepted":toSmallCase(SubmissionsStorage[i].testset)+" passed")+"</span>"):(SubmissionsStorage[i].verdict=="CHALLENGED"?"<span class='ProblemWrong'>Hacked</span>":(SubmissionsStorage[i].verdict=="PARTIAL"?"<span title='PARTIAL'>PRT</span>":("<span title=\'"+SubmissionsStorage[i].verdict+"\'>"+toSmallInfo(SubmissionsStorage[i].verdict)+"</span> on "+toSmallCase(SubmissionsStorage[i].testset)+" "+(SubmissionsStorage[i].passedTestCount+1))))}${SubmissionsStorage[i].points!=undefined?('('+SubmissionsStorage[i].points+')'):""}</span></td><td>${SubmissionsStorage[i].timeConsumedMillis}ms</td><td>${toMemoryInfo(SubmissionsStorage[i].memoryConsumedBytes)}</td></tr>`);
+		else
+			$(".SubmlissionsList").append(`<tr><td>${new Date(1000*SubmissionsStorage[i].creationTimeSeconds).pattern("YY-MM-dd hh:mm:ss")}</td><td>${SubmissionsStorage[i].programmingLanguage}</td><td style='font-size:25px;'><span style="cursor:pointer;" onclick='openURL("https://codeforces.com/problemset/submission/${ContestID}/${SubmissionsStorage[i].id}")'>${getSubmissionIcon(SubmissionsStorage[i].verdict,SubmissionsStorage[i].testset,`${SubmissionsStorage[i].verdict=="OK"?((SubmissionsStorage[i].testset=="TESTS"?"Accepted":toSmallCase(SubmissionsStorage[i].testset)+" passed")):(SubmissionsStorage[i].verdict=="CHALLENGED"?"Hacked":(SubmissionsStorage[i].verdict=="PARTIAL"?"PARTIAL":((SubmissionsStorage[i].verdict)+" on "+toSmallCase(SubmissionsStorage[i].testset)+" "+(SubmissionsStorage[i].passedTestCount+1))))}${SubmissionsStorage[i].points!=undefined?('('+SubmissionsStorage[i].points+')'):""}`)}</span></td><td>${SubmissionsStorage[i].timeConsumedMillis}ms</td><td>${toMemoryInfo(SubmissionsStorage[i].memoryConsumedBytes)}</td></tr>`);
+		hav = true;
+	}
+	if(!hav)	$(".SubmlissionsList").append("<tr><td colspan='5'>Blank</td></tr>");
+}
 function openProblemInfo(x){
 	if(WinHeight == 190)	return;
+	VariableX = x;
 	$(".MessageBoxFork").css('display','none');
 	$(".MessageBoxProblem").css('display','block');
 	$(".MessageBoxContest").css('display','none');
@@ -622,17 +664,7 @@ function openProblemInfo(x){
 	$('.ProblemType').html(`<i class="fa ${ProblemInfoStorage[x].type=="PROGRAMMING"?"fa-terminal":"fa-question-circle"}" title="${ProblemInfoStorage[x].type}"></i>`);
 	$(".ProblemPoints").html(ProblemInfoStorage[x].points==undefined?'/':ProblemInfoStorage[x].points);
 	$(".ProblemRating").html(ProblemInfoStorage[x].rating==undefined?'/':ProblemInfoStorage[x].rating);
-	var p = $(".DefaultLine:first");
-	$(".SubmlissionsList").css("display","block");
-	$(".SubmlissionsList").html(p);
-	var hav = false;
-	for(var i=0;i<SubmissionsStorage.length;i++){
-		if(SubmissionsStorage[i].problem.index != probList[x])
-			continue;
-		$(".SubmlissionsList").append(`<tr><td>${new Date(1000*SubmissionsStorage[i].creationTimeSeconds).pattern("YY-MM-dd hh:mm:ss")}</td><td>${SubmissionsStorage[i].programmingLanguage}</td><td><span style="cursor:pointer;" onclick='openURL("https://codeforces.com/problemset/submission/${ContestID}/${SubmissionsStorage[i].id}")'>${SubmissionsStorage[i].verdict=="OK"?("<span class='ProblemAccepted'>"+(SubmissionsStorage[i].testset=="TESTS"?"Accepted":toSmallCase(SubmissionsStorage[i].testset)+" passed")+"</span>"):(SubmissionsStorage[i].verdict=="CHALLENGED"?"<span class='ProblemWrong'>Hacked</span>":(SubmissionsStorage[i].verdict=="PARTIAL"?"<span title='PARTIAL'>PRT</span>":("<span title=\'"+SubmissionsStorage[i].verdict+"\'>"+toSmallInfo(SubmissionsStorage[i].verdict)+"</span> on "+toSmallCase(SubmissionsStorage[i].testset)+" "+(SubmissionsStorage[i].passedTestCount+1))))}${SubmissionsStorage[i].points!=undefined?('('+SubmissionsStorage[i].points+')'):""}</span></td><td>${SubmissionsStorage[i].timeConsumedMillis}ms</td><td>${toMemoryInfo(SubmissionsStorage[i].memoryConsumedBytes)}</td></tr>`);
-		hav = true;
-	}
-	if(!hav)	$(".SubmlissionsList").append("<tr><td colspan='5'>Blank</td></tr>");
+	flushSubmissionInfo(x);
 }
 function openForkInfo(){
 	if(WinHeight == 190)	return;
@@ -1147,6 +1179,7 @@ function getApiInfo(cD){
 					return;
 				}
 				json = realList[SelectContestIndex];
+				ParticipantTypeStorage = json.party.participantType;
 				if(RunInNwjs)
 					win.title = `${Username} At #${ContestID} As ${json.party.participantType}`;
 				else
@@ -1635,6 +1668,16 @@ function showAdvancedOptionIf(){
 		$('.OpenAdvancedButton').removeClass("fa-rotate-180").attr("title","More Options");
 	}
 	openAdvancedOption = !openAdvancedOption;
+}
+function SetLessInfoIf(){
+	if(showLessSubmissionInfo)
+		$(".LessInfoSelect").html(`<i class="fa fa-square-o"></i>`);
+	else
+		$(".LessInfoSelect").html(`<i class="fa fa-check-square"></i>`);
+	showLessSubmissionInfo = !showLessSubmissionInfo;
+	if($('.MessageBoxProblem').css('display')=='block'
+	&& $('.AlertWindow').css('display')=='block')
+		flushSubmissionInfo(VariableX);
 }
 $('.LockButton').attr('onclick','lockIfClick()');
 $('.SendButton').attr('onclick','changeUserInfo()');
