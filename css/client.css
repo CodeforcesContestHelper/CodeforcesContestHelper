@@ -166,6 +166,17 @@ body{
 .EventList > tr > td{
 	padding: 5px;
 }
+.ContestInfoList{
+	width: 350px;
+	min-width: 350px;
+	max-width: 350px;
+	margin: 0 auto;
+	font-family: Consolas;
+	font-size: 13px;
+}
+.ContestInfoList > tr > td{
+	padding: 5px;
+}
 hr{
 	display: block;
 	margin: 2px;

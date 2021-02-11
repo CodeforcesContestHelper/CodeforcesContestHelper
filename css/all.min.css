@@ -406,3 +406,19 @@
 .fa-book:before {
   content: "\f02d";
 }
+.fa-tag:before {
+  content: "\f02b";
+}
+.fa-star:before {
+  content: "\f005";
+}
+.fa-mortar-board:before,
+.fa-graduation-cap:before {
+  content: "\f19d";
+}
+.fa-map:before {
+  content: "\f279";
+}
+.fa-flag:before {
+  content: "\f024";
+}
