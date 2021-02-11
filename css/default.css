@@ -48,9 +48,16 @@ hr{
 .AlertWindow{
 	background: #fff;
 }
+.ContestDuration{
+	border-bottom: 2px solid #000;
+}
 .SubmlissionsList > tr > td,
 .EventList > tr > td{
 	border: 1px solid black;
+}
+.ContestInfoList > tbody > tr > td:last-child{
+	border-top: 1px solid black;
+	border-bottom: 1px solid black;
 }
 button{
 	background: #ccc;

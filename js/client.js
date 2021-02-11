@@ -42,6 +42,7 @@ var lastSet = 615;
 var chart = undefined;
 var ProblemInfoStorage = [];
 var PartyStorage = {};
+var ContestStorage = [];
 var openAdvancedOption = false;
 var DefaultStyle = JSON.parse(JSON.stringify(Highcharts.getOptions()));
 var commitInfo = [];
@@ -577,7 +578,7 @@ function toSmallInfo(x){
 	if(x == "TIME_LIMIT_EXCEEDED")	return "TLE";
 	if(x == "MEMORY_LIMIT_EXCEEDED")	return "MLE";
 	if(x == "IDLENESS_LIMIT_EXCEEDED")	return "ILE";
-	if(x == "SECURITY_VIOLATED")	return "WA";
+	if(x == "SECURITY_VIOLATED")	return "SV";
 	if(x == "CRASHED")	return "CRS";
 	if(x == "INPUT_PREPARATION_CRASHED")	return "IPC";
 	if(x == "CHALLENGED")	return "CHL";
@@ -596,11 +597,12 @@ function openProblemInfo(x){
 	if(WinHeight == 190)	return;
 	$(".MessageBoxFork").css('display','none');
 	$(".MessageBoxProblem").css('display','block');
+	$(".MessageBoxContest").css('display','none');
 	$(".BlackBackground").width($(".HtmlContainer").width());
 	$(".BlackBackground").height($(".HtmlContainer").height());
 	if(!RunInNwjs){
-		$(".BlackBackground").css('top',20);
-		$(".BlackBackground").css('left',($('body').width()-$('.HtmlContainer').width())/2);
+		$(".BlackBackground").css('top',-$(".HtmlContainer").height());
+		$(".BlackBackground").css('left',0);
 	}
 	$('.AllWindow').css('display','block');
 	$('.AlertWindow').css('display','block');
@@ -609,8 +611,8 @@ function openProblemInfo(x){
 		$('.AlertWindow').css('left',$(".HtmlContainer").width()/2);
 	}
 	else{
-		$('.AlertWindow').css('top',$(".HtmlContainer").height()/2+20);
-		$('.AlertWindow').css('left',$('body').width()/2);
+		$('.AlertWindow').css('top',-$(".HtmlContainer").height()/2);
+		$('.AlertWindow').css('left',$(".HtmlContainer").width()/2);
 	}
 	$('.AlertWindow').css('max-height',$(".HtmlContainer").height() - 100);
 	$(".BlackBackground").css('background','rgba(0,0,0,0.5)');
@@ -627,7 +629,7 @@ function openProblemInfo(x){
 	for(var i=0;i<SubmissionsStorage.length;i++){
 		if(SubmissionsStorage[i].problem.index != probList[x])
 			continue;
-		$(".SubmlissionsList").append(`<tr><td>${new Date(1000*SubmissionsStorage[i].creationTimeSeconds).pattern("YY-MM-dd hh:mm:ss")}</td><td>${SubmissionsStorage[i].programmingLanguage}</td><td><span style="cursor:pointer;" onclick='openURL("https://codeforces.com/problemset/submission/${ContestID}/${SubmissionsStorage[i].id}")'>${SubmissionsStorage[i].verdict=="OK"?("<span class='ProblemAccepted'>"+(SubmissionsStorage[i].testset=="TESTS"?"Accepted":toSmallCase(SubmissionsStorage[i].testset)+" passed")+"</span>"):(SubmissionsStorage[i].verdict=="CHALLENGED"?"<span class='ProblemWrong'>Hacked</span>":(SubmissionsStorage[i].verdict=="PARTIAL"?"PRT":(toSmallInfo(SubmissionsStorage[i].verdict)+" on "+toSmallCase(SubmissionsStorage[i].testset)+" "+(SubmissionsStorage[i].passedTestCount+1))))}${SubmissionsStorage[i].points!=undefined?('('+SubmissionsStorage[i].points+')'):""}</span></td><td>${SubmissionsStorage[i].timeConsumedMillis}ms</td><td>${toMemoryInfo(SubmissionsStorage[i].memoryConsumedBytes)}</td></tr>`);
+		$(".SubmlissionsList").append(`<tr><td>${new Date(1000*SubmissionsStorage[i].creationTimeSeconds).pattern("YY-MM-dd hh:mm:ss")}</td><td>${SubmissionsStorage[i].programmingLanguage}</td><td><span style="cursor:pointer;" onclick='openURL("https://codeforces.com/problemset/submission/${ContestID}/${SubmissionsStorage[i].id}")'>${SubmissionsStorage[i].verdict=="OK"?("<span class='ProblemAccepted'>"+(SubmissionsStorage[i].testset=="TESTS"?"Accepted":toSmallCase(SubmissionsStorage[i].testset)+" passed")+"</span>"):(SubmissionsStorage[i].verdict=="CHALLENGED"?"<span class='ProblemWrong'>Hacked</span>":(SubmissionsStorage[i].verdict=="PARTIAL"?"<span title='PARTIAL'>PRT</span>":("<span title=\'"+SubmissionsStorage[i].verdict+"\'>"+toSmallInfo(SubmissionsStorage[i].verdict)+"</span> on "+toSmallCase(SubmissionsStorage[i].testset)+" "+(SubmissionsStorage[i].passedTestCount+1))))}${SubmissionsStorage[i].points!=undefined?('('+SubmissionsStorage[i].points+')'):""}</span></td><td>${SubmissionsStorage[i].timeConsumedMillis}ms</td><td>${toMemoryInfo(SubmissionsStorage[i].memoryConsumedBytes)}</td></tr>`);
 		hav = true;
 	}
 	if(!hav)	$(".SubmlissionsList").append("<tr><td colspan='5'>Blank</td></tr>");
@@ -636,11 +638,12 @@ function openForkInfo(){
 	if(WinHeight == 190)	return;
 	$(".MessageBoxProblem").css('display','none');
 	$(".MessageBoxFork").css('display','block');
+	$(".MessageBoxContest").css('display','none');
 	$(".BlackBackground").width($(".HtmlContainer").width());
 	$(".BlackBackground").height($(".HtmlContainer").height());
 	if(!RunInNwjs){
-		$(".BlackBackground").css('top',20);
-		$(".BlackBackground").css('left',($('body').width()-$('.HtmlContainer').width())/2);
+		$(".BlackBackground").css('top',-$(".HtmlContainer").height());
+		$(".BlackBackground").css('left',0);
 	}
 	$('.AllWindow').css('display','block');
 	$('.AlertWindow').css('display','block');
@@ -649,8 +652,8 @@ function openForkInfo(){
 		$('.AlertWindow').css('left',$(".HtmlContainer").width()/2);
 	}
 	else{
-		$('.AlertWindow').css('top',$(".HtmlContainer").height()/2+20);
-		$('.AlertWindow').css('left',$('body').width()/2);
+		$('.AlertWindow').css('top',-$(".HtmlContainer").height()/2);
+		$('.AlertWindow').css('left',$(".HtmlContainer").width()/2);
 	}
 	$('.AlertWindow').css('max-height',$(".HtmlContainer").height() - 100);
 	$(".BlackBackground").css('background','rgba(0,0,0,0.5)');
@@ -667,6 +670,51 @@ function openForkInfo(){
 		hav = true;
 	}
 	if(!hav)	$(".EventList").append("<tr><td colspan='2'>Blank</td></tr>");
+}
+function checkUndefined(x){
+	return x==undefined?'/':x;
+}
+function checkUndefined2(x,y){
+	if(x==undefined && y==undefined)	return '/';
+	if(x==undefined)	return y;
+	if(y==undefined)	return x;
+	return x+'/'+y;
+}
+function openContestInfo(){
+	if(WinHeight == 190)	return;
+	$(".MessageBoxFork").css('display','none');
+	$(".MessageBoxProblem").css('display','none');
+	$(".MessageBoxContest").css('display','block');
+	$(".BlackBackground").width($(".HtmlContainer").width());
+	$(".BlackBackground").height($(".HtmlContainer").height());
+	if(!RunInNwjs){
+		$(".BlackBackground").css('top',-$(".HtmlContainer").height());
+		$(".BlackBackground").css('left',0);
+	}
+	$('.AllWindow').css('display','block');
+	$('.AlertWindow').css('display','block');
+	if(RunInNwjs){
+		$('.AlertWindow').css('top',$(".HtmlContainer").height()/2);
+		$('.AlertWindow').css('left',$(".HtmlContainer").width()/2);
+	}
+	else{
+		$('.AlertWindow').css('top',-$(".HtmlContainer").height()/2);
+		$('.AlertWindow').css('left',$(".HtmlContainer").width()/2);
+	}
+	$('.AlertWindow').css('max-height',$(".HtmlContainer").height() - 100);
+	$(".BlackBackground").css('background','rgba(0,0,0,0.5)');
+	$(".ContestNameDiv").html(ContestStorage.name);
+	$(".ContestStartTime").html(RealContestStartTime.pattern('YY-MM-dd\nhh:mm:ss'));
+	$(".ContestEndTime").html(RealContestEndTime.pattern('YY-MM-dd\nhh:mm:ss'));
+	$(".ContestDuration").html(getTimeLength(ContestStorage.durationSeconds*1000));
+	$(".ContestTypeTd").html(ContestStorage.type);
+	$(".PreparedByTd").html(checkUndefined(ContestStorage.preparedBy));
+	$(".DescriptionTd").html(checkUndefined(ContestStorage.description));
+	$(".DifficultyTd").html(checkUndefined(ContestStorage.difficulty));
+	$(".ContestKindTd").html(checkUndefined(ContestStorage.kind));
+	$(".IcpcRegionTd").html(checkUndefined(ContestStorage.icpcRegion));
+	$(".LocationTd").html(checkUndefined2(ContestStorage.country,ContestStorage.city));
+	$(".SeasonTd").html(checkUndefined(ContestStorage.season));
 }
 function getProblemList(a,b){
 	$('.ProblemList').html('');
@@ -998,6 +1046,7 @@ function getApiInfo(cD){
 			json = json.result;
 			ProblemInfoStorage = json.problems;
 			PartyStorage = json.party;
+			ContestStorage = json.contest;
 			var realLength = 0;
 			var realList = [];
 			$('.ContestTypeChosen').html("");
@@ -1029,7 +1078,7 @@ function getApiInfo(cD){
 			var currT = new Date();
 			$('.ConnectionStatus').html('<i class="fa fa-check style_accept"></i> Updated! ['+currT.pattern("hh:mm:ss")+']');
 			$('.SendButton').html('<i class="fa fa-send"></i>');
-			$('.ContestName').text(json.contest.name);
+			$('.ContestName').html(`<span class="fa fa-link" onclick="openURL('https://codeforces.com/contest/${ContestID}/')" style="cursor:pointer"></span> <span class="fa fa-info-circle" onclick="openContestInfo();" style="cursor:pointer"></span> `+json.contest.name);
 			CurrentStatus = json.contest.phase;
 			if(currT<StartTime)	CurrentStatus="BEFORE";
 			else if(currT<EndTime)	CurrentStatus="CODING";
@@ -1344,7 +1393,7 @@ function getApiInfo(cD){
 				}
 			}
 		},
-		erorr: function(jqXHR, status, error){
+		error: function(jqXHR, status, errorThrown){
 			ApiLoadingStatus = false;
 			if(jqXHR.responseJSON == undefined){
 				$('.ConnectionStatus').html('<i class="fa fa-times style_error"></i> Cannot Get Standings!');
@@ -1352,55 +1401,69 @@ function getApiInfo(cD){
 				return;
 			}
 			var ec = jqXHR.responseJSON.comment, ref = false;
-			if(ec.substr(0,10)==='contestId:'){
+			if(ec===`contestId: Contest with id ${ContestID} has not started`){
+				$('.ConnectionStatus').html('<i class="fa fa-spin fa-refresh"></i> Contest Not Started. Pending for Info...');
 				ApiLoadingStatus2 = true;
-				getContestList = $.getJSON("https://codeforces.com/api/contest.list",function(json2){
-					ApiLoadingStatus2 = false;
-					if(json2.status != "OK"){
+				getContestList = $.ajax({
+					url: "https://codeforces.com/api/contest.list",
+					type: "GET",
+					success: function(json2){
+						ApiLoadingStatus2 = false;
+						if(json2.status != "OK"){
+							$('.ConnectionStatus').html('<i class="fa fa-times style_error"></i> Contest Not Found!');
+							$('.SendButton').html('<i class="fa fa-send"></i>');
+							return;
+						}
+						json2=json2.result;
+						for(var i=0;i<json2.length;i++){
+							if(json2[i].phase == "FINISHED")	break;
+							if(json2[i].id == ContestID){
+								$(".ContestIdNumber").text("#"+ContestID);
+								$(".SmallContestName").text("#"+ContestID);
+								$('.SmallUsername').text('@'+Username);
+								$('.ContestTypeChosen').html('');
+								ContestStorage = json2[i];
+								SelectContestTime = false;
+								RealContestStartTime = StartTime = json2[i].startTimeSeconds;
+								EndTime = StartTime + json2[i].durationSeconds;
+								RealContestEndTime = RealContestStartTime + json2[i].durationSeconds;
+								StartTime = new Date(StartTime * 1000);
+								EndTime = new Date(EndTime * 1000);
+								RealContestStartTime = new Date(RealContestStartTime * 1000);
+								RealContestEndTime = new Date(RealContestEndTime * 1000);
+								var currT = new Date();
+								$('.ConnectionStatus').html('<i class="fa fa-check style_accept"></i> Updated! ['+currT.pattern("hh:mm:ss")+']');
+								$('.SendButton').html('<i class="fa fa-send"></i>');
+								$('.ContestName').html(`<span class="fa fa-link" onclick="openURL('https://codeforces.com/contest/${ContestID}/')" style="cursor:pointer"></span> <span class="fa fa-info-circle" onclick="openContestInfo();" style="cursor:pointer"></span> `+json2[i].name);
+								CurrentStatus = json2[i].phase;
+								if(currT<StartTime)	CurrentStatus="BEFORE";
+								else if(currT<EndTime)	CurrentStatus="CODING";
+								$('.VirtualRankButton').css('display','none');
+								$('.ProblemList').html('<div style="height:100%;display: flex;align-items: center;justify-content: center;vertical-align:center">Blank</div>');
+								blankTip = true;
+								$('.UserType').html('UNKNOWN');
+								$('.CurrentRating').html("#?");
+								$('.SmallRank').html('#?');
+								$('#highchatrsContainer').html('<div style="height:100%;display: flex;align-items: center;justify-content: center;vertical-align:center">Blank</div>');
+								if(!flushTimeRunned)
+									flushTimeRunned=true,setTimeout(flushTimeIndex(cD), 0);
+								clearTimeout(sTo);
+								setTimeout(function(){getApiInfo(cD);}, Math.min(30000, Number(StartTime) - Number(currT)));
+							}
+						}
+					},
+					error: function(jqXHR, status, error){
 						$('.ConnectionStatus').html('<i class="fa fa-times style_error"></i> Contest Not Found!');
 						$('.SendButton').html('<i class="fa fa-send"></i>');
-						return;
-					}
-					json2=json2.result;
-					for(var i=0;i<json2.length;i++){
-						if(json2[i].phase == "FINISHED")	break;
-						if(json2[i].id == ContestID){
-							$(".ContestIdNumber").text("#"+ContestID);
-							$(".SmallContestName").text("#"+ContestID);
-							$('.SmallUsername').text('@'+Username);
-							$('.ContestTypeChosen').html('');
-							SelectContestTime = false;
-							RealContestStartTime = StartTime = json2[i].startTimeSeconds;
-							EndTime = StartTime + json2[i].durationSeconds;
-							RealContestEndTime = RealContestStartTime + json2[i].durationSeconds;
-							StartTime = new Date(StartTime * 1000);
-							EndTime = new Date(EndTime * 1000);
-							RealContestStartTime = new Date(RealContestStartTime * 1000);
-							RealContestEndTime = new Date(RealContestEndTime * 1000);
-							var currT = new Date();
-							$('.ConnectionStatus').html('<i class="fa fa-check style_accept"></i> Updated! ['+currT.pattern("hh:mm:ss")+']');
-							$('.SendButton').html('<i class="fa fa-send"></i>');
-							$('.ContestName').html(json2[i].name);
-							CurrentStatus = json2[i].phase;
-							if(currT<StartTime)	CurrentStatus="BEFORE";
-							else if(currT<EndTime)	CurrentStatus="CODING";
-							$('.VirtualRankButton').css('display','none');
-							$('.ProblemList').html('<div style="height:100%;display: flex;align-items: center;justify-content: center;vertical-align:center">Blank</div>');
-							blankTip = true;
-							$('.UserType').html('UNKNOWN');
-							$('.CurrentRating').html("#?");
-							$('.SmallRank').html('#?');
-							$('#highchatrsContainer').html('<div style="height:100%;display: flex;align-items: center;justify-content: center;vertical-align:center">Blank</div>');
-							if(!flushTimeRunned)
-								flushTimeRunned=true,setTimeout(flushTimeIndex(cD), 0);
-							clearTimeout(sTo);
-							setTimeout(function(){getApiInfo(cD);}, Math.min(30000, Number(StartTime) - Number(currT)));
-						}
-					}
-				}).fail(function(jqXHR, status, error){
-					$('.ConnectionStatus').html('<i class="fa fa-times style_error"></i> Contest Not Found!');
-					$('.SendButton').html('<i class="fa fa-send"></i>');
-				});
+					},
+					xhr: function() {
+			            var xhr = new XMLHttpRequest();
+			            xhr.addEventListener('progress', function (e) {
+			                $('.ConnectionStatus').html('<i class="fa fa-download"></i> Downloading Contest Info... '+toMemoryInfo(e.loaded));
+			            });
+			            return xhr;
+			        }
+				})
 			}
 			else{
 				$('.ConnectionStatus').html('<i class="fa fa-times style_error"></i> '+(ec.substr(0,8)==='handles:'?'Username Not Found!':(ec.substr(0,10)==='contestId:'?'Contest Not Found!':(ref=true,"Cannot Get Standings!"))));

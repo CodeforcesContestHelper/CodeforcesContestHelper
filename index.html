@@ -130,6 +130,29 @@
 						</tr>
 					</table>
 				</div>
+				<div class="MessageBoxContest">
+					<span style="float:right;cursor:pointer;" onclick="closeMessageBox()"><i class="fa fa-times style_error"></i></span>
+					<div style="text-align:center;margin:2px;"><i class="fa fa-calendar"></i> Contest Info</div>
+					<div style="text-align:center"><div class="ContestNameDiv"></div></div>
+					<table class="ContsetTime" style="text-align:center;word-wrap:break-word;font-size:15px" cellspacing="0">
+						<tr>
+							<td class="ContestStartTime" style="width:97px"></td>
+							<td style="width:150px"><div class="ContestDuration" style="font-size:14px;width:100%"></div></td>
+							<td class="ContestEndTime" style="width:97px"></td>
+						</tr>
+					</table>
+					<table class="ContestInfoList" style="text-align:center;word-wrap:break-word;" cellspacing="0">
+						<tr><td class="fa fa-tag" title="Contest Type" style="width:20px"></td><td class="ContestTypeTd" style="width:320px;"></td></tr>
+						<tr><td class="fa fa-users" title="Prepared By" style="width:20px"></td><td class="PreparedByTd" style="width:320px;"></td></tr>
+						<tr><td class="fa fa-book" title="Description" style="width:20px"></td><td class="DescriptionTd" style="width:320px;"></td></tr>
+						<tr><td class="fa fa-star" title="Difficulty(1-5)" style="width:20px"></td><td class="DifficultyTd" style="width:320px;"></td></tr>
+						<tr><td class="fa fa-mortar-board" title="Contest Kind" style="width:20px"></td><td class="ContestKindTd" style="width:320px;"></td></tr>
+						<tr><td class="fa fa-map" title="ICPC Region" style="width:20px"></td><td class="IcpcRegionTd" style="width:320px;"></td></tr>
+						<tr><td class="fa fa-flag" title="Location" style="width:20px"></td><td class="LocationTd" style="width:320px;"></td></tr>
+						<tr><td class="fa fa-clock-o" title="Season" style="width:20px"></td><td class="SeasonTd" style="width:320px;"></td></tr>
+						
+					</table>
+				</div>
 			</div>
 		</div>
 		<div class="SmallInterface">
@@ -177,6 +200,8 @@
 					$('body').css('background','#484848');
 				$(".HtmlContainer").css('margin','0 auto');
 				$(".HtmlContainer").css('margin-top','20px');
+				$(".BlackBackground").css("position",'absolute');
+				$(".AlertWindow").css("position","absolute");
 			}
 		    var element =  document.documentElement;
 		    if(navigator.userAgent.indexOf("Chrome")>0){
