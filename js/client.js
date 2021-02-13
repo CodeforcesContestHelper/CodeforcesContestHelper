@@ -46,6 +46,7 @@ var ContestStorage = [];
 var openAdvancedOption = false;
 var showLessSubmissionInfo = false;
 var ParticipantTypeStorage = "";
+var failedToLoadRatingChange = false;
 var DefaultStyle = JSON.parse(JSON.stringify(Highcharts.getOptions()));
 var commitInfo = [];
 function openURL(x){
@@ -1024,9 +1025,11 @@ function calcDelta(y){
 	return '<span class="ProblemCoding" style="font-size:12px;font-family:VerdanaBold">'+y+'</span>';
 }
 function loadRatingChanges(json,un){
+	failedToLoadRatingChange = true;
 	json = json.result;
 	for(var i=0;i<json.length;i++){
 		if(json[i].handle == un){
+			failedToLoadRatingChange = false;
 			var x = Number(json[i].oldRating);
 			var y = Number(json[i].newRating);
 			$(".ContestRatingChanges").html(`<span style="color:${CodeforcesRatingColor(x)};font-family: VerdanaBold;">${x}</span></br>${calcDelta(y-x)} <i class="fa fa-angle-double-right"></i> <span style="color:${CodeforcesRatingColor(y)};font-family:VerdanaBold">${y}</span>`);
@@ -1364,6 +1367,7 @@ function getApiInfo(cD){
 					$('.ContestRatingChanges').html("<i class='fa fa-spin fa-spinner'></i>");
 					$('.SmallRatingChanges').html("<i class='fa fa-spin fa-spinner'></i>");
 					ApiLoadingStatus3 = true;
+					failedToLoadRatingChange = true;
 					if(CurrentStatus == "FINISHED"){
 						getRatingChanges = $.ajax({
 							url: "https://codeforces.com/api/contest.ratingChanges",
@@ -1393,7 +1397,7 @@ function getApiInfo(cD){
 					        }
 						});
 					}
-					else{
+					if(failedToLoadRatingChange){
 						getRatingChanges = $.ajax({
 							url: "https://cf-predictor-frontend.herokuapp.com/GetNextRatingServlet",
 							type: "GET",
