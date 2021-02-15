@@ -41,6 +41,7 @@ body{
 	padding: 3px;
 }
 .ContestName{
+	-webkit-app-region: no-drag;
 	font-family: Verdana;
 	width: 100%;
 	padding-left: 5px;
