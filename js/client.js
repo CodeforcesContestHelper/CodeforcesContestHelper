@@ -1633,7 +1633,7 @@ function getNewestRepo(){
 		UpdateTime=new Date(UpdateTime.replace(/-/g,'/'));
 		UpdateTime=new Date(Number(UpdateTime)-UpdateTime.getTimezoneOffset()*60*1000);
 		BranchLink=json.html_url;
-		$('.ConnectionStatus').html(`<i class="fa fa-check style_accept"></i> Last Update at ${UpdateTime.pattern("YY-MM-dd hh:mm:ss")} <span onclick="openForkInfo()" class="fa fa-code-branch" style="cursor:pointer;"></span> <span onclick="openURL(RepoLink)" class="fa fa-github" style="cursor:pointer;"></span>`);
+		$('.ConnectionStatus').html(`<i class="fa fa-check style_accept"></i> Last Update at ${UpdateTime.pattern("YY-MM-dd hh:mm:ss")} <span onclick="openForkInfo()" class="fa fa-code-branch" style="cursor:pointer;"></span> <span onclick="openURL(RepoLink)" class="fab fa-github" style="cursor:pointer;"></span>`);
 	}).fail(function(){
 		$('.ConnectionStatus').html('<i class="fa fa-times style_error"></i> Connection Error!');
 	});
