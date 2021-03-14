@@ -41,7 +41,7 @@ hr{
 .ContestRatingTd{
 	background-color: #444;
 }
-.UserType, .ContestType{
+.UserType{
 	background: #777;
 	color: #000;
 }
@@ -112,4 +112,19 @@ input[readonly='readonly']{
 .ProblemList::-webkit-scrollbar:hover,
 .AlertWindow::-webkit-scrollbar:hover{
     background-color: #444;
+}
+input{
+	border: 1px solid #444;
+}
+input:hover{
+	border: 1px solid #777;
+}
+input:focus{
+	border: 1px solid #ccc;
+}
+progress{
+	border: 1px solid #888;
+}
+progress::-webkit-progress-value{
+	background-color: #157615;
 }

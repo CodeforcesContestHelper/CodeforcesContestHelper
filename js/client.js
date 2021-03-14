@@ -165,6 +165,9 @@ function getPredictedRank(points,penalty,time){
 	}
 	return returnValue;
 }
+function getPredictedRatingChange(json){
+
+}
 function getOverallPredictedRank(json){
 	var currT = StartTime;
 	var Step = 60 * 1000;
@@ -528,12 +531,14 @@ function flushTimeIndex(cD){
 	}
 	var currT = new Date();
 	if(currT<=StartTime){
+		$(".ContestProgress").attr("value", "0").attr("max", "1");
 		var diff = Number(StartTime) - Number(currT);
-		$('.ContestStatus').html('Contest Starts In '+getTimeLength2(diff));
+		$('.ContestStatus span').html('Contest Starts In '+getTimeLength2(diff));
 	}
 	else if(currT<=EndTime){
 		var diff = Number(EndTime) - Number(currT);
-		$('.ContestStatus').html('Contest Ends In '+getTimeLength2(diff));
+		$(".ContestProgress").attr("value", Number(currT) - Number(StartTime)).attr("max", Number(EndTime) - Number(StartTime));
+		$('.ContestStatus span').html('Contest Ends In '+getTimeLength2(diff));
 	}
 	else	return;
 	setTimeout(function(){flushTimeIndex(cD);},1000);
@@ -1328,11 +1333,7 @@ function getApiInfo(cD){
 							else se=getTimeLength(se*1000);
 							var th = json.problemResults[i].points;
 							if(ContestType == "CF" && CurrentStatus == "CODING" && ProblemType != "ProblemAccepted"){
-								var kpm = 0;
-								kpm = (i+1) * 2;
-								if(probList[i].length != 1)
-									kpm = Math.ceil(kpm/4)*2;
-								var predictScore = ProblemInfoStorage[i].points;
+								var kpm = ProblemInfoStorage[i].points / 250;
 								predictScore -= Math.floor((Number(currT) - Number(StartTime))/1000/60)*kpm;
 								predictScore = Math.max(predictScore, 0.3 * ProblemInfoStorage[i].points);
 								th = predictScore;
@@ -1350,18 +1351,20 @@ function getApiInfo(cD){
 			            return xhr;
 			        }
 				});
+				if(CurrentStatus != "CODING")
+					$(".ContestProgress").attr("value", "1").attr("max", "1");
 				if(CurrentStatus == "CODING"){
 					if(!flushTimeRunned)
 						flushTimeRunned=true, setTimeout(flushTimeIndex(cD), 0);
 				}
 				else if(CurrentStatus == "PENDING_SYSTEM_TEST")
-					$('.ContestStatus').html('Pending System Test...');
+					$('.ContestStatus span').html('Pending System Test...');
 				else if(CurrentStatus == "SYSTEM_TEST")
-					$('.ContestStatus').html('System Testing...');
+					$('.ContestStatus span').html('System Testing...');
 				else if(json.party.participantType=="PRACTICE")
-					$('.ContestStatus').html('Finished');
+					$('.ContestStatus span').html('Finished');
 				else if(CurrentStatus == "FINISHED")
-					$('.ContestStatus').html('Finished'),
+					$('.ContestStatus span').html('Finished'),
 					clearTimeout(sTo);
 				if(json.party.participantType == "CONTESTANT"){
 					$('.ContestRatingChanges').html("<i class='fa fa-spin fa-spinner'></i>");
@@ -1381,6 +1384,36 @@ function getApiInfo(cD){
 									return;
 								}
 								loadRatingChanges(json3, Username);
+								if(failedToLoadRatingChange){
+									getRatingChanges = $.ajax({
+										url: "https://cf-predictor-frontend.codeforces.ml/GetNextRatingServlet",
+										type: "GET",
+										data: {contestId: ContestID},
+										success: function(json3){
+											ApiLoadingStatus3 = false;
+											json3 = JSON.parse(json3);
+											if(json3.status != "OK"){
+												$('.ContestRatingChanges').html("<i class='fa fa-unlink'></i>");
+												$('.SmallRatingChanges').html("<i class='fa fa-unlink'></i>");
+												return;
+											}
+											loadRatingChanges(json3, Username);
+										},
+										error: function(){
+											ApiLoadingStatus3 = false;
+											$('.ContestRatingChanges').html("<i class='fa fa-unlink'></i>");
+											$('.SmallRatingChanges').html("<i class='fa fa-unlink'></i>");
+										},
+										xhr: function() {
+								            var xhr = new XMLHttpRequest();
+								            xhr.addEventListener('progress', function (e) {
+								                $('.ContestRatingChanges').html("<i class='fa fa-download'></i> </br>"+toMemoryInfo(e.loaded));
+								            	$('.SmallRatingChanges').html("<i class='fa fa-download'></i> "+toMemoryInfo(e.loaded));
+								            });
+								            return xhr;
+								        }
+									});
+								}
 							},
 							error: function(){
 								ApiLoadingStatus3 = false;
@@ -1397,9 +1430,9 @@ function getApiInfo(cD){
 					        }
 						});
 					}
-					if(failedToLoadRatingChange){
+					else{
 						getRatingChanges = $.ajax({
-							url: "https://cf-predictor-frontend.herokuapp.com/GetNextRatingServlet",
+							url: "https://cf-predictor-frontend.codeforces.ml/GetNextRatingServlet",
 							type: "GET",
 							data: {contestId: ContestID},
 							success: function(json3){
@@ -1476,6 +1509,7 @@ function getApiInfo(cD){
 								if(currT<StartTime)	CurrentStatus="BEFORE";
 								else if(currT<EndTime)	CurrentStatus="CODING";
 								$('.VirtualRankButton').css('display','none');
+								ToolListLength=188,flushToolList();
 								$('.ProblemList').html('<div style="height:100%;display: flex;align-items: center;justify-content: center;vertical-align:center">Blank</div>');
 								blankTip = true;
 								$('.UserType').html('UNKNOWN');

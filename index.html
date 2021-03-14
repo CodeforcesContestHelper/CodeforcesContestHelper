@@ -48,7 +48,7 @@
 				</tr>
 				<tr>
 					<td style="width:289px;">
-						<div class="ContestStatus">Idle</div>
+						<div class="ContestStatus"><progress class="ContestProgress"></progress><span style="z-index: 1">Idle</span></div>
 						<table>
 							<tr>
 								<td><div class="ContestId"><i class="fa fa-calendar"></i> Contest Id:<br/><span class="ContestIdNumber">?</span></div></td>
@@ -60,24 +60,21 @@
 							<div style="height:100%;display: flex;align-items: center;justify-content: center;vertical-align:center">Blank</div>
 						</div>
 						<hr>
-						<table style="width:100%;text-align:right;">
-							<tr>
-								<td style="width: 12px;font-size: 16px;padding: 4px;" class="fa fa-user"></td>
-								<td class="inputWrapper"><label><input type="text" class="UsernameInput" placeholder="Handle"/></label></td>
-							</tr>
-							<tr>
-								<td style="width: 12px;font-size: 16px;padding: 4px;" class="fa fa-calendar"></td>
-								<td><label style="width:299px"><input type="text" class="ContestIDInput"  placeholder="Contest ID" style="width:299px"/></label><div class="ContestType">/</div></td>
-							</tr>
-							<tr>
-								<td style="width: 12px;font-size: 16px;padding: 4px;" class="fa fa-clock-o"></td>
-								<td><select class="ContestTypeChosen"></select></td>
-							</tr>
-							<tr>
-								<td style="width: 12px;font-size: 16px;padding: 4px;" class="fa fa-list-alt"></td>
-								<td><label><input type="text" class="ContestDiffCalc"  placeholder="Compatitor Expression"/></label></td>
-							</tr>
-						</table>
+						<div style="width:100%;">
+							<div>
+								<label><input type="text" class="UsernameInput" placeholder="Handle"/><i class="fa fa-user"></i></label>
+							</div>
+							<div>
+								<label><input type="text" class="ContestIdInput" placeholder="Contest Id" style="padding-right: 50px"/><i class="fa fa-calendar"></i><span class="ContestType" style="position:absolute; right:0;top: 6px;"></span></label>
+							</div>
+							<div style="display:flex;flex-direction: row;width:100%;font-size:16px;">
+								<i class="fa fa-clock-o" style="padding: 3px;width: 1.5em;height: 100%;text-align:center;"></i>
+								<select class="ContestTypeChosen"></select>
+							</div>
+							<div>
+								<label><input type="text" class="ContestDiffCalc" placeholder="Diff Expression"/><i class="fa fa-list-alt"></i></label>
+							</div>
+						</div>
 						<div class="ConnectionStatus"><i class="fa fa-globe"></i> Fill & Send to update!</div>
 						<span class="UserType">?</span>
 						<div class="ToolList">
@@ -156,7 +153,7 @@
 			</div>
 		</div>
 		<div class="SmallInterface">
-			<div class="ContestStatus">Idle</div>
+			<div class="ContestStatus"><progress class="ContestProgress"></progress><span style="z-index: 1">Idle</span></div>
 			<table style="table-layout:fixed;width:100%;"><tr><td>
 			<div class="SmallRankInfo">
 				<span class="SmallContestName">#?</span>
@@ -268,12 +265,6 @@
 				window.matchMedia('(prefers-color-scheme: light)').addListener(listeners.light)
 			}
 			$('.SmallInterface').css('display','none');
-			$("input").focus(function() {
-		        $(this).parent("label").addClass("active");
-		    });
-		    $("input").blur(function() {
-		        $(this).parent("label").removeClass("active");
-		    })
 		</script>
 	</footer>
 </html>
