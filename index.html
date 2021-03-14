@@ -39,7 +39,7 @@
 								<td class="ContestRatingTd" style="padding:0px;width:calc(100% - 130px)" rowspan='2'><div class="CurrentRating">#?</div><div class="ContestRatingChanges"></div></td>
 							</tr>
 							<tr>
-								<td class="RatingGraphDescriptionTd"><div class="RatingGraphDescription" style="width:130px;"><i class="fa fa-line-chart"></i> Rank Graph&nbsp;</div></td>
+								<td class="RatingGraphDescriptionTd"><div class="RatingGraphDescription" style="width:130px;"><i class="fa fa-chart-line"></i> Rank Graph&nbsp;</div></td>
 							</tr>
 						</table>
 						<div id="highchatrsContainer"><div style="height:100%;display: flex;align-items: center;justify-content: center;vertical-align:center">Blank</div></div>
@@ -87,9 +87,9 @@
 								<button type="button" class="UnofficialButton" title="Show Unofficial"><i class="fa fa-user"></i></button>
 								<button type="button" class="UpdateButton" title="Get Update Time"><i class="fa fa-upload"></i></button>
 							</div>
-							<button type="button" class="ThemeButton" title="Change Theme"><i class="fa fa-sun-o"></i></button>
+							<button type="button" class="ThemeButton" title="Change Theme"><i class="fa fa-sun"></i></button>
 							<button type="button" class="LockButton" title="Lock"><i class="fa fa-unlock"></i></button>
-							<button type="button" class="SendButton" title="Send"><i class="fa fa-send"></i></button>
+							<button type="button" class="SendButton" title="Send"><i class="fa fa-paper-plane"></i></button>
 							<button type="button" class="CloseButton" title="Close"><i class="fa fa-times style_error"></i></button>
 						</div>
 					</td>
@@ -106,13 +106,13 @@
 					<div style="text-align:center"><div class="ProblemName"></div></div>
 					<div style="text-align:center"><span class="ProblemType"></span> | POINTS: <span class="ProblemPoints"></span> | RATING: <span class="ProblemRating"></span></div>
 					<hr>
-					<div class="ProblemStatusType" style="margin:2px;"><span class="float:left;"><i class="fa fa-hourglass"></i> Submissions</span><span style="float:right;">Show as Icon <span class="LessInfoSelect" style="cursor:pointer;" onclick="SetLessInfoIf()"><i class="fa fa-square-o"></i></span></div>
+					<div class="ProblemStatusType" style="margin:2px;"><span class="float:left;"><i class="fa fa-hourglass"></i> Submissions</span><span style="float:right;">Show as Icon <span class="LessInfoSelect" style="cursor:pointer;" onclick="SetLessInfoIf()"><i class="far fa-square"></i></span></div>
 					<table class="SubmlissionsList" style="text-align:center;word-wrap:break-word;" cellspacing="0">
 						<tr class="DefaultLine">
 							<td style="font-size:16px;width:56px;" title="When"><i class="fa fa-user"></i></td>
 							<td style="font-size:16px;width:90px;" title="Language"><i class="fa fa-code"></i></td>
 							<td style="font-size:16px;width:120px;" title="Verdict"><i class="fa fa-server"></i></td>
-							<td style="font-size:16px;width:42px;" title="Time"><i class="fa fa-clock-o"></i></td>
+							<td style="font-size:16px;width:42px;" title="Time"><i class="fa fa-clock"></i></td>
 							<td style="font-size:16px;width:42px;" title="Memory"><i class="fa fa-microchip"></i></td>
 						</tr>
 					</table>
@@ -122,8 +122,8 @@
 					<div style="text-align:center;margin:2px;"><i class="fa fa-book"></i> Recent Commits</div>
 					<table class="EventList" style="text-align:center;word-wrap:break-word;" cellspacing="0">
 						<tr class="DefaultLine2">
-							<td style="font-size:16px;width:56px;" title="When"><i class="fa fa-clock-o"></i></td>
-							<td style="font-size:16px;width:274px;" title="Message"><i class="fa fa-code-fork"></i></td>
+							<td style="font-size:16px;width:56px;" title="When"><i class="fa fa-clock"></i></td>
+							<td style="font-size:16px;width:274px;" title="Message"><i class="fa fa-code-branch"></i></td>
 						</tr>
 					</table>
 				</div>
@@ -146,7 +146,7 @@
 						<tr><td class="fa fa-mortar-board" title="Contest Kind" style="width:20px"></td><td class="ContestKindTd" style="width:320px;"></td></tr>
 						<tr><td class="fa fa-map" title="ICPC Region" style="width:20px"></td><td class="IcpcRegionTd" style="width:320px;"></td></tr>
 						<tr><td class="fa fa-flag" title="Location" style="width:20px"></td><td class="LocationTd" style="width:320px;"></td></tr>
-						<tr><td class="fa fa-clock-o" title="Season" style="width:20px"></td><td class="SeasonTd" style="width:320px;"></td></tr>
+						<tr><td class="fa fa-clock" title="Season" style="width:20px"></td><td class="SeasonTd" style="width:320px;"></td></tr>
 						
 					</table>
 				</div>
@@ -178,9 +178,9 @@
 					<button type="button" class="UnofficialButton" title="Show Unofficial"><i class="fa fa-user"></i></button>
 					<button type="button" class="UpdateButton" title="Get Update Time"><i class="fa fa-upload"></i></button>
 				</div>
-				<button type="button" class="ThemeButton" title="Change Theme"><i class="fa fa-sun-o"></i></button>
+				<button type="button" class="ThemeButton" title="Change Theme"><i class="fa fa-sun"></i></button>
 				<button type="button" class="LockButton" title="Lock"><i class="fa fa-unlock"></i></button>
-				<button type="button" class="SendButton" title="Send"><i class="fa fa-send"></i></button>
+				<button type="button" class="SendButton" title="Send"><i class="fa fa-paper-plane"></i></button>
 				<button type="button" class="CloseButton" title="Close"><i class="fa fa-times style_error"></i></button>
 			</div>
 			</td></tr></table>
@@ -224,11 +224,11 @@
 				});
 			}
 			if(DarkMode)
-				$('.ThemeButton').html('<i class="fa fa-moon-o"></i>');
+				$('.ThemeButton').html('<i class="fa fa-moon"></i>');
 			function ChangeTheme(){
 				if(!DarkMode){
 					$('.ThemeTypeIf').attr('href','./css/dark.css'),
-					$('.ThemeButton').html('<i class="fa fa-moon-o"></i>');
+					$('.ThemeButton').html('<i class="fa fa-moon"></i>');
 					if(opacityIf)
 						$('.HtmlContainer').css('background-color','rgba(0,0,0,0.5)');
 					else
@@ -238,7 +238,7 @@
 				}
 				else{
 					$('.ThemeTypeIf').attr('href','./css/default.css'),
-					$('.ThemeButton').html('<i class="fa fa-sun-o"></i>');
+					$('.ThemeButton').html('<i class="fa fa-sun"></i>');
 					if(opacityIf)
 						$('.HtmlContainer').css('background-color','rgba(255,255,255,0.5)');
 					else

@@ -606,7 +606,7 @@ function getSubmissionIcon(x,y,ttl){
 	if(x == "RUNTIME_ERROR")	return `<i class="fa fa-bomb" style="color:rgb(191, 63, 255);" title='${ttl}'></i>`+las;
 	if(x == "WRONG_ANSWER")	return `<i class="fa fa-times style_error" title='${ttl}'></i>`+las;
 	if(x == "PRESENTATION_ERROR")	return `<i class="fa fa-print" style="color:rgb(255, 155, 70);" title='${ttl}'></i>`+las;
-	if(x == "TIME_LIMIT_EXCEEDED")	return `<i class="fa fa-clock-o" style="color:rgb(255, 155, 70);" title='${ttl}'></i>`+las;
+	if(x == "TIME_LIMIT_EXCEEDED")	return `<i class="fa fa-clock" style="color:rgb(255, 155, 70);" title='${ttl}'></i>`+las;
 	if(x == "MEMORY_LIMIT_EXCEEDED")	return `<i class="fa fa-microchip" style="color:rgb(255, 155, 70);" title='${ttl}'></i>`+las;
 	if(x == "IDLENESS_LIMIT_EXCEEDED")	return `<i class="fa fa-align-left" style="color:rgb(255, 155, 70);" title='${ttl}'></i>`+las;
 	if(x == "SECURITY_VIOLATED")	return `<i class="fa fa-ban style_error" title='${ttl}'></i>`+las;
@@ -1069,7 +1069,7 @@ function getApiInfo(cD){
 			ApiLoadingStatus = false;
 			if(json.status != "OK"){
 				$('.ConnectionStatus').html('<i class="fa fa-times style_error"></i> Cannot Get Standings!');
-				$('.SendButton').html('<i class="fa fa-send"></i>');
+				$('.SendButton').html('<i class="fa fa-paper-plane"></i>');
 				return;
 			}
 			json.result.rows.sort(sortRows);
@@ -1117,7 +1117,7 @@ function getApiInfo(cD){
 			RealContestEndTime = new Date(RealContestEndTime * 1000);
 			var currT = new Date();
 			$('.ConnectionStatus').html('<i class="fa fa-check style_accept"></i> Updated! ['+currT.pattern("hh:mm:ss")+']');
-			$('.SendButton').html('<i class="fa fa-send"></i>');
+			$('.SendButton').html('<i class="fa fa-paper-plane"></i>');
 			$('.ContestName').html(`<span class="fa fa-link" onclick="openURL('https://codeforces.com/contest/${ContestID}/')" style="cursor:pointer"></span> <span class="fa fa-info-circle" onclick="openContestInfo();" style="cursor:pointer"></span> `+json.contest.name);
 			CurrentStatus = json.contest.phase;
 			if(currT<StartTime)	CurrentStatus="BEFORE";
@@ -1467,7 +1467,7 @@ function getApiInfo(cD){
 			ApiLoadingStatus = false;
 			if(jqXHR.responseJSON == undefined){
 				$('.ConnectionStatus').html('<i class="fa fa-times style_error"></i> Cannot Get Standings!');
-				$('.SendButton').html('<i class="fa fa-send"></i>');
+				$('.SendButton').html('<i class="fa fa-paper-plane"></i>');
 				return;
 			}
 			var ec = jqXHR.responseJSON.comment, ref = false;
@@ -1481,7 +1481,7 @@ function getApiInfo(cD){
 						ApiLoadingStatus2 = false;
 						if(json2.status != "OK"){
 							$('.ConnectionStatus').html('<i class="fa fa-times style_error"></i> Contest Not Found!');
-							$('.SendButton').html('<i class="fa fa-send"></i>');
+							$('.SendButton').html('<i class="fa fa-paper-plane"></i>');
 							return;
 						}
 						json2=json2.result;
@@ -1503,7 +1503,7 @@ function getApiInfo(cD){
 								RealContestEndTime = new Date(RealContestEndTime * 1000);
 								var currT = new Date();
 								$('.ConnectionStatus').html('<i class="fa fa-check style_accept"></i> Updated! ['+currT.pattern("hh:mm:ss")+']');
-								$('.SendButton').html('<i class="fa fa-send"></i>');
+								$('.SendButton').html('<i class="fa fa-paper-plane"></i>');
 								$('.ContestName').html(`<span class="fa fa-link" onclick="openURL('https://codeforces.com/contest/${ContestID}/')" style="cursor:pointer"></span> <span class="fa fa-info-circle" onclick="openContestInfo();" style="cursor:pointer"></span> `+json2[i].name);
 								CurrentStatus = json2[i].phase;
 								if(currT<StartTime)	CurrentStatus="BEFORE";
@@ -1525,7 +1525,7 @@ function getApiInfo(cD){
 					},
 					error: function(jqXHR, status, error){
 						$('.ConnectionStatus').html('<i class="fa fa-times style_error"></i> Contest Not Found!');
-						$('.SendButton').html('<i class="fa fa-send"></i>');
+						$('.SendButton').html('<i class="fa fa-paper-plane"></i>');
 					},
 					xhr: function() {
 			            var xhr = new XMLHttpRequest();
@@ -1538,7 +1538,7 @@ function getApiInfo(cD){
 			}
 			else{
 				$('.ConnectionStatus').html('<i class="fa fa-times style_error"></i> '+(ec.substr(0,8)==='handles:'?'Username Not Found!':(ec.substr(0,10)==='contestId:'?'Contest Not Found!':(ref=true,"Cannot Get Standings!"))));
-				$('.SendButton').html('<i class="fa fa-send"></i>');
+				$('.SendButton').html('<i class="fa fa-paper-plane"></i>');
 				if(!ref)
 					clearTimeout(sTo);
 			}
@@ -1667,7 +1667,7 @@ function getNewestRepo(){
 		UpdateTime=new Date(UpdateTime.replace(/-/g,'/'));
 		UpdateTime=new Date(Number(UpdateTime)-UpdateTime.getTimezoneOffset()*60*1000);
 		BranchLink=json.html_url;
-		$('.ConnectionStatus').html(`<i class="fa fa-check style_accept"></i> Last Update at ${UpdateTime.pattern("YY-MM-dd hh:mm:ss")} <span onclick="openForkInfo()" class="fa fa-code-fork" style="cursor:pointer;"></span> <span onclick="openURL(RepoLink)" class="fa fa-github" style="cursor:pointer;"></span>`);
+		$('.ConnectionStatus').html(`<i class="fa fa-check style_accept"></i> Last Update at ${UpdateTime.pattern("YY-MM-dd hh:mm:ss")} <span onclick="openForkInfo()" class="fa fa-code-branch" style="cursor:pointer;"></span> <span onclick="openURL(RepoLink)" class="fab fa-github" style="cursor:pointer;"></span>`);
 	}).fail(function(){
 		$('.ConnectionStatus').html('<i class="fa fa-times style_error"></i> Connection Error!');
 	});
@@ -1709,7 +1709,7 @@ function showAdvancedOptionIf(){
 }
 function SetLessInfoIf(){
 	if(showLessSubmissionInfo)
-		$(".LessInfoSelect").html(`<i class="fa fa-square-o"></i>`);
+		$(".LessInfoSelect").html(`<i class="far fa-square"></i>`);
 	else
 		$(".LessInfoSelect").html(`<i class="fa fa-check-square"></i>`);
 	showLessSubmissionInfo = !showLessSubmissionInfo;
