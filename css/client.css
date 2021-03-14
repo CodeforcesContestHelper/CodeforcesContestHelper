@@ -234,11 +234,9 @@ hr{
 .ContestType{
 	text-align: center;
 	display: inline-block;
-	width: 60px;
-	margin: 1px;
-	padding: 2px;
-	border-radius: 3px;
-	height: 18.4px;
+	width: 50px;
+	height: 1em;
+	line-height: 1;
 }
 .ToolList{
 	float: right;
@@ -276,29 +274,26 @@ input{
     width: 100%;
     outline: none;
     border: 0px;
+    padding-left: 2em;
+    transition: 0.3s;
 }
 label{
+	padding: 2px 0px;
 	position:relative;
-	width:365px;
+	width: 100%;
 	display:inline-block;
 }
-label:after {
-	content:"";
-	display:inline-block;
-	width:0;
-	height:1.5px;
-	background:skyblue;
-	transition:width 0.3s;
-	position:absolute;
-	bottom:1px;
-	left:1px;
+label > i{
+	position: absolute;
+	top: 0px;
+	left: 0px;
+	padding: 6px 2px;
+	width: 1.5em;
+	height: 1.5em;
+	text-align:center;
 }
 .active:after {
 	width:calc(100% - 2px)
-}
-.ContestIDInput{
-	width: calc(100% - 66px);
-	display: inline-block;
 }
 select{
 	-webkit-app-region: no-drag;
@@ -349,4 +344,30 @@ a{
 .AdvancedToolList::-webkit-scrollbar-thumb,
 .AdvancedToolList::-webkit-scrollbar-corner{
     display: none;
+}
+.ContestStatus{
+	z-index: 0;
+	position: relative;
+	height: 20px;
+}
+.ContestProgress{
+	position: absolute;
+	right: 0px;
+	top: 0px;
+	width: 100%;
+	height: 100%;
+}
+.ContestStatus > span{
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	white-space: nowrap;
+}
+progress{
+	border:none;
+	background: inherit;     
+}
+progress::-webkit-progress-bar{
+	background: inherit;
 }
