@@ -397,11 +397,11 @@ function flushToolList(){
 }
 var opacityIf = false;
 function setSize(y){
+	WinHeight = y;
 	if(!RunInNwjs)	return;
 	win.setResizable(true);
 	win.resizeTo(win.width,y);
 	win.moveBy(0,WinHeight-y);
-	WinHeight = y;
 	if(y!=190)	lastSet = y;
 	win.setResizable(false);
 }
