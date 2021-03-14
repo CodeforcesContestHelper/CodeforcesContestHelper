@@ -1,0 +1,13 @@
+name: Greetings
+
+on: [pull_request, issues]
+
+jobs:
+  greeting:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/first-interaction@v1
+      with:
+        repo-token: ${{ secrets.GITHUB_TOKEN }}
+        issue-message: 'Thanks for making your first issue in the CCH repo, we will react with you ASAP.'
+        pr-message: 'Thanks for making your first pr in the CCH repo, we will review your code ASAP.'
