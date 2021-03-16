@@ -1544,7 +1544,7 @@ function getApiInfo(cD){
 								if(currT<StartTime)	CurrentStatus="BEFORE";
 								else if(currT<EndTime)	CurrentStatus="CODING";
 								$('.VirtualRankButton').css('display','none');
-								ToolListLength=188,flushToolList();
+								ToolListLength=188;flushToolList();
 								$('.ProblemList').html('<div style="height:100%;display: flex;align-items: center;justify-content: center;vertical-align:center">Blank</div>');
 								blankTip = true;
 								$('.UserType').html('UNKNOWN');
