@@ -267,7 +267,7 @@ button{
 }
 input{
 	-webkit-app-region: no-drag;
-	transition: background 0.3s;
+	transition: 0.3s;
     padding: 3px;
     font-size: 14px;
     font-family: 'Consolas','Fira Code','Source Code Pro','Lucida Console','Cascadia Code','Ubuntu Mono','Monospace', sans-serif;
@@ -276,7 +276,6 @@ input{
     outline: none;
     border: 0px;
     padding-left: 2em;
-    transition: 0.3s;
 }
 label{
 	padding: 2px 0px;
