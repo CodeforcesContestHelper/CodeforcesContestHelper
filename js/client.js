@@ -426,14 +426,16 @@ function setBig(){
 	opacityIf = false;
 }
 $('.GraphFolder').click(function(){
-	if(!isFold)
-		$('#highchatrsContainer').css('display','none'),
-		$('.GraphFolder').html('<i class="fa fa-angle-down"></i> Unfold'),
+	if(!isFold){
+		$('#highchatrsContainer').css('display','none');
+		$('.GraphFolder').html('<span class="fa fa-angle-down"></span>  Unfold');
 		setSize(390);
-	else
-		setSize(615),
-		$('#highchatrsContainer').css('display','block'),
-		$('.GraphFolder').html('<i class="fa fa-angle-up"></i> Fold');
+	}
+	else{
+		setSize(615);
+		$('#highchatrsContainer').css('display','block');
+		$('.GraphFolder').html('<span class="fa fa-angle-up"></span>  Fold');
+	}
 	isFold = !isFold;
 });
 function closeIf(){
@@ -441,38 +443,44 @@ function closeIf(){
 	win.close(true);
 }
 function lockIfClick(){
-	if(!lockStatus)
-		$('input').attr('readonly',true),
-		$('select').attr('disabled',true),
-		$('.CloseButton').html('<i class="fa fa-ban style_error"></i>').attr('title','Unlock to close'),
-		$('.LockButton').html('<i class="fa fa-lock"></i>').attr('title','Unlock');
-	else
-		$('input').attr('readonly',false),
-		$('select').attr('disabled',false),
-		$('.CloseButton').html('<i class="fa fa-times style_error"></i>').attr('title','Close'),
-		$('.LockButton').html('<i class="fa fa-unlock"></i>').attr('title','Lock');
+	if(!lockStatus){
+		$('input').attr('readonly',true);
+		$('select').attr('disabled',true);
+		$('.CloseButton').html('<span class="fa fa-ban style_error"></span> ').attr('title','Unlock to close');
+		$('.LockButton').html('<span class="fa fa-lock"></span> ').attr('title','Unlock');
+	}
+	else{
+		$('input').attr('readonly',false);
+		$('select').attr('disabled',false);
+		$('.CloseButton').html('<span class="fa fa-times style_error"></span> ').attr('title','Close');
+		$('.LockButton').html('<span class="fa fa-unlock"></span> ').attr('title','Lock');
+	}
 	lockStatus=!lockStatus;
 }
 function showUnofficialIfClick(){
 	if(!showUnofficialIf)
-		$('.UnofficialButton').html('<i class="fa fa-users"></i>').attr('title','Hide Unofficial');
+		$('.UnofficialButton').html('<span class="fa fa-users"></span> ').attr('title','Hide Unofficial');
 	else
-		$('.UnofficialButton').html('<i class="fa fa-user"></i>').attr('title','Show Unofficial');
+		$('.UnofficialButton').html('<span class="fa fa-user"></span> ').attr('title','Show Unofficial');
 	showUnofficialIf=!showUnofficialIf;
 }
 function getVirtualRankIf(){
 	if(!VirtualRank)
-		$('.VirtualRankButton').html('<i class="fa fa-calculator"></i>').attr('title','Disable Rank Predictor');
+		$('.VirtualRankButton').html('<span class="fa fa-calculator"></span> ').attr('title','Disable Rank Predictor');
 	else
-		$('.VirtualRankButton').html('<i class="fa fa-database"></i>').attr('title','Enable Rank Predictor');
+		$('.VirtualRankButton').html('<span class="fa fa-database"></span> ').attr('title','Enable Rank Predictor');
 	VirtualRank = !VirtualRank;
 }
 function setOnTopIf(){
 	if(!RunInNwjs)	return;
-	if(onTopStatus)
-		win.setAlwaysOnTop(false),$('.SetOnTopButton').html("<i class='fa fa-window-restore'></i>").attr('title','Set As Top');
-	else
-		win.setAlwaysOnTop(true),$('.SetOnTopButton').html("<i class='fa fa-window-maximize'></i>").attr('title','Set As Window');
+	if(onTopStatus){
+		win.setAlwaysOnTop(false);
+		$('.SetOnTopButton').html("<span class='fa fa-window-restore'></span> ").attr('title','Set As Top');
+	}
+	else{
+		win.setAlwaysOnTop(true);
+		$('.SetOnTopButton').html("<span class='fa fa-window-maximize'></span> ").attr('title','Set As Window');
+	}
 	onTopStatus = !onTopStatus;
 }
 function getTimeLength(x){
@@ -596,26 +604,26 @@ function toSmallInfo(x){
 	return "";
 }
 function getSubmissionIcon(x,y,ttl){
-	if(x == "OK")	return `<i class="fa fa-check style_accept" title='${ttl}'></i>`;
+	if(x == "OK")	return `<span class="fa fa-check style_accept" title='${ttl}'></span> `;
 	var las = "";
 	if(y=="TESTS" &&  ParticipantTypeStorage != "PRACTICE")
-		las = ` <i class="fa fa-times-circle style_error" title='Failed at System Test'></i>`;
-	if(x == "FAILED")	return `<i class="fa fa-server" style="color:rgb(175, 168, 158)" title='${ttl}'></i>`+las;
-	if(x == "PARTIAL")	return `<i class="fa fa-percent" style="color:rgb(74, 254, 246)" title='${ttl}'></i>`+las;
-	if(x == "COMPILATION_ERROR")	return `<i class="fa fa-code" style="color:rgb(74, 254, 246)" title='${ttl}'></i>`+las;
-	if(x == "RUNTIME_ERROR")	return `<i class="fa fa-bomb" style="color:rgb(191, 63, 255);" title='${ttl}'></i>`+las;
-	if(x == "WRONG_ANSWER")	return `<i class="fa fa-times style_error" title='${ttl}'></i>`+las;
-	if(x == "PRESENTATION_ERROR")	return `<i class="fa fa-print" style="color:rgb(255, 155, 70);" title='${ttl}'></i>`+las;
-	if(x == "TIME_LIMIT_EXCEEDED")	return `<i class="fa fa-clock" style="color:rgb(255, 155, 70);" title='${ttl}'></i>`+las;
-	if(x == "MEMORY_LIMIT_EXCEEDED")	return `<i class="fa fa-microchip" style="color:rgb(255, 155, 70);" title='${ttl}'></i>`+las;
-	if(x == "IDLENESS_LIMIT_EXCEEDED")	return `<i class="fa fa-align-left" style="color:rgb(255, 155, 70);" title='${ttl}'></i>`+las;
-	if(x == "SECURITY_VIOLATED")	return `<i class="fa fa-ban style_error" title='${ttl}'></i>`+las;
-	if(x == "CRASHED")	return `<i class="fa fa-chain-broken" style="color:rgb(255, 155, 70);" title='${ttl}'></i>`+las;
-	if(x == "INPUT_PREPARATION_CRASHED")	return `<i class="fa fa-sign-in" style="color:rgb(255, 155, 70);" title='${ttl}'></i>`+las;
-	if(x == "CHALLENGED")	return `<i class="fa fa-user-secret" style="color:rgb(175, 168, 158)" title='${ttl}'></i>`+las;
-	if(x == "SKIPPED")	return `<i class="fa fa-forward" style="color:rgb(110, 149, 210);" title='${ttl}'></i>`+las;
-	if(x == "TESTING")	return `<i class="fa fa-hourglass-2" style="color:rgb(110, 149, 210)" title='${ttl}'></i>`+las;
-	if(x == "REJECTED")	return `<i class="fa fa-exclamation-triangle" style="color:#decb29" title='${ttl}'></i>`+las;
+		las = ` <span class="fa fa-times-circle style_error" title='Failed at System Test'></span> `;
+	if(x == "FAILED")	return `<span class="fa fa-server" style="color:rgb(175, 168, 158)" title='${ttl}'></span> `+las;
+	if(x == "PARTIAL")	return `<span class="fa fa-percent" style="color:rgb(74, 254, 246)" title='${ttl}'></span> `+las;
+	if(x == "COMPILATION_ERROR")	return `<span class="fa fa-code" style="color:rgb(74, 254, 246)" title='${ttl}'></span> `+las;
+	if(x == "RUNTIME_ERROR")	return `<span class="fa fa-bomb" style="color:rgb(191, 63, 255);" title='${ttl}'></span> `+las;
+	if(x == "WRONG_ANSWER")	return `<span class="fa fa-times style_error" title='${ttl}'></span> `+las;
+	if(x == "PRESENTATION_ERROR")	return `<span class="fa fa-print" style="color:rgb(255, 155, 70);" title='${ttl}'></span> `+las;
+	if(x == "TIME_LIMIT_EXCEEDED")	return `<span class="fa fa-clock" style="color:rgb(255, 155, 70);" title='${ttl}'></span> `+las;
+	if(x == "MEMORY_LIMIT_EXCEEDED")	return `<span class="fa fa-microchip" style="color:rgb(255, 155, 70);" title='${ttl}'></span> `+las;
+	if(x == "IDLENESS_LIMIT_EXCEEDED")	return `<span class="fa fa-align-left" style="color:rgb(255, 155, 70);" title='${ttl}'></span> `+las;
+	if(x == "SECURITY_VIOLATED")	return `<span class="fa fa-ban style_error" title='${ttl}'></span> `+las;
+	if(x == "CRASHED")	return `<span class="fa fa-chain-broken" style="color:rgb(255, 155, 70);" title='${ttl}'></span> `+las;
+	if(x == "INPUT_PREPARATION_CRASHED")	return `<span class="fa fa-sign-in" style="color:rgb(255, 155, 70);" title='${ttl}'></span> `+las;
+	if(x == "CHALLENGED")	return `<span class="fa fa-user-secret" style="color:rgb(175, 168, 158)" title='${ttl}'></span> `+las;
+	if(x == "SKIPPED")	return `<span class="fa fa-forward" style="color:rgb(110, 149, 210);" title='${ttl}'></span> `+las;
+	if(x == "TESTING")	return `<span class="fa fa-hourglass-2" style="color:rgb(110, 149, 210)" title='${ttl}'></span> `+las;
+	if(x == "REJECTED")	return `<span class="fa fa-exclamation-triangle" style="color:#decb29" title='${ttl}'></span> `+las;
 }
 function toSmallCase(x){
 	if(x=="TESTS")	return "test";
@@ -633,12 +641,12 @@ function flushSubmissionInfo(x){
 		if(SubmissionsStorage[i].problem.index != probList[x])
 			continue;
 		if(!showLessSubmissionInfo)
-			$(".SubmlissionsList").append(`<tr><td>${new Date(1000*SubmissionsStorage[i].creationTimeSeconds).pattern("YY-MM-dd hh:mm:ss")}</td><td>${SubmissionsStorage[i].programmingLanguage}</td><td><span style="cursor:pointer;" onclick='openURL("https://codeforces.com/problemset/submission/${ContestID}/${SubmissionsStorage[i].id}")'>${SubmissionsStorage[i].verdict=="OK"?("<span class='ProblemAccepted'>"+(SubmissionsStorage[i].testset=="TESTS"?"Accepted":toSmallCase(SubmissionsStorage[i].testset)+" passed")+"</span>"):(SubmissionsStorage[i].verdict=="CHALLENGED"?"<span class='ProblemWrong'>Hacked</span>":(SubmissionsStorage[i].verdict=="PARTIAL"?"<span title='PARTIAL'>PRT</span>":("<span title=\'"+SubmissionsStorage[i].verdict+"\'>"+toSmallInfo(SubmissionsStorage[i].verdict)+"</span> on "+toSmallCase(SubmissionsStorage[i].testset)+" "+(SubmissionsStorage[i].passedTestCount+1))))}${SubmissionsStorage[i].points!=undefined?('('+SubmissionsStorage[i].points+')'):""}</span></td><td>${SubmissionsStorage[i].timeConsumedMillis}ms</td><td>${toMemoryInfo(SubmissionsStorage[i].memoryConsumedBytes)}</td></tr>`);
+			$(".SubmlissionsList").append(`<tr><th>${new Date(1000*SubmissionsStorage[i].creationTimeSeconds).pattern("YY-MM-dd hh:mm:ss")}</th><th>${SubmissionsStorage[i].programmingLanguage}</th><th><span style="cursor:pointer;" onclick='openURL("https://codeforces.com/problemset/submission/${ContestID}/${SubmissionsStorage[i].id}")'>${SubmissionsStorage[i].verdict=="OK"?("<span class='ProblemAccepted'>"+(SubmissionsStorage[i].testset=="TESTS"?"Accepted":toSmallCase(SubmissionsStorage[i].testset)+" passed")+"</span>"):(SubmissionsStorage[i].verdict=="CHALLENGED"?"<span class='ProblemWrong'>Hacked</span>":(SubmissionsStorage[i].verdict=="PARTIAL"?"<span title='PARTIAL'>PRT</span>":("<span title=\'"+SubmissionsStorage[i].verdict+"\'>"+toSmallInfo(SubmissionsStorage[i].verdict)+"</span> on "+toSmallCase(SubmissionsStorage[i].testset)+" "+(SubmissionsStorage[i].passedTestCount+1))))}${SubmissionsStorage[i].points!=undefined?('('+SubmissionsStorage[i].points+')'):""}</span></th><th>${SubmissionsStorage[i].timeConsumedMillis}ms</th><th>${toMemoryInfo(SubmissionsStorage[i].memoryConsumedBytes)}</th></tr>`);
 		else
-			$(".SubmlissionsList").append(`<tr><td>${new Date(1000*SubmissionsStorage[i].creationTimeSeconds).pattern("YY-MM-dd hh:mm:ss")}</td><td>${SubmissionsStorage[i].programmingLanguage}</td><td style='font-size:25px;'><span style="cursor:pointer;" onclick='openURL("https://codeforces.com/problemset/submission/${ContestID}/${SubmissionsStorage[i].id}")'>${getSubmissionIcon(SubmissionsStorage[i].verdict,SubmissionsStorage[i].testset,`${SubmissionsStorage[i].verdict=="OK"?((SubmissionsStorage[i].testset=="TESTS"?"Accepted":toSmallCase(SubmissionsStorage[i].testset)+" passed")):(SubmissionsStorage[i].verdict=="CHALLENGED"?"Hacked":(SubmissionsStorage[i].verdict=="PARTIAL"?"PARTIAL":((SubmissionsStorage[i].verdict)+" on "+toSmallCase(SubmissionsStorage[i].testset)+" "+(SubmissionsStorage[i].passedTestCount+1))))}${SubmissionsStorage[i].points!=undefined?('('+SubmissionsStorage[i].points+')'):""}`)}</span></td><td>${SubmissionsStorage[i].timeConsumedMillis}ms</td><td>${toMemoryInfo(SubmissionsStorage[i].memoryConsumedBytes)}</td></tr>`);
+			$(".SubmlissionsList").append(`<tr><th>${new Date(1000*SubmissionsStorage[i].creationTimeSeconds).pattern("YY-MM-dd hh:mm:ss")}</th><th>${SubmissionsStorage[i].programmingLanguage}</th><th style='font-size:25px;'><span style="cursor:pointer;" onclick='openURL("https://codeforces.com/problemset/submission/${ContestID}/${SubmissionsStorage[i].id}")'>${getSubmissionIcon(SubmissionsStorage[i].verdict,SubmissionsStorage[i].testset,`${SubmissionsStorage[i].verdict=="OK"?((SubmissionsStorage[i].testset=="TESTS"?"Accepted":toSmallCase(SubmissionsStorage[i].testset)+" passed")):(SubmissionsStorage[i].verdict=="CHALLENGED"?"Hacked":(SubmissionsStorage[i].verdict=="PARTIAL"?"PARTIAL":((SubmissionsStorage[i].verdict)+" on "+toSmallCase(SubmissionsStorage[i].testset)+" "+(SubmissionsStorage[i].passedTestCount+1))))}${SubmissionsStorage[i].points!=undefined?('('+SubmissionsStorage[i].points+')'):""}`)}</span></th><th>${SubmissionsStorage[i].timeConsumedMillis}ms</th><th>${toMemoryInfo(SubmissionsStorage[i].memoryConsumedBytes)}</th></tr>`);
 		hav = true;
 	}
-	if(!hav)	$(".SubmlissionsList").append("<tr><td colspan='5'>Blank</td></tr>");
+	if(!hav)	$(".SubmlissionsList").append("<tr><th colspan='5'>Blank</th></tr>");
 }
 function openProblemInfo(x){
 	if(WinHeight == 190)	return;
@@ -664,10 +672,10 @@ function openProblemInfo(x){
 	}
 	$('.AlertWindow').css('max-height',$(".HtmlContainer").height() - 100);
 	$(".BlackBackground").css('background','rgba(0,0,0,0.5)');
-	$('.ProblemLink').html(`<i class='fa fa-link'></i> CF${ContestID}${probList[x]}`);
+	$('.ProblemLink').html(`<span class='fa fa-link'></span>  CF${ContestID}${probList[x]}`);
 	$('.ProblemLink').attr("onclick",`openURL('https://codeforces.com/contest/${ContestID}/problem/${probList[x]}')`);
 	$('.ProblemName').html(ProblemInfoStorage[x].name);
-	$('.ProblemType').html(`<i class="fa ${ProblemInfoStorage[x].type=="PROGRAMMING"?"fa-terminal":"fa-question-circle"}" title="${ProblemInfoStorage[x].type}"></i>`);
+	$('.ProblemType').html(`<span class="fa ${ProblemInfoStorage[x].type=="PROGRAMMING"?"fa-terminal":"fa-question-circle"}" title="${ProblemInfoStorage[x].type}"></span> `);
 	$(".ProblemPoints").html(ProblemInfoStorage[x].points==undefined?'/':ProblemInfoStorage[x].points);
 	$(".ProblemRating").html(ProblemInfoStorage[x].rating==undefined?'/':ProblemInfoStorage[x].rating);
 	flushSubmissionInfo(x);
@@ -704,10 +712,10 @@ function openForkInfo(){
 		UpdateTime=UpdateTime.substr(0,UpdateTime.length-1);
 		UpdateTime=new Date(UpdateTime.replace(/-/g,'/'));
 		UpdateTime=new Date(Number(UpdateTime)-UpdateTime.getTimezoneOffset()*60*1000);
-		$(".EventList").append(`<tr><td>${UpdateTime.pattern("YY-MM-dd hh:mm:ss")}</td><td><div style='cursor:pointer;word-wrap:break-word;width:265px;overflow-x:none' onclick="openURL('${commitInfo[i].html_url}')">${allHtmlSpecialChars(commitInfo[i].commit.message)}</div></td></tr>`);
+		$(".EventList").append(`<tr><th>${UpdateTime.pattern("YY-MM-dd hh:mm:ss")}</th><th><div style='cursor:pointer;word-wrap:break-word;width:265px;overflow-x:none' onclick="openURL('${commitInfo[i].html_url}')">${allHtmlSpecialChars(commitInfo[i].commit.message)}</div></th></tr>`);
 		hav = true;
 	}
-	if(!hav)	$(".EventList").append("<tr><td colspan='2'>Blank</td></tr>");
+	if(!hav)	$(".EventList").append("<tr><th colspan='2'>Blank</th></tr>");
 }
 function checkUndefined(x){
 	return x==undefined?'/':x;
@@ -774,10 +782,14 @@ function ProblemListAppend(a,b,c,d){
 	$('.ProblemList').append(`<div class="SingleProblem"><div class="BackgroundPic">#</div><span class="ProblemResult ProblemCoding">${a}</span></br><span class="TimeUsed"><span class="style_accept">+${c}</span>:<span class="style_error">-${d}</span></span></br><hr><span class="ProblemScore">${b}</span></div>`);
 }
 function killGetStandings(){
-	if(LoadingStatus)
-		LoadingStatus = false, getStandingsJSONStatus.abort();
-	if(LoadingStatus2)
-		LoadingStatus2 = false, getHacksJSONStatus.abort();
+	if(LoadingStatus){
+		LoadingStatus = false;
+		getStandingsJSONStatus.abort();
+	}
+	if(LoadingStatus2){
+		LoadingStatus2 = false;
+		getHacksJSONStatus.abort();
+	}
 }
 function refreshStandings(){
 	var currP = new Date();
@@ -841,8 +853,10 @@ function refreshStandings(){
 							var r = {};
 							for(var j=0;j<FriendSuccessList.length;j++)
 								r[FriendSuccessList[j]] = getOverallPredictedRank(FriendJson[FriendSuccessList[j]]);
-							if(currP > changeDate)
-								RankData=p,ScoreData=q,FriendRankData=r,getChart();
+							if(currP > changeDate){
+								RankData=p;ScoreData=q;
+								FriendRankData=r;getChart();
+							}
 						},
 						error: function(jqXHR, status, error){
 							LoadingStatus = false;
@@ -865,8 +879,10 @@ function refreshStandings(){
 					var r = {};
 					for(var j=0;j<FriendSuccessList.length;j++)
 						r[FriendSuccessList[j]] = getOverallPredictedRank(FriendJson[FriendSuccessList[j]]);
-					if(currP > changeDate)
-						RankData=p,ScoreData=q,FriendRankData=r,getChart();
+					if(currP > changeDate){
+						RankData=p;ScoreData=q;
+						FriendRankData=r;getChart();
+					}
 				}
 			},
 			error: function(jqXHR, status, error){
@@ -890,8 +906,8 @@ function refreshStandings(){
 			q.push(getPredictedRank(getRealScore(FriendJson[FriendSuccessList[j]],(Number(currT)-Number(StartTime))/1000),getRealPenalty(FriendJson[FriendSuccessList[j]],(Number(currT)-Number(StartTime))/1000),(Number(currT)-Number(StartTime))/1000));
 		if(currP > changeDate){
 			var fir = Number(new Date())-currT.getTimezoneOffset()*60*1000;
-			$('.CurrentRating').html('#'+p),$('.SmallRank').html('#'+p),
-			RankData.push([fir,p]),ScoreData.push([fir,globalJson.points]);
+			$('.CurrentRating').html('#'+p);$('.SmallRank').html('#'+p);
+			RankData.push([fir,p]);ScoreData.push([fir,globalJson.points]);
 			for(var j=0;j<FriendSuccessList.length;j++){
 				if(FriendRankData[FriendSuccessList[j]]==undefined)
 					FriendRankData[FriendSuccessList[j]]=[];
@@ -957,8 +973,8 @@ function refreshStandings(){
 								q.push(getPredictedRank(getRealScore(FriendJson[FriendSuccessList[j]],(Number(currT)-Number(StartTime))/1000),getRealPenalty(FriendJson[FriendSuccessList[j]],(Number(currT)-Number(StartTime))/1000),(Number(currT)-Number(StartTime))/1000));
 							if(currP > changeDate){
 								var fir = Number(new Date())-currT.getTimezoneOffset()*60*1000;
-								$('.CurrentRating').html('#'+p),$('.SmallRank').html('#'+p),
-								RankData.push([fir,p]),ScoreData.push([fir,globalJson.points]);
+								$('.CurrentRating').html('#'+p);$('.SmallRank').html('#'+p);
+								RankData.push([fir,p]);ScoreData.push([fir,globalJson.points]);
 								for(var j=0;j<FriendSuccessList.length;j++){
 									if(FriendRankData[FriendSuccessList[j]]==undefined)
 										FriendRankData[FriendSuccessList[j]]=[];
@@ -989,8 +1005,8 @@ function refreshStandings(){
 						q.push(getPredictedRank(getRealScore(FriendJson[FriendSuccessList[j]],(Number(currT)-Number(StartTime))/1000),getRealPenalty(FriendJson[FriendSuccessList[j]],(Number(currT)-Number(StartTime))/1000),(Number(currT)-Number(StartTime))/1000));
 					if(currP > changeDate){
 						var fir = Number(new Date())-currT.getTimezoneOffset()*60*1000;
-						$('.CurrentRating').html('#'+p),$('.SmallRank').html('#'+p),
-						RankData.push([fir,p]),ScoreData.push([fir,globalJson.points]);
+						$('.CurrentRating').html('#'+p);$('.SmallRank').html('#'+p);
+						RankData.push([fir,p]);ScoreData.push([fir,globalJson.points]);
 						for(var j=0;j<FriendSuccessList.length;j++){
 							if(FriendRankData[FriendSuccessList[j]]==undefined)
 								FriendRankData[FriendSuccessList[j]]=[];
@@ -1016,14 +1032,22 @@ function refreshStandings(){
 	}
 }
 function killApiLoad(){
-	if(ApiLoadingStatus)
-		ApiLoadingStatus = false, refreshApiInfo.abort();
-	if(ApiLoadingStatus2)
-		ApiLoadingStatus2 = false, getContestList.abort();
-	if(ApiLoadingStatus3)
-		ApiLoadingStatus3 = false, getRatingChanges.abort();
-	if(ApiLoadingStatus4)
-		ApiLoadingStatus4 = false, getSubmissions.abort();
+	if(ApiLoadingStatus){
+		ApiLoadingStatus = false;
+		refreshApiInfo.abort();
+	}
+	if(ApiLoadingStatus2){
+		ApiLoadingStatus2 = false;
+		getContestList.abort();
+	}
+	if(ApiLoadingStatus3){
+		ApiLoadingStatus3 = false;
+		getRatingChanges.abort();
+	}
+	if(ApiLoadingStatus4){
+		ApiLoadingStatus4 = false;
+		getSubmissions.abort();
+	}
 }
 function calcDelta(y){
 	if(y>0)	return '<span class="ProblemAccepted" style="font-size:12px">+'+y+'</span>';
@@ -1037,8 +1061,8 @@ function loadRatingChanges(json,un){
 			failedToLoadRatingChange = false;
 			var x = Number(json[i].oldRating);
 			var y = Number(json[i].newRating);
-			$(".ContestRatingChanges").html(`<span style="color:${CodeforcesRatingColor(x)};font-family: VerdanaBold;">${x}</span></br>${calcDelta(y-x)} <i class="fa fa-angle-double-right"></i> <span style="color:${CodeforcesRatingColor(y)};font-family:VerdanaBold">${y}</span>`);
-			$(".SmallRatingChanges").html(`<span style="color:${CodeforcesRatingColor(x)};font-family: VerdanaBold;">${x}</span> |${calcDelta(y-x)}| <i class="fa fa-angle-double-right"></i> <span style="color:${CodeforcesRatingColor(y)};font-family:VerdanaBold">${y}</span>`);
+			$(".ContestRatingChanges").html(`<span style="color:${CodeforcesRatingColor(x)};font-family: VerdanaBold;">${x}</span></br>${calcDelta(y-x)} <span class="fa fa-angle-double-right"></span>  <span style="color:${CodeforcesRatingColor(y)};font-family:VerdanaBold">${y}</span>`);
+			$(".SmallRatingChanges").html(`<span style="color:${CodeforcesRatingColor(x)};font-family: VerdanaBold;">${x}</span> |${calcDelta(y-x)}| <span class="fa fa-angle-double-right"></span>  <span style="color:${CodeforcesRatingColor(y)};font-family:VerdanaBold">${y}</span>`);
 			return;
 		}
 	}
@@ -1054,8 +1078,8 @@ function getApiInfo(cD){
 	var handleList = Username;
 	for(var p=0;p<CurrDiffDetail.length;p++)
 		handleList += (';' + CurrDiffDetail[p].handle);
-	$('.ConnectionStatus').html('<i class="fa fa-spin fa-spinner"></i> Pending for Standings...');
-	$('.SendButton').html('<i class="fa fa-spin fa-spinner"></i>');
+	$('.ConnectionStatus').html('<span class="fa fa-spin fa-spinner"></span>  Pending for Standings...');
+	$('.SendButton').html('<span class="fa fa-spin fa-spinner"></span> ');
 	ApiLoadingStatus = true;
 	refreshApiInfo = $.ajax({
 		url: "https://codeforces.com/api/contest.standings",
@@ -1068,8 +1092,8 @@ function getApiInfo(cD){
 		success: function(json){
 			ApiLoadingStatus = false;
 			if(json.status != "OK"){
-				$('.ConnectionStatus').html('<i class="fa fa-times style_error"></i> Cannot Get Standings!');
-				$('.SendButton').html('<i class="fa fa-paper-plane"></i>');
+				$('.ConnectionStatus').html('<span class="fa fa-times style_error"></span>  Cannot Get Standings!');
+				$('.SendButton').html('<span class="fa fa-paper-plane"></span> ');
 				return;
 			}
 			json.result.rows.sort(sortRows);
@@ -1091,9 +1115,10 @@ function getApiInfo(cD){
 			var realList = [];
 			$('.ContestTypeChosen').html("");
 			for(var i=0;i<json.rows.length;i++)
-				if(json.rows[i].party.members[0].handle==Username)
-					++realLength, realList.push(json.rows[i]), 
+				if(json.rows[i].party.members[0].handle==Username){
+					++realLength;realList.push(json.rows[i]);
 					$('.ContestTypeChosen').append(`<option value="${realLength-1}">${(new Date(json.rows[i].party.startTimeSeconds*1000)).pattern("YY-MM-dd hh:mm")} ${json.rows[i].party.participantType}</option>`);
+				}
 			if(SelectContestIndex<0 || SelectContestIndex>=realLength)
 				SelectContestTime=false;
 			if(!SelectContestTime)
@@ -1116,15 +1141,17 @@ function getApiInfo(cD){
 			RealContestStartTime = new Date(RealContestStartTime * 1000);
 			RealContestEndTime = new Date(RealContestEndTime * 1000);
 			var currT = new Date();
-			$('.ConnectionStatus').html('<i class="fa fa-check style_accept"></i> Updated! ['+currT.pattern("hh:mm:ss")+']');
-			$('.SendButton').html('<i class="fa fa-paper-plane"></i>');
+			$('.ConnectionStatus').html('<span class="fa fa-check style_accept"></span>  Updated! ['+currT.pattern("hh:mm:ss")+']');
+			$('.SendButton').html('<span class="fa fa-paper-plane"></span> ');
 			$('.ContestName').html(`<span class="fa fa-link" onclick="openURL('https://codeforces.com/contest/${ContestID}/')" style="cursor:pointer"></span> <span class="fa fa-info-circle" onclick="openContestInfo();" style="cursor:pointer"></span> `+json.contest.name);
 			CurrentStatus = json.contest.phase;
 			if(currT<StartTime)	CurrentStatus="BEFORE";
 			else if(currT<EndTime)	CurrentStatus="CODING";
-			if(realLength==0)
-				$('.VirtualRankButton').css('display','none'),
-				ToolListLength=188,flushToolList();
+			if(realLength==0){
+				$('.VirtualRankButton').css('display','none');
+				ToolListLength=188;flushToolList();
+			}
+				
 			var FriendResultInfo = {};
 			for(var i=0;i<json.rows.length;i++){
 				var nam = json.rows[i].party.members[0].handle;
@@ -1141,14 +1168,16 @@ function getApiInfo(cD){
 				for(var j=0;j<CurrDiffDetail[i].contestInfo.length;j++){
 					var Q = nam + '[' + CurrDiffDetail[i].contestInfo[j] + ']';
 					if(CurrDiffDetail[i].contestInfo[j]=="C"){
-						if(FriendResultInfo[nam]["CONTESTANT"]!=undefined)
-							FriendJson[Q] = FriendResultInfo[nam]["CONTESTANT"][0],
+						if(FriendResultInfo[nam]["CONTESTANT"]!=undefined){
+							FriendJson[Q] = FriendResultInfo[nam]["CONTESTANT"][0];
 							FriendSuccessList.push(Q);
+						}
 					}
 					else if(CurrDiffDetail[i].contestInfo[j]=="O"){
-						if(FriendResultInfo[nam]["OUT_OF_COMPETITION"]!=undefined)
-							FriendJson[Q] = FriendResultInfo[nam]["OUT_OF_COMPETITION"][0],
+						if(FriendResultInfo[nam]["OUT_OF_COMPETITION"]!=undefined){
+							FriendJson[Q] = FriendResultInfo[nam]["OUT_OF_COMPETITION"][0];
 							FriendSuccessList.push(Q);
+						}
 					}
 					else{
 						if(FriendResultInfo[nam]["VIRTUAL"]==undefined)
@@ -1158,7 +1187,7 @@ function getApiInfo(cD){
 						if(p>=0)	p=p-1;
 						else if(p<0)	p=FriendResultInfo[nam]["VIRTUAL"].length+p;
 						if(p<0 || p>=FriendResultInfo[nam]["VIRTUAL"].length)	continue;
-						FriendJson[Q] = FriendResultInfo[nam]["VIRTUAL"][p],
+						FriendJson[Q] = FriendResultInfo[nam]["VIRTUAL"][p];
 						FriendSuccessList.push(Q);
 					}
 				}
@@ -1166,8 +1195,10 @@ function getApiInfo(cD){
 			if(CurrentStatus=="BEFORE"){
 				$('.ProblemList').html('<div style="height:100%;display: flex;align-items: center;justify-content: center;vertical-align:center">Blank</div>');
 				blankTip = true;
-				if(!flushTimeRunned)
-					flushTimeRunned=true,setTimeout(flushTimeIndex(cD), 0);
+				if(!flushTimeRunned){
+					flushTimeRunned=true;
+					setTimeout(flushTimeIndex(cD), 0);
+				}
 				clearTimeout(sTo);
 				setTimeout(function(){getApiInfo(cD);}, Math.min(30000, Number(StartTime) - Number(currT)));
 			}
@@ -1177,7 +1208,7 @@ function getApiInfo(cD){
 				for(var i=0;i<json.problems.length;i++)
 					probList.push(json.problems[i].index);
 				if(realLength==0){
-					$('.ConnectionStatus').html('<i class="fa fa-times style_error"></i> Not In The Contest!');
+					$('.ConnectionStatus').html('<span class="fa fa-times style_error"></span>  Not In The Contest!');
 					for(var i=0;i<probList.length;i++)
 						reslList.push(['?','--:--','0','ProblemUnknown']);
 					getProblemList(probList, reslList);
@@ -1203,12 +1234,13 @@ function getApiInfo(cD){
 					if(VirtualRank){
 						globalJson = json;
 						if(!LoadingStatus)
-							refreshStandings(json);
+							refreshStandings();
 					}
 				}
-				else
-					$('.VirtualRankButton').css('display','none'),
-					ToolListLength=188,flushToolList();
+				else{
+					$('.VirtualRankButton').css('display','none');
+					ToolListLength=188;flushToolList();
+				}
 				if(json.party.participantType=="PRACTICE"){
 					$('.CurrentRating').html("#?");
 					$('.SmallRank').html('#?');
@@ -1346,7 +1378,7 @@ function getApiInfo(cD){
 					xhr: function() {
 			            var xhr = new XMLHttpRequest();
 			            xhr.addEventListener('progress', function (e) {
-			                $('.ProblemList').html(`<div style="height:100%;display: flex;align-items: center;justify-content: center;vertical-align:center"><i class="fa fa-download"></i> Downloading Status... ${toMemoryInfo(e.loaded)}</div>`);
+			                $('.ProblemList').html(`<div style="height:100%;display: flex;align-items: center;justify-content: center;vertical-align:center"><span class="fa fa-download"></span>  Downloading Status... ${toMemoryInfo(e.loaded)}</div>`);
 			            });
 			            return xhr;
 			        }
@@ -1354,8 +1386,10 @@ function getApiInfo(cD){
 				if(CurrentStatus != "CODING")
 					$(".ContestProgress").attr("value", "1").attr("max", "1");
 				if(CurrentStatus == "CODING"){
-					if(!flushTimeRunned)
-						flushTimeRunned=true, setTimeout(flushTimeIndex(cD), 0);
+					if(!flushTimeRunned){
+						flushTimeRunned=true;
+						setTimeout(flushTimeIndex(cD), 0);
+					}
 				}
 				else if(CurrentStatus == "PENDING_SYSTEM_TEST")
 					$('.ContestStatus span').html('Pending System Test...');
@@ -1363,12 +1397,13 @@ function getApiInfo(cD){
 					$('.ContestStatus span').html('System Testing...');
 				else if(json.party.participantType=="PRACTICE")
 					$('.ContestStatus span').html('Finished');
-				else if(CurrentStatus == "FINISHED")
-					$('.ContestStatus span').html('Finished'),
+				else if(CurrentStatus == "FINISHED"){
+					$('.ContestStatus span').html('Finished');
 					clearTimeout(sTo);
+				}
 				if(json.party.participantType == "CONTESTANT"){
-					$('.ContestRatingChanges').html("<i class='fa fa-spin fa-spinner'></i>");
-					$('.SmallRatingChanges').html("<i class='fa fa-spin fa-spinner'></i>");
+					$('.ContestRatingChanges').html("<span class='fa fa-spin fa-spinner'></span> ");
+					$('.SmallRatingChanges').html("<span class='fa fa-spin fa-spinner'></span> ");
 					ApiLoadingStatus3 = true;
 					failedToLoadRatingChange = true;
 					if(CurrentStatus == "FINISHED"){
@@ -1379,8 +1414,8 @@ function getApiInfo(cD){
 							success: function(json3){
 								ApiLoadingStatus3 = false;
 								if(json3.status != "OK"){
-									$('.ContestRatingChanges').html("<i class='fa fa-unlink'></i>");
-									$('.SmallRatingChanges').html("<i class='fa fa-unlink'></i>");
+									$('.ContestRatingChanges').html("<span class='fa fa-unlink'></span> ");
+									$('.SmallRatingChanges').html("<span class='fa fa-unlink'></span> ");
 									return;
 								}
 								loadRatingChanges(json3, Username);
@@ -1393,22 +1428,22 @@ function getApiInfo(cD){
 											ApiLoadingStatus3 = false;
 											json3 = JSON.parse(json3);
 											if(json3.status != "OK"){
-												$('.ContestRatingChanges').html("<i class='fa fa-unlink'></i>");
-												$('.SmallRatingChanges').html("<i class='fa fa-unlink'></i>");
+												$('.ContestRatingChanges').html("<span class='fa fa-unlink'></span> ");
+												$('.SmallRatingChanges').html("<span class='fa fa-unlink'></span> ");
 												return;
 											}
 											loadRatingChanges(json3, Username);
 										},
 										error: function(){
 											ApiLoadingStatus3 = false;
-											$('.ContestRatingChanges').html("<i class='fa fa-unlink'></i>");
-											$('.SmallRatingChanges').html("<i class='fa fa-unlink'></i>");
+											$('.ContestRatingChanges').html("<span class='fa fa-unlink'></span> ");
+											$('.SmallRatingChanges').html("<span class='fa fa-unlink'></span> ");
 										},
 										xhr: function() {
 								            var xhr = new XMLHttpRequest();
 								            xhr.addEventListener('progress', function (e) {
-								                $('.ContestRatingChanges').html("<i class='fa fa-download'></i> </br>"+toMemoryInfo(e.loaded));
-								            	$('.SmallRatingChanges').html("<i class='fa fa-download'></i> "+toMemoryInfo(e.loaded));
+								                $('.ContestRatingChanges').html("<span class='fa fa-download'></span>  </br>"+toMemoryInfo(e.loaded));
+								            	$('.SmallRatingChanges').html("<span class='fa fa-download'></span>  "+toMemoryInfo(e.loaded));
 								            });
 								            return xhr;
 								        }
@@ -1417,14 +1452,14 @@ function getApiInfo(cD){
 							},
 							error: function(){
 								ApiLoadingStatus3 = false;
-								$('.ContestRatingChanges').html("<i class='fa fa-unlink'></i>");
-								$('.SmallRatingChanges').html("<i class='fa fa-unlink'></i>");
+								$('.ContestRatingChanges').html("<span class='fa fa-unlink'></span> ");
+								$('.SmallRatingChanges').html("<span class='fa fa-unlink'></span> ");
 							},
 							xhr: function() {
 					            var xhr = new XMLHttpRequest();
 					            xhr.addEventListener('progress', function (e) {
-					                $('.ContestRatingChanges').html("<i class='fa fa-download'></i> </br>"+toMemoryInfo(e.loaded));
-					            	$('.SmallRatingChanges').html("<i class='fa fa-download'></i> "+toMemoryInfo(e.loaded));
+					                $('.ContestRatingChanges').html("<span class='fa fa-download'></span>  </br>"+toMemoryInfo(e.loaded));
+					            	$('.SmallRatingChanges').html("<span class='fa fa-download'></span>  "+toMemoryInfo(e.loaded));
 					            });
 					            return xhr;
 					        }
@@ -1439,22 +1474,22 @@ function getApiInfo(cD){
 								ApiLoadingStatus3 = false;
 								json3 = JSON.parse(json3);
 								if(json3.status != "OK"){
-									$('.ContestRatingChanges').html("<i class='fa fa-unlink'></i>");
-									$('.SmallRatingChanges').html("<i class='fa fa-unlink'></i>");
+									$('.ContestRatingChanges').html("<span class='fa fa-unlink'></span> ");
+									$('.SmallRatingChanges').html("<span class='fa fa-unlink'></span> ");
 									return;
 								}
 								loadRatingChanges(json3, Username);
 							},
 							error: function(){
 								ApiLoadingStatus3 = false;
-								$('.ContestRatingChanges').html("<i class='fa fa-unlink'></i>");
-								$('.SmallRatingChanges').html("<i class='fa fa-unlink'></i>");
+								$('.ContestRatingChanges').html("<span class='fa fa-unlink'></span> ");
+								$('.SmallRatingChanges').html("<span class='fa fa-unlink'></span> ");
 							},
 							xhr: function() {
 					            var xhr = new XMLHttpRequest();
 					            xhr.addEventListener('progress', function (e) {
-					                $('.ContestRatingChanges').html("<i class='fa fa-download'></i> </br>"+toMemoryInfo(e.loaded));
-					            	$('.SmallRatingChanges').html("<i class='fa fa-download'></i> "+toMemoryInfo(e.loaded));
+					                $('.ContestRatingChanges').html("<span class='fa fa-download'></span>  </br>"+toMemoryInfo(e.loaded));
+					            	$('.SmallRatingChanges').html("<span class='fa fa-download'></span>  "+toMemoryInfo(e.loaded));
 					            });
 					            return xhr;
 					        }
@@ -1466,13 +1501,13 @@ function getApiInfo(cD){
 		error: function(jqXHR, status, errorThrown){
 			ApiLoadingStatus = false;
 			if(jqXHR.responseJSON == undefined){
-				$('.ConnectionStatus').html('<i class="fa fa-times style_error"></i> Cannot Get Standings!');
-				$('.SendButton').html('<i class="fa fa-paper-plane"></i>');
+				$('.ConnectionStatus').html('<span class="fa fa-times style_error"></span>  Cannot Get Standings!');
+				$('.SendButton').html('<span class="fa fa-paper-plane"></span> ');
 				return;
 			}
 			var ec = jqXHR.responseJSON.comment, ref = false;
 			if(ec===`contestId: Contest with id ${ContestID} has not started`){
-				$('.ConnectionStatus').html('<i class="fa fa-spin fa-refresh"></i> Contest Not Started. Pending for Info...');
+				$('.ConnectionStatus').html('<span class="fa fa-spin fa-refresh"></span>  Contest Not Started. Pending for Info...');
 				ApiLoadingStatus2 = true;
 				getContestList = $.ajax({
 					url: "https://codeforces.com/api/contest.list",
@@ -1480,8 +1515,8 @@ function getApiInfo(cD){
 					success: function(json2){
 						ApiLoadingStatus2 = false;
 						if(json2.status != "OK"){
-							$('.ConnectionStatus').html('<i class="fa fa-times style_error"></i> Contest Not Found!');
-							$('.SendButton').html('<i class="fa fa-paper-plane"></i>');
+							$('.ConnectionStatus').html('<span class="fa fa-times style_error"></span>  Contest Not Found!');
+							$('.SendButton').html('<span class="fa fa-paper-plane"></span> ');
 							return;
 						}
 						json2=json2.result;
@@ -1502,8 +1537,8 @@ function getApiInfo(cD){
 								RealContestStartTime = new Date(RealContestStartTime * 1000);
 								RealContestEndTime = new Date(RealContestEndTime * 1000);
 								var currT = new Date();
-								$('.ConnectionStatus').html('<i class="fa fa-check style_accept"></i> Updated! ['+currT.pattern("hh:mm:ss")+']');
-								$('.SendButton').html('<i class="fa fa-paper-plane"></i>');
+								$('.ConnectionStatus').html('<span class="fa fa-check style_accept"></span>  Updated! ['+currT.pattern("hh:mm:ss")+']');
+								$('.SendButton').html('<span class="fa fa-paper-plane"></span> ');
 								$('.ContestName').html(`<span class="fa fa-link" onclick="openURL('https://codeforces.com/contest/${ContestID}/')" style="cursor:pointer"></span> <span class="fa fa-info-circle" onclick="openContestInfo();" style="cursor:pointer"></span> `+json2[i].name);
 								CurrentStatus = json2[i].phase;
 								if(currT<StartTime)	CurrentStatus="BEFORE";
@@ -1524,21 +1559,21 @@ function getApiInfo(cD){
 						}
 					},
 					error: function(jqXHR, status, error){
-						$('.ConnectionStatus').html('<i class="fa fa-times style_error"></i> Contest Not Found!');
-						$('.SendButton').html('<i class="fa fa-paper-plane"></i>');
+						$('.ConnectionStatus').html('<span class="fa fa-times style_error"></span>  Contest Not Found!');
+						$('.SendButton').html('<span class="fa fa-paper-plane"></span> ');
 					},
 					xhr: function() {
 			            var xhr = new XMLHttpRequest();
 			            xhr.addEventListener('progress', function (e) {
-			                $('.ConnectionStatus').html('<i class="fa fa-download"></i> Downloading Contest Info... '+toMemoryInfo(e.loaded));
+			                $('.ConnectionStatus').html('<span class="fa fa-download"></span>  Downloading Contest Info... '+toMemoryInfo(e.loaded));
 			            });
 			            return xhr;
 			        }
 				})
 			}
 			else{
-				$('.ConnectionStatus').html('<i class="fa fa-times style_error"></i> '+(ec.substr(0,8)==='handles:'?'Username Not Found!':(ec.substr(0,10)==='contestId:'?'Contest Not Found!':(ref=true,"Cannot Get Standings!"))));
-				$('.SendButton').html('<i class="fa fa-paper-plane"></i>');
+				$('.ConnectionStatus').html('<span class="fa fa-times style_error"></span>  '+(ec.substr(0,8)==='handles:'?'Username Not Found!':(ec.substr(0,10)==='contestId:'?'Contest Not Found!':(ref=true,"Cannot Get Standings!"))));
+				$('.SendButton').html('<span class="fa fa-paper-plane"></span> ');
 				if(!ref)
 					clearTimeout(sTo);
 			}
@@ -1546,7 +1581,7 @@ function getApiInfo(cD){
 		xhr: function() {
             var xhr = new XMLHttpRequest();
             xhr.addEventListener('progress', function (e) {
-                $('.ConnectionStatus').html('<i class="fa fa-download"></i> Downloading Standings... '+toMemoryInfo(e.loaded));
+                $('.ConnectionStatus').html('<span class="fa fa-download"></span>  Downloading Standings... '+toMemoryInfo(e.loaded));
             });
             return xhr;
         }
@@ -1578,7 +1613,7 @@ function AnalysisString(x){
 		if(x[l]=="")	continue;
 		var nam = "";
 		var p = 0;
-		while(p != x[l].length && x[l][p]!='[')	nam += x[l][p],++p;
+		while(p != x[l].length && x[l][p]!='['){nam += x[l][p];++p;}
 		if(!checkName(nam) || x[l][x[l].length-1]!=']')	return {status: "ER",result: []};
 		var alList = [];
 		var currStr = "";
@@ -1602,29 +1637,29 @@ function changeUserInfo(){
 	var un = $('.UsernameInput:first').val();
 	var ci = $('.ContestIDInput:first').val();
 	var di = $('.ContestDiffCalc:first').val();
-	$('.ConnectionStatus').html('<i class="fa fa-spin fa-spinner"></i> Checking Information...');
+	$('.ConnectionStatus').html('<span class="fa fa-spin fa-spinner"></span>  Checking Information...');
 	if(un.length<3 || un.length>24){
-		$('.ConnectionStatus').html('<i class="fa fa-times style_error"></i> Username Incorrect!');
+		$('.ConnectionStatus').html('<span class="fa fa-times style_error"></span>  Username Incorrect!');
 		return;
 	}
 	for(var i=0;i<un.length;i++)
 		if(!((un[i]>='a' && un[i]<='z') || (un[i]>='A' && un[i]<='Z') || (un[i]>='0' && un[i]<='9') || un[i]=='_' || un[i]=='.' || un[i]=='-')){
-			$('.ConnectionStatus').html('<i class="fa fa-times style_error"></i> Username Inorrect!');
+			$('.ConnectionStatus').html('<span class="fa fa-times style_error"></span>  Username Inorrect!');
 			return;
 		}
 	if(ci.length==0){
-		$('.ConnectionStatus').html('<i class="fa fa-times style_error"></i> Contest ID Incorrect!');
+		$('.ConnectionStatus').html('<span class="fa fa-times style_error"></span>  Contest ID Incorrect!');
 		return;
 	}
 	for(var i=0;i<ci.length;i++)
 		if(ci[i]<'0' || ci[i]>'9'){
-			$('.ConnectionStatus').html('<i class="fa fa-times style_error"></i> Contest ID Incorrect!');
+			$('.ConnectionStatus').html('<span class="fa fa-times style_error"></span>  Contest ID Incorrect!');
 			return;
 		}
 	if(di != CurrDiffCalc){
 		var getResult = AnalysisString(di);
 		if(getResult.status != "OK"){
-			$('.ConnectionStatus').html('<i class="fa fa-times style_error"></i> Analysis Failed!');
+			$('.ConnectionStatus').html('<span class="fa fa-times style_error"></span>  Analysis Failed!');
 			return;
 		}
 		CurrDiffDetail = getResult.result;
@@ -1658,7 +1693,7 @@ function changeUserInfo(){
 var BranchLink;
 var RepoLink = "https://github.com/tiger2005/CodeforcesContestHelper"
 function getNewestRepo(){
-	$('.ConnectionStatus').html('<i class="fa fa-spin fa-spinner"></i> Loading Repo Info...');
+	$('.ConnectionStatus').html('<span class="fa fa-spin fa-spinner"></span>  Loading Repo Info...');
 	$.getJSON("https://api.github.com/repos/tiger2005/CodeforcesContestHelper/commits",function(json){
 		commitInfo = json;
 		json=json[0];
@@ -1667,17 +1702,16 @@ function getNewestRepo(){
 		UpdateTime=new Date(UpdateTime.replace(/-/g,'/'));
 		UpdateTime=new Date(Number(UpdateTime)-UpdateTime.getTimezoneOffset()*60*1000);
 		BranchLink=json.html_url;
-		$('.ConnectionStatus').html(`<i class="fa fa-check style_accept"></i> Last Update at ${UpdateTime.pattern("YY-MM-dd hh:mm:ss")} <span onclick="openForkInfo()" class="fa fa-code-branch" style="cursor:pointer;"></span> <span onclick="openURL(RepoLink)" class="fab fa-github" style="cursor:pointer;"></span>`);
+		$('.ConnectionStatus').html(`<span class="fa fa-check style_accept"></span>  Last Update at ${UpdateTime.pattern("YY-MM-dd hh:mm:ss")} <span onclick="openForkInfo()" class="fa fa-code-branch" style="cursor:pointer;"></span> <span onclick="openURL(RepoLink)" class="fab fa-github" style="cursor:pointer;"></span>`);
 	}).fail(function(){
-		$('.ConnectionStatus').html('<i class="fa fa-times style_error"></i> Connection Error!');
+		$('.ConnectionStatus').html('<span class="fa fa-times style_error"></span>  Connection Error!');
 	});
 }
 function openSelf(){
 	if(!RunInNwjs)	return;
 	nw.Window.open("index.html",{
 	    "title": "Codeforces Contest Helper", 
-	    "icon": "icon.png",
-	    "frame": true,
+	    "icon": "favicon.png",
 	    "width": 400,
 	    "height": 615, 
 	    "position": "center",
@@ -1709,9 +1743,9 @@ function showAdvancedOptionIf(){
 }
 function SetLessInfoIf(){
 	if(showLessSubmissionInfo)
-		$(".LessInfoSelect").html(`<i class="far fa-square"></i>`);
+		$(".LessInfoSelect").html(`<span class="far fa-square"></span> `);
 	else
-		$(".LessInfoSelect").html(`<i class="fa fa-check-square"></i>`);
+		$(".LessInfoSelect").html(`<span class="fa fa-check-square"></span> `);
 	showLessSubmissionInfo = !showLessSubmissionInfo;
 	if($('.MessageBoxProblem').css('display')=='block'
 	&& $('.AlertWindow').css('display')=='block')

@@ -21,13 +21,13 @@ body{
 	margin: 0px;
 	user-select:none;
 	font-size: 14px;
-	font-family: 'Consolas','Fira Code','Source Code Pro','Lucida Console','Cascadia Code','Ubuntu Mono','Monospace';
+	font-family: 'Consolas','Fira Code','Source Code Pro','Lucida Console','Cascadia Code','Ubuntu Mono','Monospace', sans-serif;
 	-webkit-app-region: drag;
 	transition: background-color 0.3s, color 0.3s;
 	border-radius: 5px;
 }
 .ContestStatus{
-	font-family: Verdana;
+	font-family: Verdana, sans-serif;
 	font-size: 16px;
 	height: 16px;
 	text-align: center;
@@ -42,7 +42,7 @@ body{
 }
 .ContestName{
 	-webkit-app-region: no-drag;
-	font-family: Verdana;
+	font-family: Verdana, sans-serif;
 	width: 100%;
 	padding-left: 5px;
 	height: 54px;
@@ -73,7 +73,7 @@ body{
 .SingleProblem{
 	-webkit-app-region: no-drag;
 	box-shadow: 0px 0px 3px #666;
-	font-family: Verdana;
+	font-family: Verdana, sans-serif;
 	text-align: center;
 	position: relative;
 	min-width: 60px;
@@ -83,7 +83,7 @@ body{
 	display: inline-block;
 }
 .BackgroundPic{
-	font-family: 'Consolas','Fira Code','Source Code Pro','Lucida Console','Cascadia Code','Ubuntu Mono','Monospace';
+	font-family: 'Consolas','Fira Code','Source Code Pro','Lucida Console','Cascadia Code','Ubuntu Mono','Monospace', sans-serif;
 	z-index: -1;
 	position:absolute;
     left:calc(50% - 30px);
@@ -100,15 +100,15 @@ body{
 	font-size: 0.9em;
 }
 .ProblemAccepted{
-	font-family: VerdanaBold;
+	font-family: VerdanaBold, sans-serif;
 }
 .ProblemWrong{
-	font-family: VerdanaBold;
+	font-family: VerdanaBold, sans-serif;
 	font-weight: bold;
 	color: red;
 }
 .ProblemUnknown{
-	font-family: VerdanaBold;
+	font-family: VerdanaBold, sans-serif;
 	font-weight: bold;
 	color: grey;
 }
@@ -150,7 +150,7 @@ body{
 	min-width: 350px;
 	max-width: 350px;
 	margin: 0 auto;
-	font-family: Consolas;
+	font-family: Consolas, sans-serif;
 	font-size: 13px;
 }
 .SubmlissionsList > tr > td{
@@ -161,7 +161,7 @@ body{
 	min-width: 350px;
 	max-width: 350px;
 	margin: 0 auto;
-	font-family: Consolas;
+	font-family: Consolas, sans-serif;
 	font-size: 13px;
 }
 .EventList > tr > td{
@@ -172,7 +172,7 @@ body{
 	min-width: 350px;
 	max-width: 350px;
 	margin: 0 auto;
-	font-family: Consolas;
+	font-family: Consolas, sans-serif;
 	font-size: 13px;
 }
 .ContestInfoList > tr > td{
@@ -221,6 +221,7 @@ hr{
 .ConnectionStatus{
 	-webkit-app-region: no-drag;
 	margin-left: 2px;
+	text-align: left;
 }
 .UserType{
 	transition: width 0.3s, max-width 0.3s;
@@ -269,7 +270,7 @@ input{
 	transition: background 0.3s;
     padding: 3px;
     font-size: 14px;
-    font-family: 'Consolas','Fira Code','Source Code Pro','Lucida Console','Cascadia Code','Ubuntu Mono','Monospace';;
+    font-family: 'Consolas','Fira Code','Source Code Pro','Lucida Console','Cascadia Code','Ubuntu Mono','Monospace', sans-serif;
     height: 22px;
     width: 100%;
     outline: none;
@@ -283,7 +284,7 @@ label{
 	width: 100%;
 	display:inline-block;
 }
-label > i{
+label > span:nth-child(2){
 	position: absolute;
 	top: 0px;
 	left: 0px;
@@ -299,7 +300,7 @@ select{
 	-webkit-app-region: no-drag;
 	transition: background 0.3s;
 	font-size: 14px;
-	font-family: 'Consolas','Fira Code','Source Code Pro','Lucida Console','Cascadia Code','Ubuntu Mono','Monospace';;
+	font-family: 'Consolas','Fira Code','Source Code Pro','Lucida Console','Cascadia Code','Ubuntu Mono','Monospace', sans-serif;
     border: none;
     outline: none;
     width: 100%;

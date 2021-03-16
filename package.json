@@ -7,9 +7,8 @@
   "keywords": [ "Codeforces", "node-webkit" ],
   "window": {
     "title": "Codeforces Contest Helper", 
-    "icon": "icon.png",
+    "icon": "favicon.png",
     "toolbar": false,
-    "frame": true,
     "width": 400,
     "height": 615, 
     "position": "center",
