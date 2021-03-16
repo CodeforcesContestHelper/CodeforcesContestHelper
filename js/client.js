@@ -1197,7 +1197,7 @@ function getApiInfo(cD){
 				blankTip = true;
 				if(!flushTimeRunned){
 					flushTimeRunned=true;
-					setTimeout(flushTimeIndex(cD), 0);
+					setTimeout(function(){flushTimeIndex(cD);}, 0);
 				}
 				clearTimeout(sTo);
 				setTimeout(function(){getApiInfo(cD);}, Math.min(30000, Number(StartTime) - Number(currT)));
@@ -1388,7 +1388,7 @@ function getApiInfo(cD){
 				if(CurrentStatus == "CODING"){
 					if(!flushTimeRunned){
 						flushTimeRunned=true;
-						setTimeout(flushTimeIndex(cD), 0);
+						setTimeout(function(){flushTimeIndex(cD);}, 0);
 					}
 				}
 				else if(CurrentStatus == "PENDING_SYSTEM_TEST")
@@ -1544,15 +1544,17 @@ function getApiInfo(cD){
 								if(currT<StartTime)	CurrentStatus="BEFORE";
 								else if(currT<EndTime)	CurrentStatus="CODING";
 								$('.VirtualRankButton').css('display','none');
-								ToolListLength=188,flushToolList();
+								ToolListLength=188;flushToolList();
 								$('.ProblemList').html('<div style="height:100%;display: flex;align-items: center;justify-content: center;vertical-align:center">Blank</div>');
 								blankTip = true;
 								$('.UserType').html('UNKNOWN');
 								$('.CurrentRating').html("#?");
 								$('.SmallRank').html('#?');
 								$('#highchatrsContainer').html('<div style="height:100%;display: flex;align-items: center;justify-content: center;vertical-align:center">Blank</div>');
-								if(!flushTimeRunned)
-									flushTimeRunned=true,setTimeout(flushTimeIndex(cD), 0);
+								if(!flushTimeRunned){
+									flushTimeRunned=true;
+									setTimeout(function(){flushTimeIndex(cD);}, 0);
+								}
 								clearTimeout(sTo);
 								setTimeout(function(){getApiInfo(cD);}, Math.min(30000, Number(StartTime) - Number(currT)));
 							}
