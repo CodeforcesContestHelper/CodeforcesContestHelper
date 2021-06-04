@@ -25,8 +25,17 @@ body{
 hr{
 	background-color: #fff;
 }
-.SingleProblem{
+.SingleProblemInfo{
 	border: 1px solid #fff;
+}
+.ProblemSubmissionIntro{
+	background: #666;
+}
+.ProblemSubmission{
+	background: #555;
+}
+.ProblemSubmission:hover{
+	background: #666;
 }
 .RatingGraphDescriptionTd, .GraphFolder{
 	background: #383839;
@@ -66,6 +75,10 @@ button{
 button:hover{
 	background: #666;
 }
+button[disabled]{
+	background: #333;
+	color: grey;
+}
 input{
 	background: #222;
 	color: #fff;
@@ -95,7 +108,7 @@ input[readonly='readonly']{
     color :#e7483f;
 }
 .style_accept{
-    color: #20901c;
+    color: #1cff1c;
 }
 .style_pending{
     color: grey;
@@ -105,12 +118,10 @@ input[readonly='readonly']{
 	color: #fff;
 }
 
-.ProblemList::-webkit-scrollbar-thumb,
-.AlertWindow::-webkit-scrollbar-thumb{
+::-webkit-scrollbar-thumb{
 	background-color: #777;
 }
-.ProblemList::-webkit-scrollbar:hover,
-.AlertWindow::-webkit-scrollbar:hover{
+::-webkit-scrollbar:hover{
     background-color: #444;
 }
 input{
@@ -122,9 +133,43 @@ input:hover{
 input:focus{
 	border: 1px solid #ccc;
 }
-progress{
-	border: 1px solid #888;
+.OneBar{
+	background: #555;
+	color: white;
 }
-progress::-webkit-progress-value{
-	background-color: #157615;
+.OneBar:hover{
+	background: #444;
+}
+.OneBar.ChosenBar{
+	background: transparent;
+}
+.StatusBar{
+	background: #555;
+}
+.checkButton{
+	color: #1cff1c;
+	transition: 0.2s;
+}
+.checkButton:hover{
+	background-color: #20901c;
+	color: white;
+}
+.ContestProgress .left,
+.ContestProgress .right{
+	border: 8px solid #222;
+}
+.ContestProgress .marker{
+	background: #222;
+}
+.ContestProgress .ContestStatus{
+	background: #222;
+}
+.ContestProgress .wrap{
+	background: #777;
+}
+.ContestProgress .circle{
+	border: 8px solid #777;
+}
+.LGM:first-letter{
+	color: white;
 }

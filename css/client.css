@@ -28,8 +28,7 @@ body{
 }
 .ContestStatus{
 	font-family: Verdana, sans-serif;
-	font-size: 16px;
-	height: 16px;
+	font-size: 14px;
 	text-align: center;
 }
 .ContestId{
@@ -70,29 +69,6 @@ body{
 	width:100%;
 	text-align:center;
 }
-.SingleProblem{
-	-webkit-app-region: no-drag;
-	box-shadow: 0px 0px 3px #666;
-	font-family: Verdana, sans-serif;
-	text-align: center;
-	position: relative;
-	min-width: 60px;
-	height: 55px;
-	border-radius: 5px;
-	margin: 0px 3px;
-	display: inline-block;
-}
-.BackgroundPic{
-	font-family: 'Consolas','Fira Code','Source Code Pro','Lucida Console','Cascadia Code','Ubuntu Mono','Monospace', sans-serif;
-	z-index: -1;
-	position:absolute;
-    left:calc(50% - 30px);
-    top:0px;
-    width: 60px;
-    height: 55px;
-    font-size: 50px;
-    text-align: center;
-}
 .ProblemScore{
 	font-size: 0.9em;
 }
@@ -113,6 +89,7 @@ body{
 	color: grey;
 }
 .ProblemCoding{
+	font-family: Verdana, sans-serif;
 	color: grey;
 }
 .TimeUsed{
@@ -198,11 +175,6 @@ hr{
 	border-bottom-right-radius: 3px;
 	border-top-right-radius: 3px;
 }
-.CurrentRating{
-	margin: 8px;
-	float: right;
-	font-size: 32px;
-}
 .ContestRatingChanges{
 	margin: 8px;
 	float: right;
@@ -214,12 +186,11 @@ hr{
 #highchatrsContainer{
 	-webkit-app-region: no-drag;
 	vertical-align: center;
-	height: 220px;
-	max-height: 220px;
+	height: 175px;
+	max-height: 175px;
 	min-height: 0px;
 }
 .ConnectionStatus{
-	-webkit-app-region: no-drag;
 	margin-left: 2px;
 	text-align: left;
 }
@@ -254,6 +225,7 @@ hr{
 	overflow: scroll;
 }
 button{
+	font-family: Verdana;
 	-webkit-app-region: no-drag;
 	text-align: center;
 	outline: 0px;
@@ -265,32 +237,39 @@ button{
 	border: 0px;
 	transition: background 0.3s;
 }
+button.mixed{
+	width: 110px;
+	padding: 0px 10px;
+}
+button.mixed > span{
+	padding-right: 1px;
+}
 input{
 	-webkit-app-region: no-drag;
 	transition: 0.3s;
-    padding: 3px;
+    padding: 5px;
     font-size: 14px;
     font-family: 'Consolas','Fira Code','Source Code Pro','Lucida Console','Cascadia Code','Ubuntu Mono','Monospace', sans-serif;
     height: 22px;
-    width: 100%;
     outline: none;
     border: 0px;
-    padding-left: 2em;
+    width: 220px;
 }
-label{
-	padding: 2px 0px;
+.united{
+	padding: 5px 10px;
 	position:relative;
-	width: 100%;
+	width: calc(100% - 20px);
 	display:inline-block;
+	font-family: Verdana;
+	font-size: 16px;
+
 }
-label > span:nth-child(2){
-	position: absolute;
-	top: 0px;
-	left: 0px;
-	padding: 6px 2px;
-	width: 1.5em;
-	height: 1.5em;
-	text-align:center;
+.united > span{
+	display: inline-block;
+	width: 150px;
+}
+.united > span > span:nth-child(1){
+	padding-right: 7px;
 }
 .active:after {
 	width:calc(100% - 2px)
@@ -302,8 +281,10 @@ select{
 	font-family: 'Consolas','Fira Code','Source Code Pro','Lucida Console','Cascadia Code','Ubuntu Mono','Monospace', sans-serif;
     border: none;
     outline: none;
-    width: 100%;
+    width: calc(100% - 20px);
+    margin: 3px 10px;
     height: 22px;
+    padding: 3px;
 }
 a{
 	color: inherit;
@@ -327,47 +308,270 @@ a{
 	margin: 3px;
 	padding: 3px;
 }
-.ProblemList::-webkit-scrollbar,
-.AlertWindow::-webkit-scrollbar{
+::-webkit-scrollbar{
     width: 5px;
     height: 5px;
 }
-.ProblemList::-webkit-scrollbar-thumb,
-.AlertWindow::-webkit-scrollbar-thumb{
+::-webkit-scrollbar-thumb{
     border-radius: 1px;
 }
-.ProblemList::-webkit-scrollbar-corner,
-.AlertWindow::-webkit-scrollbar-corner{
+::-webkit-scrollbar-corner{
     display: none;
 }
-.AdvancedToolList::-webkit-scrollbar,
-.AdvancedToolList::-webkit-scrollbar-thumb,
-.AdvancedToolList::-webkit-scrollbar-corner{
+::-webkit-scrollbar-corner{
     display: none;
-}
-.ContestStatus{
-	z-index: 0;
-	position: relative;
-	height: 20px;
 }
 .ContestProgress{
-	position: absolute;
-	right: 0px;
-	top: 0px;
-	width: 100%;
-	height: 100%;
+	position: relative;
+	width: 100px;
+	height: 100px;
 }
-.ContestStatus > span{
+.BarContent{
+	-webkit-app-region: no-drag;
+	display: flex;
+	flex-direction: row;
+	height: 30px;
+}
+.OneBar{
+	cursor: pointer;
+	transition: background 0.4s;
+	display: inline-flex;
+	border-top-left-radius: 5px;
+	border-top-right-radius: 5px;
+	padding: 7px 14px;
+	font-size: 16px;
+}
+.OneBar span{
+	display: none;
+	opacity: 0;
+	text-align: center;
+	font-family: Verdana,"Helvetica Neue",Helvetica,Arial,sans-serif;
+	font-weight: bold;
+}
+.OneBar.ChosenBar span{
+	display: inline-block !important;
+	text-align: center;
+	display: inline-block;
+	flex: 1;
+	opacity: 1;
+}
+.OneBar.ChosenBar{
+	cursor: auto;
+	flex: 1;
+}
+.InfoContent{
+	height: 225px;
+	overflow: auto;
+}
+.StatusBar{
+	-webkit-app-region: drag;
+	position: relative;
+	width: calc(100% - 20px);
+	height: 18px;
+	padding: 4px 10px;
+}
+.ProblemSubmissionFolder{
+	margin: 5px 10px;
+	border-radius: 5px;
+}
+.ProblemSubmissionIntro, .ProblemSubmission{
+	font-family: Verdana, sans-serif;
+	font-weight: bold;
+	display: flex;
+	flex-direction: row;
+	padding: 0px 5px;
+	border-radius: 5px;
+	margin: 5px 0px;
+}
+.ProblemSubmission{
+	margin-left: 15px;
+	width: calc(100% - 25px);
+}
+.ProblemSubmission{
+	transition: 0.2s;
+	padding: 3px 5px;
+}
+.ProblemSubmissionIntro>div, .ProblemSubmission>span{
+	padding: 3px 5px;
+}
+.ProblemSubmissionIntro>div:nth-child(1){
+	min-width: 40px;
+	text-align: center;
+}
+.ProblemSubmissionIntro>div:nth-child(2){
+	flex: 1;
+	text-align: center;
+	cursor: pointer;
+}
+.ProblemSubmissionIntro>div:nth-child(3){
+	min-width: 40px;
+	text-align: center;
+	cursor: pointer;
+}
+.ProblemSubmissionIntro>div:nth-child(4){
+	min-width: 50px;
+	text-align: center;
+}
+.ProblemSubmission>span{
+	display: block;
+}
+.ProblemSubmission>span:nth-child(1){
+	min-width: 40px;
+	text-align: center;
+}
+.ProblemSubmission>span:nth-child(2){
+	flex: 1;
+	text-align: center;
+	cursor: pointer;
+}
+.ProblemSubmission>span:nth-child(3){
+	min-width: 40px;
+	text-align: center;
+}
+.ProblemSubmission>span:nth-child(4){
+	min-width: 50px;
+	text-align: center;
+}
+.RefreshVirtualButton{
+	width: 80px !important;
+	transition: 0.2s;
+	overflow: hidden;
+	height: 24px;
+}
+
+
+.ContestProgress .wrap,
+.ContestProgress .circle,
+.ContestProgress .percent {
+    position: absolute;
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+}
+
+.ContestProgress .circle {
+    box-sizing: border-box;
+    clip: rect(0, 100px, 100px, 50px);
+}
+ 
+.ContestProgress .clip-auto {
+    clip: rect(auto, auto, auto, auto);
+}
+ 
+.ContestProgress .percent {
+    box-sizing: border-box;
+    top: -8px;
+    left: -8px;
+}
+ 
+.ContestProgress .left {
+    transition: transform ease;
+    clip: rect(0, 50px, 100px, 0);
+}
+ 
+.ContestProgress .right {
+    clip: rect(0, 100px, 100px, 50px);
+}
+ 
+.ContestProgress .nothing {
+    width: 0;
+}
+ 
+.ContestProgress .ContestStatus {
+    z-index: 1;
+    position: absolute;
+    left: 8px;
+    top: 8px;
+    width: 84px;
+    height: 84px;
+    text-align: center;
+    border-radius: 50%;
+    box-sizing: border-box;
+}
+.ContestProgress .ContestStatus div{
+	display: inline;
 	position: absolute;
 	top: 50%;
 	left: 50%;
 	transform: translate(-50%, -50%);
+}
+.ContestProgress .ContestStatus div i{
+	font-size: 20px;
+}
+.ContestProgress .marker{
+	border-radius: 50%;
+	height: 8px;
+	width: 8px;
+	position: absolute;
+	top: 0;
+	left: 46px;
+}
+.ContestProgress .marker.end{
+	transform-origin: 50% 50px;
+}
+
+.OverviewSplit{
+	display: flex;
+	flex-direction: column;
+	padding: 5px;
+	width: calc(100% - 10px);
+	height: calc(100% - 10px);
+}
+
+.OverviewSplit > div{
+	margin: 5px;
+}
+.ContestAllInfoDisplayer{
+	font-size: 15px;
+	vertical-align: top;
+	font-family: Verdana, sans-serif;
+}
+.ContestAllInfoDisplayer > span{
+	display: inline-block;
+	font-size: 15px;
+	width: 20px;
+	padding: 2px;
+}
+.ContestAllInfoDisplayer > div{
+	display: inline-block;
+}
+.UserHandleDisplayer{
+	font-weight: bold;
+}
+.ContestNameDisplayer{
+	-webkit-app-region: no-drag;
+	width: calc(100% - 24px);
+	height: 35px;
+	-webkit-line-clamp: 2;
+	display: -webkit-inline-box !important;
+	overflow: hidden;
+	-webkit-box-orient: vertical;
+	text-overflow:ellipsis;
+}
+
+.AllProblemList{
+	display: inline-block;
+	overflow-x: scroll;
 	white-space: nowrap;
 }
-progress{
-	border:none;
-	background: inherit;     
+
+.ContestAllInfoDisplayer>:nth-child(4){
+	transform:  translate(0px, -20px);
 }
-progress::-webkit-progress-bar{
-	background: inherit;
+.OtherInfoContainer{
+	font-family: Verdana;
+}
+.SingleProblemInfo{
+	height: calc(100% - 12px);
+	min-width: 50px;
+	padding: 3px;
+	position: relative;
+	display: inline-block;
+	text-align: center;
+	-webkit-app-region: no-drag;
+	border-radius: 5px;
+	margin: 0px 3px;
+}
+.OverviewInfoContainer{
+	height: 100%;
 }

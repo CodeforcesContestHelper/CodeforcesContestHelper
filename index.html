@@ -32,69 +32,161 @@
 	<body>
 		<div class="HtmlContainer">
 		<div class="BigInterface">
-			<table aria-hidden="true" style="table-layout:fixed;width:100%;">
-				<tr>
-					<td style="border: 2px solid #ccc;border-radius: 5px;width:289px;box-shadow: 0px 0px 10px #666">
-						<table aria-hidden="true" style="table-layout:fixed;border-collapse:collapse;padding:0px;width:100%">
-							<tr>
-								<td style="padding:0px;width:130px;"><div class="CurrentRatingDescription"><span class="fa fa-td-list"></span>  Rank</div></td>
-								<td class="ContestRatingTd" style="padding:0px;width:calc(100% - 130px)" rowspan='2'><div class="CurrentRating">#?</div><div class="ContestRatingChanges"></div></td>
-							</tr>
-							<tr>
-								<td class="RatingGraphDescriptionTd"><div class="RatingGraphDescription" style="width:130px;"><span class="fa fa-chart-line"></span>  Rank Graph&nbsp;</div></td>
-							</tr>
-						</table>
-						<div id="highchatrsContainer"><div style="height:100%;display: flex;align-items: center;justify-content: center;vertical-align:center">Blank</div></div>
-						<div class="GraphFolder"><span class="fa fa-angle-up"></span>  Fold</div>
-					</td>
-				</tr>
-				<tr>
-					<td style="width:289px;">
-						<div class="ContestStatus"><progress class="ContestProgress"></progress><span style="z-index: 1">Idle</span></div>
-						<table aria-hidden="true">
-							<tr>
-								<td><div class="ContestId"><span class="fa fa-calendar"></span>  Contest Id:<br/><span class="ContestIdNumber">?</span></div></td>
-								<td><div class="ContestName">?</div></td>
-							</tr>
-						</table>
-						<hr>
-						<div class="ProblemList" id="ProblemList">
-							<div style="height:100%;display: flex;align-items: center;justify-content: center;vertical-align:center">Blank</div>
+			<div class="BarContent">
+				<div class="OneBar ChosenBar" for="SendInfoContainer">
+					<i class="fa fa-paper-plane"></i>
+					<span> Send </span>
+				</div>
+				<div class="OneBar" for="OverviewInfoContainer">
+					<i class="fa fa-globe"></i>
+					<span> Overview </span>
+				</div>
+				<div class="OneBar" for="ProblemInfoContainer">
+					<i class="fa fa-book"></i>
+					<span> Problems </span>
+				</div>
+				<div class="OneBar" for="RankInfoContainer">
+					<i class="fa fa-hashtag"></i>
+					<span> Rank </span>
+				</div>
+				<div class="OneBar" for="UserInfoContainer">
+					<i class="fa fa-users"></i>
+					<span> Replay </span>
+				</div>
+				<div class="OneBar" for="SettingsInfoContainer">
+					<i class="fa fa-cogs"></i>
+					<span> Setting </span>
+				</div>
+			</div>
+			<div class="InfoContent">
+				<div class="SendInfoContainer">
+					<div style="width:100%;">
+						<div class="united"><span><span class="fa fa-user"></span>Handle:</span><input type="text" class="UsernameInput" placeholder="Handle"/> </div>
+						<div class="united"><span><span class="fa fa-calendar"></span>Contest ID:</span><input type="text" class="ContestIdInput" placeholder="Contest ID"/> </div>
+						<div class="united"><span><span class="fa fa-book"></span>Contest Type:</span></div>
+						<select class="ContestTypeChosen"></select>
+						<div class="united"><span><span class="fa fa-list-alt"></span>Compete With:</span><input type="text" class="ContestDiffCalc" placeholder="Diff Expression"/></div>
+						<div class="united"><span><span class="fa fa-glasses"></span>Unofficial:</span><button type="button" class="UnofficialButton mixed"><span class="fa fa-user"></span> No</button>&thinsp;<button type="button" class="SendButton mixed checkButton"><span class="fa fa-paper-plane"></span> Send</button></div>
+						<div style="padding: 0px 10px;text-align: center;">
+							<hr style="margin-bottom: 5px"/>
+							<button type="button" class="mixed ThemeButton"><span class="fa fa-sun"></span> Light</button>&thinsp;&thinsp;|&thinsp;&thinsp;<button type="button" class="mixed SetOnTopButton"><span class="fa fa-window-maximize"></span> Sticky</button>&thinsp;&thinsp;|&thinsp;&thinsp;<button type="button" class="mixed OpenWindowButton"><span class="fa fa-clone"></span> +Window</button>
 						</div>
-						<hr>
-						<div style="width:100%;">
-							<div style="width:100%;display:flex;flex-direction: row;">
-								<label style="width: 250px"><input type="text" class="UsernameInput" placeholder="Handle"/><span class="fa fa-user"></span> </label>
-								<label style="flex: 1;position: relative"><input type="text" class="ContestIdInput" placeholder="Id" style="padding-right: 50px"/><span class="fa fa-calendar"></span> <span class="ContestType" style="position:absolute; right:0;top: 6px;"></span></label>
+					</div>
+				</div>
+				<div class="OverviewInfoContainer" style="display: none;">
+					<div class="OverviewSplit">
+						<div style="display: flex; flex-direction: row;">
+							<div class="ContestProgress">
+								<div class="wrap">
+								    <div class="circle">
+								        <div class="percent left"></div>
+								        <div class="percent right nothing"></div>
+								    </div>
+								    <div class="ContestStatus"><div>Idle</div></div>
+								</div>
+								<div class="marker start" style="display:none"></div>
+								<div class="marker end" style="display:none"></div>
 							</div>
-							<div style="display:flex;flex-direction: row;width:100%;font-size:16px;">
-								<span class="fa fa-clock" style="padding: 3px;width: 1.5em;height: 100%;text-align:center;"></span> 
-								<select class="ContestTypeChosen"></select>
-							</div>
-							<div>
-								<label><input type="text" class="ContestDiffCalc" placeholder="Diff Expression"/><span class="fa fa-list-alt"></span> </label>
+							<div style="height: 100%;width: 2px;background: grey;margin-left:10px"></div>
+							<div class="ContestAllInfoDisplayer" style="flex: 1; padding-left: 10px">
+								<span class="fa fa-user"></span><div class="UserHandleDisplayer">...</div><br/>
+								<span class="fa fa-calendar"></span><div class="ContestNameDisplayer">...</div><br/>
+								<span class="fa fa-hashtag"></span><div class="RankDisplayer">#?</div><br/>
+								<span class="fa fa-plus"></span><div class="RatingChangesDisplayer">? |?| -> ?</div><br/>
 							</div>
 						</div>
-						<div class="ConnectionStatus"><span class="fa fa-globe"></span>  Fill & Send to update!</div>
-						<span class="UserType">?</span>
-						<div class="ToolList">
-							<div class="AdvancedToolList" style="width:24px;height:24px;">
-								<button type="button" class="OpenAdvancedButton" title="More Options"><span class="fa fa-angle-double-left"></span> </button>
-								<button type="button" class="SetOnTopButton" title="Set as window"><span class="fa fa-window-maximize"></span> </button>
-								<button type="button" class="OpenWindowButton" title="Open New Window"><span class="fa fa-clone"></span> </button>
-								<button type="button" class="FoldButton" title="Fold Window"><span class="fa fa-angle-down"></span> </button>
-								<button type="button" class="VirtualRankButton" title="Enable Rank Predictor" style="display:none"><span class="fa fa-database"></span> </button>
-								<button type="button" class="UnofficialButton" title="Show Unofficial"><span class="fa fa-user"></span> </button>
-								<button type="button" class="UpdateButton" title="Get Update Time"><span class="fa fa-upload"></span> </button>
-							</div>
-							<button type="button" class="ThemeButton" title="Change Theme"><span class="fa fa-sun"></span> </button>
-							<button type="button" class="LockButton" title="Lock"><span class="fa fa-unlock"></span> </button>
-							<button type="button" class="SendButton" title="Send"><span class="fa fa-paper-plane"></span> </button>
-							<button type="button" class="CloseButton" title="Close"><span class="fa fa-times style_error"></span> </button>
+						<div style="flex: 1" class="AllProblemList">
+							
 						</div>
-					</td>
-				</tr>
-			</table>
+						<div class="OtherInfoContainer">Hack: +? : -? | Score: ? | Penalty: ?</div>
+					</div>
+				</div>
+				<div class="ProblemInfoContainer" style="display: none;padding: 5px">
+					<div style="height:calc(100% - 10px);display: flex;align-items: center;justify-content: center;vertical-align:center">Start a sync to watch!</div>
+				</div>
+				<div class="RankInfoContainer" style="display: none;padding: 5px">
+					<div id="highchatrsContainer"><div style="height:100%;display: flex;align-items: center;justify-content: center;vertical-align:center">Blank</div></div>
+					<hr style="margin-bottom: 5px"/>
+					<div style="text-align: center;font-family:Verdana, sans-serif;font-size: 14px;">
+						<span style="float:left;height:29.6px;line-height:29.6px;padding-left:5px">Rank: <span class="RankDisplayer">#?</span></span><span style="float:right;height:29.6px;line-height:29.6px;">Data from: <button type="button" class="mixed VirtualRankButton" disabled><span class="fa fa-database"></span> Database</button> <button type="button" class="mixed RefreshVirtualButton" style="max-width: 0px;padding: 0px;overflow: hidden"><span class="fa fa-sync"></span> Sync</button></span>
+					</div>
+				</div>
+				<div class="UserInfoContainer" style="display: none;padding: 5px">
+					<div style="height:calc(100% - 10px);display: flex;align-items: center;justify-content: center;vertical-align:center">Replay mode still in progress...</div>
+				</div>
+				<div class="SettingsInfoContainer" style="display: none;padding: 5px">
+					<div style="padding: 0px 10px;text-align: center;">
+						<hr style="margin-bottom: 5px"/>
+						<button type="button" class="UpdateButton mixed"><span class="fa fa-upload"></span> Update</button>&thinsp;&thinsp;|&thinsp;&thinsp;<button type="button" class="mixed" onclick="openForkInfo()"><span class="fa fa-code-branch"></span> History</button>&thinsp;&thinsp;|&thinsp;&thinsp;<button type="button" class="mixed" onclick="openURL(RepoLink)"><span class="fab fa-github"></span> Repo Link</button>
+					</div>
+				</div>
+				<!-- <table aria-hidden="true" style="table-layout:fixed;width:100%;">
+					<tr>
+						<td style="border: 2px solid #ccc;border-radius: 5px;width:289px;box-shadow: 0px 0px 10px #666">
+							<table aria-hidden="true" style="table-layout:fixed;border-collapse:collapse;padding:0px;width:100%">
+								<tr>
+									<td style="padding:0px;width:130px;"><div class="CurrentRatingDescription"><span class="fa fa-list-ol"></span>  Rank</div></td>
+									<td class="ContestRatingTd" style="padding:0px;width:calc(100% - 130px)" rowspan='2'><div class="CurrentRating">#?</div><div class="ContestRatingChanges"></div></td>
+								</tr>
+								<tr>
+									<td class="RatingGraphDescriptionTd"><div class="RatingGraphDescription" style="width:130px;"><span class="fa fa-chart-line"></span>  Rank Graph&nbsp;</div></td>
+								</tr>
+							</table>
+							<div id="highchatrsContainer"><div style="height:100%;display: flex;align-items: center;justify-content: center;vertical-align:center">Blank</div></div>
+							<div class="GraphFolder"><span class="fa fa-angle-up"></span>  Fold</div>
+						</td>
+					</tr>
+					<tr>
+						<td style="width:289px;">
+							<div class="ContestStatus"><progress class="ContestProgress" value="0" max="1"></progress><span style="z-index: 1">Idle</span></div>
+							<table aria-hidden="true">
+								<tr>
+									<td><div class="ContestId"><span class="fa fa-calendar"></span>  Contest Id:<br/><span class="ContestIdNumber">?</span></div></td>
+									<td><div class="ContestName">?</div></td>
+								</tr>
+							</table>
+							<hr>
+							<div class="ProblemList" id="ProblemList">
+								<div style="height:100%;display: flex;align-items: center;justify-content: center;vertical-align:center">Blank</div>
+							</div>
+							<hr>
+							<div style="width:100%;">
+								<div style="width:100%;display:flex;flex-direction: row;">
+									<div class="united" style="width: 250px"><input type="text" class="UsernameInput" placeholder="Handle"/><span class="fa fa-user"></span> </div>
+									<div class="united" style="flex: 1;position: relative"><input type="text" class="ContestIdInput" placeholder="Id" style="padding-right: 50px"/><span class="fa fa-calendar"></span> <span class="ContestType" style="position:absolute; right:0;top: 6px;"></span></div>
+								</div>
+								<div style="width:100%;position:relative;">
+									<div class="united"><select class="ContestTypeChosen"></select><span class="fa fa-clock" style="width: 1.5em;height: 100%;text-align:center;"></span>  </div>
+								</div>
+								<div>
+									<div class="united"><input type="text" class="ContestDiffCalc" placeholder="Diff Expression"/><span class="fa fa-list-alt"></span> </div>
+								</div>
+							</div>
+							<div class="ConnectionStatus"><span class="fa fa-globe"></span>  Fill & Send to update!</div>
+							<span class="UserType">?</span>
+							<div class="ToolList">
+								<div class="AdvancedToolList" style="width:24px;height:24px;">
+									<button type="button" class="OpenAdvancedButton" title="More Options"><span class="fa fa-angle-double-left"></span> </button>
+									<button type="button" class="SetOnTopButton" title="Set as window"><span class="fa fa-window-maximize"></span> </button>
+									<button type="button" class="OpenWindowButton" title="Open New Window"><span class="fa fa-clone"></span> </button>
+									<button type="button" class="FoldButton" title="Fold Window"><span class="fa fa-angle-down"></span> </button>
+									<button type="button" class="VirtualRankButton" title="Enable Rank Predictor" style="display:none"><span class="fa fa-database"></span> </button>
+									<button type="button" class="UnofficialButton" title="Show Unofficial"><span class="fa fa-user"></span> </button>
+									<button type="button" class="UpdateButton" title="Get Update Time"><span class="fa fa-upload"></span> </button>
+								</div>
+								<button type="button" class="ThemeButton" title="Change Theme"><span class="fa fa-sun"></span> </button>
+								<button type="button" class="LockButton" title="Lock"><span class="fa fa-unlock"></span> </button>
+								<button type="button" class="SendButton" title="Send"><span class="fa fa-paper-plane"></span> </button>
+								<button type="button" class="CloseButton" title="Close"><span class="fa fa-times style_error"></span> </button>
+							</div>
+						</td>
+					</tr>
+				</table> -->
+			</div>
+			<div class="StatusBar">
+				<div class="ConnectionStatus"><span class="fa fa-globe"></span>  Fill & Send to update!</div>
+				<button type="button" class="CloseButton" style="position: absolute;top: 1px;right: 5px"><span class="fa fa-times style_error"></span> </button>
+			</div>
 		</div>
 		<div class="AllWindow">
 			<div class="BlackBackground"></div>
@@ -154,7 +246,7 @@
 			</div>
 		</div>
 		<div class="SmallInterface">
-			<div class="ContestStatus"><progress class="ContestProgress"></progress><span style="z-index: 1">Idle</span></div>
+			<div class="ContestStatus"><progress class="ContestProgress" value="0" max="1"></progress><span style="z-index: 1">Idle</span></div>
 			<table aria-hidden="true" style="table-layout:fixed;width:100%;"><tr><td>
 			<div class="SmallRankInfo">
 				<span class="SmallContestName">#?</span>
@@ -218,18 +310,18 @@
 				if(detail < 0)	step = moveForwardStep;
 				else	step = moveBackStep;
 				scrollAnimation = true;
-				$(".ProblemList").each(function(){
+				$(".AllProblemList").each(function(){
 					$(this).animate({'scrollLeft': $(this).scrollLeft() + step}, 100, "swing", function(){
 						scrollAnimation = false;
 					});
 				});
 			}
 			if(DarkMode)
-				$('.ThemeButton').html('<span class="fa fa-moon"></span> ');
+				$('.ThemeButton').html('<span class="fa fa-moon"></span> Dark');
 			function ChangeTheme(){
 				if(!DarkMode){
 					$('.ThemeTypeIf').attr('href','./css/dark.css'),
-					$('.ThemeButton').html('<span class="fa fa-moon"></span> ');
+					$('.ThemeButton').html('<span class="fa fa-moon"></span> Dark');
 					if(opacityIf)
 						$('.HtmlContainer').css('background-color','rgba(0,0,0,0.5)');
 					else
@@ -239,7 +331,7 @@
 				}
 				else{
 					$('.ThemeTypeIf').attr('href','./css/default.css'),
-					$('.ThemeButton').html('<span class="fa fa-sun"></span> ');
+					$('.ThemeButton').html('<span class="fa fa-sun"></span> Light');
 					if(opacityIf)
 						$('.HtmlContainer').css('background-color','rgba(255,255,255,0.5)');
 					else
@@ -266,6 +358,13 @@
 				window.matchMedia('(prefers-color-scheme: light)').addListener(listeners.light)
 			}
 			$('.SmallInterface').css('display','none');
+			$(".OneBar").click(function(){
+				var p = $(".OneBar.ChosenBar");
+				$("."+p.attr("for")).css("display", "none");
+				p.removeClass("ChosenBar");
+				$(this).addClass("ChosenBar");
+				$("."+$(this).attr("for")).css("display", "block");
+			})
 		</script>
 	</footer>
 </html>
