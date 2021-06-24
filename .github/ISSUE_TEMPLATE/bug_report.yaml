@@ -48,7 +48,7 @@ body:
   - type: input
     attributes:
       label: CodeforcesContestHelper version
-      placeholder: 1.3
+      placeholder: v1.3
     validations:
       required: true
 
