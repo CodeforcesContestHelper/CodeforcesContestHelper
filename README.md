@@ -1,11 +1,8 @@
 # CodeforcesContestHelper
 [![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Ftiger2005%2FCodeforcesContestHelper.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2Ftiger2005%2FCodeforcesContestHelper?ref=badge_shield)
 
-## Warning
-As we have took full use of the CodeForces API, we can't develop the app further without your issue. So, please, open an issue if you found any problem.  
-Also, pull requests are also welcomed.
-
-We will now pause the update of this project.
+## Donation
+https://afdian.net/@cfcontesthelper
 
 ## Copyright
 Project developed by [@tiger2005](https://www.luogu.com.cn/user/60864), packed by [@qinyihao](https://www.luogu.com.cn/user/348831)  
