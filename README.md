@@ -1,5 +1,10 @@
 # CodeforcesContestHelper
+
+## Important Notice
+This version of CCH is now deprecated. Please move on to [the repo for v2](https://github.com/CodeforcesContestHelper/CCHv2) for future updates.
+
 [![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Ftiger2005%2FCodeforcesContestHelper.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2Ftiger2005%2FCodeforcesContestHelper?ref=badge_shield)
+
 
 ## Donation
 https://afdian.net/@cfcontesthelper
